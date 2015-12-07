@@ -52,7 +52,7 @@ void SimplePlatooningApp::initialize(int stage) {
 		//leader speed
 		leaderSpeed = par("leaderSpeed").doubleValue();
 
-		if (myId == 0) {
+		if (mySUMOId_int == 0) {
 			//ACC speed is 100 km/h
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
 			//leader uses the ACC
@@ -71,8 +71,8 @@ void SimplePlatooningApp::initialize(int stage) {
 
 			changeSpeed = 0;
 		}
-		//every car must run on first lane
-		traciVehicle->setFixedLane(0);
+		//every car must run on its own lane
+		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
 	}
 
@@ -93,7 +93,7 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	//this takes car of feeding data into CACC and reschedule the self message
 	BaseApp::handleSelfMsg(msg);
 
-	if (msg == changeSpeed && myId == 0) {
+	if (msg == changeSpeed && mySUMOId_int == 0) {
 		//make leader speed oscillate
 		traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
 		scheduleAt(simTime() + SimTime(0.1), changeSpeed);

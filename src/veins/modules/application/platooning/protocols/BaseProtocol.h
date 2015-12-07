@@ -25,6 +25,9 @@
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 class BaseProtocol : public BaseApplLayer {
 
 	private:
@@ -36,6 +39,14 @@ class BaseProtocol : public BaseApplLayer {
 
 		//id of this vehicle
 		int myId;
+
+        //SUMO id of this vehicle
+        std::string mySUMOId;
+        int dotIndex;
+        std::string mystrId;
+        std::string myPlatoonName;
+        int mySUMOId_int;
+
 		//sequence number of sent messages
 		int seq_n;
 

@@ -57,6 +57,12 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+        //Get the SUMO ID of the vehicle.
+        mySUMOId = mobility->getExternalId();
+        dotIndex = mySUMOId.find_last_of('.');
+        myPlatoonName = mySUMOId.substr(0,dotIndex);
+        mystrId = mySUMOId.substr(dotIndex + 1);
+        mySUMOId_int = strtol(mystrId.c_str(), 0, 10);
 	}
 
 }
@@ -77,14 +83,16 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 		PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
 		ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
-
-		//if the message comes from the leader
-		if (epkt->getVehicleId() == 0) {
-			traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-		}
-		//if the message comes from the vehicle in front
-		if (epkt->getVehicleId() == myId - 1) {
-			traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+		if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
+		{
+		    //if the message comes from the leader
+            if (epkt->getVehicleId() == 0) {
+                traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+            //if the message comes from the vehicle in front
+            if (epkt->getVehicleId() == mySUMOId_int - 1) {
+                traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
 		}
 
 	}

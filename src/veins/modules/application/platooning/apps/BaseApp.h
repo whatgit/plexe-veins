@@ -27,6 +27,9 @@
 
 #include "veins/modules/application/platooning/CC_Const.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 class BaseApp : public BaseApplLayer
 {
 
@@ -50,8 +53,15 @@ class BaseApp : public BaseApplLayer
 		Veins::TraCICommandInterface *traci;
 		Veins::TraCICommandInterface::Vehicle *traciVehicle;
 
-		//id of this vehicle
+		//Omnet id of this vehicle
 		int myId;
+
+        //SUMO id of this vehicle
+        std::string mySUMOId;
+        int dotIndex;
+        std::string mystrId;
+        std::string myPlatoonName;
+        int mySUMOId_int;
 
 		//determine whether to send the actual acceleration or the one just computed by the controller
 		bool useControllerAcceleration;

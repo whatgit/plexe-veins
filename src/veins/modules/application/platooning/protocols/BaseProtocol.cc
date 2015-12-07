@@ -70,6 +70,12 @@ void BaseProtocol::initialize(int stage) {
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
+        //Get the SUMO ID of the vehicle.
+        mySUMOId = mobility->getExternalId();
+        dotIndex = mySUMOId.find_last_of('.');
+        myPlatoonName = mySUMOId.substr(0,dotIndex);
+        mystrId = mySUMOId.substr(dotIndex + 1);
+        mySUMOId_int = strtol(mystrId.c_str(), 0, 10);
 
 		//set names for output vectors
 		//distance from front vehicle
@@ -170,7 +176,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 		pkt->setAcceleration(acceleration);
 	}
 	pkt->setSpeed(speed);
-	pkt->setVehicleId(myId);
+	pkt->setVehicleId(mySUMOId_int);
 	pkt->setPositionX(position.x);
 	pkt->setPositionY(position.y);
 	//set the time to now
@@ -180,6 +186,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setKind(BEACON_TYPE);
 	pkt->setByteLength(packetSize);
 	pkt->setSequenceNumber(seq_n++);
+	pkt->setPlatoonName(myPlatoonName.c_str());
 
 	//put platooning beacon into the message for the UnicastProtocol
 	unicast->encapsulate(pkt);
