@@ -46,9 +46,13 @@ class SimplePlatooningApp : public BaseApp
 		//message used to tell the leader to continuously change its desired speed
 		cMessage *changeSpeed;
 
+		//message used to tell platoon to make a gap
+		cMessage *makeGap;
+
 	public:
 		SimplePlatooningApp() {
 			changeSpeed = 0;
+			makeGap = 0;
 		}
 
 	protected:

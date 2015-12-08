@@ -2,7 +2,7 @@ src/Makefile
 src/*.so
 src/**/*_m.h
 src/**/*_m.cc
-.csetting/*
+.csettings/*
 
 doc/doxy
 doc/neddoc

@@ -71,6 +71,10 @@ void SimplePlatooningApp::initialize(int stage) {
 
 			changeSpeed = 0;
 		}
+		//new message for making gap
+		makeGap = new cMessage();
+		scheduleAt(simTime() + SimTime(40), makeGap);
+
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
@@ -83,6 +87,10 @@ void SimplePlatooningApp::finish() {
 	if (changeSpeed) {
 		cancelAndDelete(changeSpeed);
 		changeSpeed = 0;
+	}
+	if (makeGap) {
+	    cancelAndDelete(makeGap);
+	    makeGap = 0;
 	}
 }
 
@@ -97,6 +105,10 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 		//make leader speed oscillate
 		traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
 		scheduleAt(simTime() + SimTime(0.1), changeSpeed);
+	}
+	if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
+	    //make 20m gap
+	    traciVehicle->setCACCConstantSpacing(20);
 	}
 
 }
