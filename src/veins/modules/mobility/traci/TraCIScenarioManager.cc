@@ -199,6 +199,7 @@ void TraCIScenarioManager::initialize(int stage) {
 	autoShutdown = par("autoShutdown");
 	std::string roiRoads_s = par("roiRoads");
 	std::string roiRects_s = par("roiRects");
+	useDS = par("useDrivingSimulator");
 
 	numVehicles = par("numVehicles").longValue();
 
@@ -361,6 +362,9 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
+	    if (useDS) {
+	        ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //can either end with .19 or . 51
+	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
 		init_traci();
@@ -739,6 +743,9 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 
 	// make sure we got updates for all attributes
 	if (numRead != 5) return;
+
+	//Send vehicle's data to the driving simulator
+	if (useDS) ds_connection->sendTCPMessage(makeTraCICommand(0x02, TraCIBuffer() << objectId << px << py << speed));
 
 	Coord p = connection->traci2omnet(TraCICoord(px, py));
 	if ((p.x < 0) || (p.y < 0)) error("received bad node position (%.2f, %.2f), translated to (%.2f, %.2f)", px, py, p.x, p.y);

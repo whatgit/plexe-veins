@@ -135,6 +135,7 @@ class TraCIScenarioManager : public cSimpleModule
 		TypeMapping moduleDisplayString; /**< module displayString to be used in the simulation for each managed vehicle */
 		std::string host;
 		int port;
+		bool useDS; /**< whether to use driving simulator*/
 
 		cMessage* myAddVehicleTimer;
 
@@ -146,6 +147,8 @@ class TraCIScenarioManager : public cSimpleModule
 		std::list<std::pair<TraCICoord, TraCICoord> > roiRects; /**< which rectangles (e.g. "0,0-10,10 20,20-30,30) are considered to consitute the region of interest, if not empty */
 
 		TraCIConnection* connection;
+		TraCIConnection* ds_connection; //connection for the driving simulator
+		std::string ds_vehicle_id;  //id of the vehicle to be controlled by the driving simulator
 		TraCICommandInterface* commandIfc;
 
 		size_t nextNodeVectorIndex; /**< next OMNeT++ module vector index to use */

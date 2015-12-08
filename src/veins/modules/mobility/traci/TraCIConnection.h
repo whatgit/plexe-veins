@@ -31,6 +31,11 @@ class TraCIConnection
 		void sendMessage(std::string buf);
 
 		/**
+        * send a normal TCP message (used with driving simulators)
+        */
+        void sendTCPMessage(std::string msg);
+
+		/**
 		 * receives a message via TraCI (and strips the header)
 		 */
 		std::string receiveMessage();
