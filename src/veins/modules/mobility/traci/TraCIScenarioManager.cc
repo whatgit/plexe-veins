@@ -236,6 +236,7 @@ void TraCIScenarioManager::initialize(int stage) {
 	parkingVehicleCount = 0;
 	drivingVehicleCount = 0;
 	autoShutdownTriggered = false;
+	ds_vehicle_id = "platoon0.2"; //id of the vehicle to be controlled by the driving simulator
 
 	world = FindModule<BaseWorldUtility*>::findGlobalModule();
 	if (world == NULL) error("Could not find BaseWorldUtility module");
@@ -363,7 +364,7 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
 	    if (useDS) {
-	        ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //can either end with .19 or . 51
+	        ds_connection = TraCIConnection::connect("194.47.15.51", 8888); //can either end with .19 or . 51
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);

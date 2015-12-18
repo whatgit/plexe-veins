@@ -19,6 +19,10 @@
 #define SIMPLEPLATOONINGAPP_H_
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
+#include "veins/modules/mobility/traci/TraCIConnection.h"
+#include "veins/modules/mobility/traci/TraCIBuffer.h"
+
+#define USE_DS false
 
 class SimplePlatooningApp : public BaseApp
 {
@@ -46,8 +50,15 @@ class SimplePlatooningApp : public BaseApp
 		//message used to tell the leader to continuously change its desired speed
 		cMessage *changeSpeed;
 
+		//message used to tell to read control input from driving simulator
+        cMessage *readDS;
+
 		//message used to tell platoon to make a gap
 		cMessage *makeGap;
+
+		double newHeadway;
+
+		Veins::TraCIConnection* ds_control;
 
 	public:
 		SimplePlatooningApp() {

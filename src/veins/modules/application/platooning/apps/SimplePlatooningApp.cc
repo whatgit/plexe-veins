@@ -71,12 +71,28 @@ void SimplePlatooningApp::initialize(int stage) {
 
 			changeSpeed = 0;
 		}
+
+		//change to normal acc
+		if (mySUMOId_int == 2 && USE_DS) {
+		    traciVehicle->setActiveController(Plexe::ACC);
+		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+            ds_control = Veins::TraCIConnection::connect("194.47.15.51", 8855); //can either end with .19 or . 51
+            readDS = new cMessage();
+            scheduleAt(simTime() + SimTime(0.1), readDS);
+		}
+		else {
+            ds_control = 0;
+            readDS = 0;
+		}
+
 		//new message for making gap
 		makeGap = new cMessage();
-		scheduleAt(simTime() + SimTime(40), makeGap);
+		scheduleAt(simTime() + SimTime(60), makeGap);
 
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+
+		newHeadway = 1.0;
 
 	}
 
@@ -92,6 +108,10 @@ void SimplePlatooningApp::finish() {
 	    cancelAndDelete(makeGap);
 	    makeGap = 0;
 	}
+	if (readDS) {
+        cancelAndDelete(readDS);
+        readDS = 0;
+    }
 }
 
 void SimplePlatooningApp::onData(WaveShortMessage *wsm) {
@@ -107,10 +127,37 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 		scheduleAt(simTime() + SimTime(0.1), changeSpeed);
 	}
 	if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
-	    //make 20m gap
-	    traciVehicle->setCACCConstantSpacing(20);
+	    //make 20m gap or 2 seconds headway
+	    if (traciVehicle->getActiveController() == Plexe::CACC) {
+	        traciVehicle->setCACCConstantSpacing(10);
+	    }
+	    else {
+            traciVehicle->setGenericInformation(CC_SET_PLOEG_H,&newHeadway,sizeof(double));
+	    }
 	}
+	if (msg == readDS) {
+        uint8_t read_a_byte;
+        double speed = 0.00;
+        std::string ds_resp;
 
+        ds_control->sendTCPMessage(Veins::makeTraCICommand(0x10, Veins::TraCIBuffer()));   //send command to request control values from ds (basically speed of ego vehicle)
+        ds_resp = ds_control->receiveMessage();
+        Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
+        buf >> read_a_byte;
+        buf >> read_a_byte;
+        buf >> read_a_byte;
+        buf >> read_a_byte;
+        buf >> read_a_byte;
+        buf >> speed;
+
+        ev << "Received speed is " << speed << endl;
+
+        //Control the vehicle with received speed
+        traciVehicle->setACCHeadwayTime(0.1);
+        traciVehicle->setCruiseControlDesiredSpeed(speed);
+
+	    scheduleAt(simTime() + SimTime(0.1), readDS);
+	}
 }
 
 void SimplePlatooningApp::onBeacon(WaveShortMessage* wsm) {

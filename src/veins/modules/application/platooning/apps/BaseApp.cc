@@ -85,7 +85,7 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 		ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
 		if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
 		{
-		    //if the message comes from the leader
+            //if the message comes from the leader
             if (epkt->getVehicleId() == 0) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
@@ -93,8 +93,8 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
             if (epkt->getVehicleId() == mySUMOId_int - 1) {
                 traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
-		}
 
+		}
 	}
 
 	delete enc;
