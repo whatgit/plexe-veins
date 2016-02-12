@@ -59,7 +59,7 @@ void SimplePlatooningApp::initialize(int stage) {
 			traciVehicle->setActiveController(Plexe::ACC);
 			//leader speed must oscillate
 			changeSpeed = new cMessage();
-			scheduleAt(simTime() + SimTime(0.1), changeSpeed);
+			scheduleAt(simTime() + SimTime(40), changeSpeed);
 		}
 		else {
 			//followers speed is higher
@@ -68,22 +68,36 @@ void SimplePlatooningApp::initialize(int stage) {
 			traciVehicle->setActiveController(controller);
 			//use headway time specified by the user (if ACC is employed)
 			traciVehicle->setACCHeadwayTime(accHeadway);
+			traciVehicle->setCACCConstantSpacing(10);
 
 			changeSpeed = 0;
 		}
 
-		//change to normal acc
+		//change to normal cc
 		if (mySUMOId_int == 2 && USE_DS) {
 		    traciVehicle->setActiveController(Plexe::ACC);
 		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.51", 8855); //can either end with .19 or . 51
+            ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), readDS);
 		}
 		else {
-            ds_control = 0;
-            readDS = 0;
+		            ds_control = 0;
+		            readDS = 0;
 		}
+
+		disturb = 0;
+
+		//Only to test disturbance
+
+        if (mySUMOId_int == 2) {
+            //test disturbance from SUMO
+            traciVehicle->setActiveController(Plexe::ACC);
+            disturb = new cMessage();
+            scheduleAt(simTime() + SimTime(0.1), disturb);
+        }
+
+
 
 		//new message for making gap
 		makeGap = new cMessage();
@@ -112,6 +126,10 @@ void SimplePlatooningApp::finish() {
         cancelAndDelete(readDS);
         readDS = 0;
     }
+	if (disturb) {
+        cancelAndDelete(disturb);
+        disturb = 0;
+    }
 }
 
 void SimplePlatooningApp::onData(WaveShortMessage *wsm) {
@@ -123,13 +141,19 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 
 	if (msg == changeSpeed && mySUMOId_int == 0) {
 		//make leader speed oscillate
-		traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
-		scheduleAt(simTime() + SimTime(0.1), changeSpeed);
+		//traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
+	    if(simTime() < 60) {
+	        traciVehicle->setCruiseControlDesiredSpeed(25);
+	    }
+	    else {
+	        traciVehicle->setCruiseControlDesiredSpeed(30);
+	    }
+		scheduleAt(simTime() + SimTime(60), changeSpeed);
 	}
 	if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
-	    //make 20m gap or 2 seconds headway
+	    //make 10m gap or 1 seconds headway
 	    if (traciVehicle->getActiveController() == Plexe::CACC) {
-	        traciVehicle->setCACCConstantSpacing(10);
+	        traciVehicle->setCACCConstantSpacing(20);
 	    }
 	    else {
             traciVehicle->setGenericInformation(CC_SET_PLOEG_H,&newHeadway,sizeof(double));
@@ -150,14 +174,28 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
         buf >> read_a_byte;
         buf >> speed;
 
-        ev << "Received speed is " << speed << endl;
-
         //Control the vehicle with received speed
         traciVehicle->setACCHeadwayTime(0.1);
         traciVehicle->setCruiseControlDesiredSpeed(speed);
 
 	    scheduleAt(simTime() + SimTime(0.1), readDS);
 	}
+
+	if (msg == disturb) {
+	    double distance, rel_speed;
+	    double mySpeed, myAcc, controlAcc, posX, posY, time;
+	    traciVehicle->getRadarMeasurements(distance, rel_speed);
+	    traciVehicle->getVehicleData(mySpeed, myAcc, controlAcc, posX, posY, time);
+	    if (distance < 12) {
+	        traciVehicle->setCruiseControlDesiredSpeed(mySpeed + rel_speed - (5/3.6));
+	    }
+	    else {
+	        traciVehicle->setCruiseControlDesiredSpeed(120/3.6);
+	    }
+	    traciVehicle->setACCHeadwayTime(0.1);
+	    scheduleAt(simTime() + SimTime(0.1), disturb);
+	}
+
 }
 
 void SimplePlatooningApp::onBeacon(WaveShortMessage* wsm) {

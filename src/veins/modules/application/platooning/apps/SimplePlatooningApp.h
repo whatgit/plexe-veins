@@ -53,6 +53,9 @@ class SimplePlatooningApp : public BaseApp
 		//message used to tell to read control input from driving simulator
         cMessage *readDS;
 
+        //message to test disturbance
+        cMessage *disturb;
+
 		//message used to tell platoon to make a gap
 		cMessage *makeGap;
 
