@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2016
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,16 +15,16 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef SIMPLEPLATOONINGAPP_H_
-#define SIMPLEPLATOONINGAPP_H_
+#ifndef PLATOONMERGINGAPP_H_
+#define PLATOONMERGINGAPP_H_
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 #include "veins/modules/mobility/traci/TraCIConnection.h"
 #include "veins/modules/mobility/traci/TraCIBuffer.h"
 
-#define USE_DS true
+#define USE_DS false
 
-class SimplePlatooningApp : public BaseApp
+class PlatoonMergingApp : public BaseApp
 {
 
 	public:
@@ -59,12 +59,17 @@ class SimplePlatooningApp : public BaseApp
 		//message used to tell platoon to make a gap
 		cMessage *makeGap;
 
+		//message used to tell platoon to change lane
+		cMessage *changeLane;
+
 		double newHeadway;
+
+		void handleLowerMsg(cMessage *msg);
 
 		Veins::TraCIConnection* ds_control;
 
 	public:
-		SimplePlatooningApp() {
+		PlatoonMergingApp() {
 			changeSpeed = 0;
 			makeGap = 0;
 		}
@@ -77,4 +82,4 @@ class SimplePlatooningApp : public BaseApp
 
 };
 
-#endif /* SIMPLEPLATOONINGAPP_H_ */
+#endif /* PLATOONMERGINGAPP_H_ */

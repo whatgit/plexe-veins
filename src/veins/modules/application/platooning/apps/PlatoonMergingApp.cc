@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2016
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "veins/modules/application/platooning/apps/SimplePlatooningApp.h"
+#include "veins/modules/application/platooning/apps/PlatoonMergingApp.h"
 
 #include "crng.h"
 #include "veins/modules/messages/WaveShortMessage_m.h"
@@ -24,9 +24,9 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
-Define_Module(SimplePlatooningApp);
+Define_Module(PlatoonMergingApp);
 
-void SimplePlatooningApp::initialize(int stage) {
+void PlatoonMergingApp::initialize(int stage) {
 
 	BaseApp::initialize(stage);
 
@@ -77,7 +77,7 @@ void SimplePlatooningApp::initialize(int stage) {
 		if (mySUMOId_int == 2 && USE_DS) {
 		    traciVehicle->setActiveController(Plexe::ACC);
 		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.51", 8855); //can either end with .19 or . 51
+            ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), readDS);
 		}
@@ -98,11 +98,13 @@ void SimplePlatooningApp::initialize(int stage) {
         }
         */
 
-
+		//new message for changing lane
+		changeLane = new cMessage();
+		scheduleAt(simTime() + SimTime(70), changeLane);
 
 		//new message for making gap
 		makeGap = new cMessage();
-		scheduleAt(simTime() + SimTime(60), makeGap);
+		scheduleAt(simTime() + SimTime(45), makeGap);
 
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
@@ -113,7 +115,7 @@ void SimplePlatooningApp::initialize(int stage) {
 
 }
 
-void SimplePlatooningApp::finish() {
+void PlatoonMergingApp::finish() {
 	BaseApp::finish();
 	if (changeSpeed) {
 		cancelAndDelete(changeSpeed);
@@ -131,12 +133,16 @@ void SimplePlatooningApp::finish() {
         cancelAndDelete(disturb);
         disturb = 0;
     }
+	if (changeLane) {
+	        cancelAndDelete(changeLane);
+	        changeLane = 0;
+	}
 }
 
-void SimplePlatooningApp::onData(WaveShortMessage *wsm) {
+void PlatoonMergingApp::onData(WaveShortMessage *wsm) {
 }
 
-void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
+void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	//this takes car of feeding data into CACC and reschedule the self message
 	BaseApp::handleSelfMsg(msg);
 
@@ -182,10 +188,13 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	    scheduleAt(simTime() + SimTime(0.1), readDS);
 	}
 
+	if (msg == changeLane) {
+	    traciVehicle->setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
+	    traciVehicle->setFixedLane(1);
+	}
+
+
 	if (msg == disturb) {
-	    traciVehicle->setCruiseControlDesiredSpeed((100 + 10 * sin(2 * M_PI * simTime().dbl()) / 3.6));
-	    scheduleAt(simTime() + SimTime(0.1), disturb);
-	    /*
 	    double distance, rel_speed;
 	    double mySpeed, myAcc, controlAcc, posX, posY, time;
 	    traciVehicle->getRadarMeasurements(distance, rel_speed);
@@ -198,10 +207,14 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	    }
 	    traciVehicle->setACCHeadwayTime(0.1);
 	    scheduleAt(simTime() + SimTime(0.1), disturb);
-	    */
 	}
 
 }
 
-void SimplePlatooningApp::onBeacon(WaveShortMessage* wsm) {
+void PlatoonMergingApp::onBeacon(WaveShortMessage* wsm) {
+}
+
+void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
+
+    BaseApp::handleLowerMsg(msg);
 }

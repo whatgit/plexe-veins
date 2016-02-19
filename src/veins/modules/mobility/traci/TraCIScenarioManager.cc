@@ -364,7 +364,7 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
 	    if (useDS) {
-	        ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //can either end with .19 or . 51
+	        ds_connection = TraCIConnection::connect("194.47.15.51", 8888); //can either end with .19 or . 51
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
@@ -473,9 +473,15 @@ void TraCIScenarioManager::executeOneTimestep() {
 
 	MYDEBUG << "Triggering TraCI server simulation advance to t=" << simTime() <<endl;
 
+	std::string ds_resp;
 	uint32_t targetTime = getCurrentTimeMs();
 
 	if (targetTime > round(connectAt.dbl() * 1000)) {
+
+	    //Some blocking here to wait for sync with VTI
+	    ds_connection->sendTCPMessage(makeTraCICommand(0x20, TraCIBuffer()));
+	    ds_resp = ds_connection->receiveMessage();
+
 		TraCIBuffer buf = connection->query(CMD_SIMSTEP2, TraCIBuffer() << targetTime);
 
 		uint32_t count; buf >> count;
