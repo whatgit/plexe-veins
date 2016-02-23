@@ -52,6 +52,10 @@ void SimplePlatooningApp::initialize(int stage) {
 		//leader speed
 		leaderSpeed = par("leaderSpeed").doubleValue();
 
+		VTIcontrol = par("DScontrol").boolValue();
+
+		SUMO_disturbance = par("SUMOdisturb").boolValue();
+
 		if (mySUMOId_int == 0) {
 			//ACC speed is 100 km/h
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
@@ -73,11 +77,12 @@ void SimplePlatooningApp::initialize(int stage) {
 			changeSpeed = 0;
 		}
 
-		//change to normal cc
-		if (mySUMOId_int == 2 && USE_DS) {
+		//change to normal CC
+		if (mySUMOId_int == 2 && VTIcontrol) {
 		    traciVehicle->setActiveController(Plexe::ACC);
+		    traciVehicle->setACCHeadwayTime(0.0);
 		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.51", 8855); //can either end with .19 or . 51
+            ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), readDS);
 		}
@@ -89,15 +94,14 @@ void SimplePlatooningApp::initialize(int stage) {
 		disturb = 0;
 
 		//Only to test disturbance
-		/*
-        if (mySUMOId_int == 2) {
+
+        if (mySUMOId_int == 2 && SUMO_disturbance) {
             //test disturbance from SUMO
             traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setACCHeadwayTime(0.0);
             disturb = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), disturb);
         }
-        */
-
 
 
 		//new message for making gap
@@ -176,16 +180,18 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
         buf >> speed;
 
         //Control the vehicle with received speed
-        traciVehicle->setACCHeadwayTime(0.1);
+        //traciVehicle->setACCHeadwayTime(0.0);
         traciVehicle->setCruiseControlDesiredSpeed(speed);
 
 	    scheduleAt(simTime() + SimTime(0.1), readDS);
 	}
 
 	if (msg == disturb) {
+	    /*
 	    traciVehicle->setCruiseControlDesiredSpeed((100 + 10 * sin(2 * M_PI * simTime().dbl()) / 3.6));
 	    scheduleAt(simTime() + SimTime(0.1), disturb);
-	    /*
+	    */
+
 	    double distance, rel_speed;
 	    double mySpeed, myAcc, controlAcc, posX, posY, time;
 	    traciVehicle->getRadarMeasurements(distance, rel_speed);
@@ -196,9 +202,9 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	    else {
 	        traciVehicle->setCruiseControlDesiredSpeed(120/3.6);
 	    }
-	    traciVehicle->setACCHeadwayTime(0.1);
+	    //traciVehicle->setACCHeadwayTime(0.0);
 	    scheduleAt(simTime() + SimTime(0.1), disturb);
-	    */
+
 	}
 
 }

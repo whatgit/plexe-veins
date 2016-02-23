@@ -22,8 +22,6 @@
 #include "veins/modules/mobility/traci/TraCIConnection.h"
 #include "veins/modules/mobility/traci/TraCIBuffer.h"
 
-#define USE_DS true
-
 class SimplePlatooningApp : public BaseApp
 {
 
@@ -60,6 +58,10 @@ class SimplePlatooningApp : public BaseApp
 		cMessage *makeGap;
 
 		double newHeadway;
+
+		bool VTIcontrol;
+
+		bool SUMO_disturbance;
 
 		Veins::TraCIConnection* ds_control;
 

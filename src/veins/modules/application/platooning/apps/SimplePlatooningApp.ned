@@ -38,6 +38,10 @@ simple SimplePlatooningApp like BaseApp
         double ploegH @unit("s") = default(0.5 s);
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
+        
+        //To request control value from driving simulator or not
+        bool DScontrol = default(false);
+        bool SUMOdisturb = default(false);
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);
