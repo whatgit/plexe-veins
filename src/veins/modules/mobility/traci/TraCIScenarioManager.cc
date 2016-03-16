@@ -477,7 +477,8 @@ void TraCIScenarioManager::executeOneTimestep() {
 	uint32_t targetTime = getCurrentTimeMs();
 
 	//Some blocking here to wait for sync with VTI
-    ds_connection->sendTCPMessage(makeTraCICommand(0x20, TraCIBuffer()));
+    //ds_connection->sendTCPMessage(makeTraCICommand(0x20, TraCIBuffer()));
+	//expected a sync message from VTI
     ds_resp = ds_connection->receiveMessage();
 
 	if (targetTime > round(connectAt.dbl() * 1000)) {
