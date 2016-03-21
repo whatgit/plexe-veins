@@ -56,6 +56,11 @@ void SimplePlatooningApp::initialize(int stage) {
 
 		SUMO_disturbance = par("SUMOdisturb").boolValue();
 
+		//set name for record
+		/*gap_d.setName("gap_d");
+		gap_v.setName("gap_v");
+		speed_fake_controller.setName("speed_fake_control");*/
+
 		if (mySUMOId_int == 0) {
 			//ACC speed is 100 km/h
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
@@ -93,10 +98,10 @@ void SimplePlatooningApp::initialize(int stage) {
 		if (mySUMOId_int == 2 && VTIcontrol) {
 		    traciVehicle->setActiveController(Plexe::ACC);
 		    traciVehicle->setACCHeadwayTime(0.0);
-		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+		    //traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
             ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
-            scheduleAt(simTime() + SimTime(0.01), readDS);
+            scheduleAt(simTime() + SimTime(0.1), readDS);
 		}
 		else {
 		            //ds_control = 0;
@@ -110,7 +115,7 @@ void SimplePlatooningApp::initialize(int stage) {
             traciVehicle->setACCHeadwayTime(0.0);
             ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             disturb = new cMessage();
-            scheduleAt(simTime() + SimTime(0.01), disturb);
+            scheduleAt(simTime() + SimTime(0.1), disturb);
         }
         else {
             //ds_control = 0;
@@ -179,15 +184,16 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	}
 	if (msg == readDS) {
         uint8_t read_a_byte;
-        double speed = 0.00;
+        double speed;
         std::string ds_resp;
-/*        double radar_distance, rel_speed;
-        traciVehicle->getRadarMeasurements(radar_distance, rel_speed);*/
+        double radar_distance, rel_speed;
+        traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
 
         //send command to request control values from ds (basically speed of ego vehicle)
         ds_control->sendTCPMessage(Veins::makeTraCICommand(0x10, Veins::TraCIBuffer()));  //Command without distance
         //ds_control->sendTCPMessage(Veins::makeTraCICommand(0x11, Veins::TraCIBuffer() << radar_distance));    //Command with distance
         ds_resp = ds_control->receiveMessage();
+
         Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
         buf >> read_a_byte;
         buf >> read_a_byte;
@@ -200,12 +206,16 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
         //traciVehicle->setACCHeadwayTime(0.0);
         traciVehicle->setCruiseControlDesiredSpeed(speed);
 
-	    scheduleAt(simTime() + SimTime(0.01), readDS);
+        /*gap_v.record(radar_distance);
+        speed_fake_controller.record(speed);*/
+
+	    scheduleAt(simTime() + SimTime(0.1), readDS);
 	}
 
 	if (msg == disturb) {
 	    uint8_t read_a_byte;
-        double distance = 0.00;
+        double distance;
+        double speed;
         std::string ds_resp;
 
         ds_control->sendTCPMessage(Veins::makeTraCICommand(0x20, Veins::TraCIBuffer()));   //send command to request control values from ds (basically speed of ego vehicle)
@@ -220,17 +230,24 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 
 	    double radar_distance, rel_speed;
 	    double mySpeed, myAcc, controlAcc, posX, posY, time;
-	    traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
+        traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
 	    traciVehicle->getVehicleData(mySpeed, myAcc, controlAcc, posX, posY, time);
+	    //rel_speed is minus if we are faster
 	    if (distance < 12.00) {
+	        speed = mySpeed + rel_speed - (5/3.6);
 	        traciVehicle->setCruiseControlDesiredSpeed(mySpeed + rel_speed - (5/3.6));
 	    }
 	    else {
+	        speed = 120/3.6;
 	        traciVehicle->setCruiseControlDesiredSpeed(120/3.6);
 	    }
-	    //traciVehicle->setACCHeadwayTime(0.0);
-	    scheduleAt(simTime() + SimTime(0.01), disturb);
 
+	    /*gap_d.record(distance);
+        gap_v.record(radar_distance);
+        speed_fake_controller.record(speed);*/
+
+	    //traciVehicle->setACCHeadwayTime(0.0);
+	    scheduleAt(simTime() + SimTime(0.1), disturb);
 	}
 
 }

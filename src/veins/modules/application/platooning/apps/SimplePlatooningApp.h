@@ -36,6 +36,8 @@ class SimplePlatooningApp : public BaseApp
 
 	private:
 
+		//cOutVector gap_d, gap_v, speed_fake_controller;
+
 		//frequency at which the leader speed is oscillating
 		double leaderOscillationFrequency;
 		//controller to be used for platooning
