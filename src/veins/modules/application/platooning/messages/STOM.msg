@@ -11,31 +11,11 @@
 // 
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see http://www.gnu.org/licenses/.
-// 
-
-#ifndef PLATOONMERGINGPROTOCOL_H_
-#define PLATOONMERGINGPROTOCOL_H_
-
-#include "BaseProtocol.h"
-
-class PlatoonMergingProtocol : public BaseProtocol
-{
-    protected:
-
-        virtual void handleSelfMsg(cMessage *msg);
-        virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
-        cMessage *sendSTOMmsg;
-        void sendSTOM(int destinationAddress);
-
-    public:
-        PlatoonMergingProtocol() {
-            sendSTOMmsg = 0;
-        }
-        virtual ~PlatoonMergingProtocol();
-
-        virtual void initialize(int stage);
-        virtual void finish();
-};
-
-
-#endif /* PLATOONMERGINGPROTOCOL_H_ */
+//
+packet STOM {
+	//id of the originator
+	int vehicleId = 0;
+	double time = 0;	//Timestamp
+	string platoonName;
+	int sequenceNumber = 0;
+}

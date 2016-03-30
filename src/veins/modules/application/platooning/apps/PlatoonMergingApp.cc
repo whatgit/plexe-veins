@@ -22,7 +22,8 @@
 #include "veins/base/messages/MacPkt_m.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
-#include "veins/modules/application/platooning/protocols/BaseProtocol.h"
+//#include "veins/modules/application/platooning/protocols/BaseProtocol.h"
+#include "veins/modules/application/platooning/protocols/PlatoonMergingProtocol.h"
 
 Define_Module(PlatoonMergingApp);
 
@@ -73,43 +74,18 @@ void PlatoonMergingApp::initialize(int stage) {
 			changeSpeed = 0;
 		}
 
-		//change to normal cc
-		if (mySUMOId_int == 2 && USE_DS) {
-		    traciVehicle->setActiveController(Plexe::ACC);
-		    traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
-            readDS = new cMessage();
-            scheduleAt(simTime() + SimTime(0.1), readDS);
-		}
-		else {
-		            ds_control = 0;
-		            readDS = 0;
-		}
-
-		disturb = 0;
-
-		//Only to test disturbance
-		/*
-        if (mySUMOId_int == 2) {
-            //test disturbance from SUMO
-            traciVehicle->setActiveController(Plexe::ACC);
-            disturb = new cMessage();
-            scheduleAt(simTime() + SimTime(0.1), disturb);
-        }
-        */
-
-		//new message for changing lane
-		changeLane = new cMessage();
-		scheduleAt(simTime() + SimTime(70), changeLane);
-
 		//new message for making gap
 		makeGap = new cMessage();
-		scheduleAt(simTime() + SimTime(45), makeGap);
+		scheduleAt(simTime() + SimTime(35), makeGap);
+
+		changeLane = new cMessage();
+		//scheduleAt(simTime() + SimTime(70), changeLane);
 
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
 		newHeadway = 1.0;
+		lane_change_count = 0;
 
 	}
 
@@ -125,14 +101,6 @@ void PlatoonMergingApp::finish() {
 	    cancelAndDelete(makeGap);
 	    makeGap = 0;
 	}
-	if (readDS) {
-        cancelAndDelete(readDS);
-        readDS = 0;
-    }
-	if (disturb) {
-        cancelAndDelete(disturb);
-        disturb = 0;
-    }
 	if (changeLane) {
 	        cancelAndDelete(changeLane);
 	        changeLane = 0;
@@ -149,14 +117,15 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	if (msg == changeSpeed && mySUMOId_int == 0) {
 		//make leader speed oscillate
 		//traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
-	    if(simTime() < 60) {
+	    /*if(simTime() < 60) {
 	        traciVehicle->setCruiseControlDesiredSpeed(25);
 	    }
 	    else {
 	        traciVehicle->setCruiseControlDesiredSpeed(30);
-	    }
+	    }*/
 		scheduleAt(simTime() + SimTime(60), changeSpeed);
 	}
+
 	if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
 	    //make 10m gap or 1 seconds headway
 	    if (traciVehicle->getActiveController() == Plexe::CACC) {
@@ -166,47 +135,10 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
             traciVehicle->setGenericInformation(CC_SET_PLOEG_H,&newHeadway,sizeof(double));
 	    }
 	}
-	if (msg == readDS) {
-        uint8_t read_a_byte;
-        double speed = 0.00;
-        std::string ds_resp;
-
-        ds_control->sendTCPMessage(Veins::makeTraCICommand(0x10, Veins::TraCIBuffer()));   //send command to request control values from ds (basically speed of ego vehicle)
-        ds_resp = ds_control->receiveMessage();
-        Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
-        buf >> read_a_byte;
-        buf >> read_a_byte;
-        buf >> read_a_byte;
-        buf >> read_a_byte;
-        buf >> read_a_byte;
-        buf >> speed;
-
-        //Control the vehicle with received speed
-        traciVehicle->setACCHeadwayTime(0.1);
-        traciVehicle->setCruiseControlDesiredSpeed(speed);
-
-	    scheduleAt(simTime() + SimTime(0.1), readDS);
-	}
 
 	if (msg == changeLane) {
-	    traciVehicle->setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
-	    traciVehicle->setFixedLane(1);
-	}
-
-
-	if (msg == disturb) {
-	    double distance, rel_speed;
-	    double mySpeed, myAcc, controlAcc, posX, posY, time;
-	    traciVehicle->getRadarMeasurements(distance, rel_speed);
-	    traciVehicle->getVehicleData(mySpeed, myAcc, controlAcc, posX, posY, time);
-	    if (distance < 12) {
-	        traciVehicle->setCruiseControlDesiredSpeed(mySpeed + rel_speed - (5/3.6));
-	    }
-	    else {
-	        traciVehicle->setCruiseControlDesiredSpeed(120/3.6);
-	    }
-	    traciVehicle->setACCHeadwayTime(0.1);
-	    scheduleAt(simTime() + SimTime(0.1), disturb);
+        traciVehicle->setFixedLane(1);
+        traciVehicle->setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
 	}
 
 }
@@ -216,5 +148,48 @@ void PlatoonMergingApp::onBeacon(WaveShortMessage* wsm) {
 
 void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
 
-    BaseApp::handleLowerMsg(msg);
+    //BaseApp::handleLowerMsg(msg);
+
+/*    UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
+    ASSERT2(unicast, "received a frame not of type UnicastMessage");
+
+    cPacket *enc = unicast->decapsulate();
+    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    if (enc->getKind() == BaseProtocol::STOM_TYPE) {
+        scheduleAt(simTime() + SimTime(0.01), changeLane);
+    }*/
+
+    UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
+    ASSERT2(unicast, "received a frame not of type UnicastMessage");
+
+    cPacket *enc = unicast->decapsulate();
+    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
+
+        PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
+        ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
+        if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
+        {
+            //if the message comes from the leader
+            if (epkt->getVehicleId() == 0) {
+                traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+            //if the message comes from the vehicle in front
+            if (epkt->getVehicleId() == mySUMOId_int - 1) {
+                traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+
+        }
+    }
+    else if(enc->getKind() == BaseProtocol::STOM_TYPE){
+        STOM *stom_pkt = dynamic_cast<STOM *>(enc);
+        if(stom_pkt->getVehicleId()-1 == mySUMOId_int) { //just example of how second vehicle tell first one to change lane
+            scheduleAt(simTime() + SimTime(0.05), changeLane);
+        }
+    }
+
+    delete enc;
+    delete unicast;
 }

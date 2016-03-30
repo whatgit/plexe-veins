@@ -166,6 +166,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	unicast = new UnicastMessage("", BEACON_TYPE);
 	unicast->setDestination(-1);
 	unicast->setPriority(priority);
+	unicast->setType(2);   //PLATOON_BEACON = 2
 
 	//create platooning beacon with data about the car
 	pkt = new PlatooningBeacon();
@@ -197,19 +198,25 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	PlatooningBeacon *epkt;
+	STOM *stom_pkt;
 
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
 	cPacket *enc = unicast->decapsulate();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-	epkt = dynamic_cast<PlatooningBeacon *>(enc);
+	if(unicast->getType() == UnicastMessageType::PLATOON_BEACON) {
 
-	if (epkt) {
+        epkt = dynamic_cast<PlatooningBeacon *>(enc);
 
-		//invoke messageReceived() method of subclass
-		messageReceived(epkt, unicast);
-
+        if (epkt) {
+            //invoke messageReceived() method of subclass
+            messageReceived(epkt, unicast);
+        }
+	}
+	else {
+        stom_pkt = dynamic_cast<STOM *>(enc);
+        //Doing nothing at the moment?
 	}
 
 	//send the message to the platooning application

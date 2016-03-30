@@ -21,4 +21,5 @@ tests/**/err.tmp
 examples/**/analysis
 examples/**/results
 examples/**/.tkenvrc
+examples/**/.tkenvlog
 examples/**/valgrind.out

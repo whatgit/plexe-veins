@@ -18,6 +18,8 @@
 enum UnicastMessageType {
 	DATA = 0;
 	ACK = 1;
+	PLATOON_BEACON = 2;
+	STOM_MSG = 3;
 };
 
 //

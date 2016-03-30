@@ -148,7 +148,8 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	//free it
 	unicast->encapsulate(msg);
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, channel, priority, 0, unicast->getSequenceNumber());
+	WaveShortMessage *wsm = prepareWSM(msg->getClassName(), 0, channel, priority, 0, unicast->getSequenceNumber());
+	//WaveShortMessage *wsm = prepareWSM("beacon", 0, channel, priority, 0, unicast->getSequenceNumber());
 	wsm->encapsulate(unicast);
 	//include control info that might have been set at higher layers
 	if (msg->getControlInfo()){

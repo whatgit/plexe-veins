@@ -50,12 +50,6 @@ class PlatoonMergingApp : public BaseApp
 		//message used to tell the leader to continuously change its desired speed
 		cMessage *changeSpeed;
 
-		//message used to tell to read control input from driving simulator
-        cMessage *readDS;
-
-        //message to test disturbance
-        cMessage *disturb;
-
 		//message used to tell platoon to make a gap
 		cMessage *makeGap;
 
@@ -64,9 +58,11 @@ class PlatoonMergingApp : public BaseApp
 
 		double newHeadway;
 
-		void handleLowerMsg(cMessage *msg);
+		virtual void handleLowerMsg(cMessage *msg);
 
 		Veins::TraCIConnection* ds_control;
+
+        int lane_change_count;
 
 	public:
 		PlatoonMergingApp() {
