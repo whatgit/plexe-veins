@@ -178,8 +178,11 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	}
 	pkt->setSpeed(speed);
 	pkt->setVehicleId(mySUMOId_int);
-	pkt->setPositionX(position.x);
-	pkt->setPositionY(position.y);
+	//send SUMO position instead
+	//pkt->setPositionX(position.x);
+	//pkt->setPositionY(position.y);
+	pkt->setPositionX(sumoPosX);
+	pkt->setPositionY(sumoPosY);
 	//set the time to now
 	pkt->setTime(time);
 	//i generated the message, i send it
@@ -199,6 +202,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	PlatooningBeacon *epkt;
 	STOM *stom_pkt;
+	ICLCM *iCLCM_pkt;
 
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
@@ -213,6 +217,9 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
             //invoke messageReceived() method of subclass
             messageReceived(epkt, unicast);
         }
+	}
+	else if (unicast->getType() == UnicastMessageType::iCLCM) {
+	    iCLCM_pkt = dynamic_cast<ICLCM *>(enc);
 	}
 	else {
         stom_pkt = dynamic_cast<STOM *>(enc);

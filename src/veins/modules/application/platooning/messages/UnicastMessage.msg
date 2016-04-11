@@ -20,6 +20,8 @@ enum UnicastMessageType {
 	ACK = 1;
 	PLATOON_BEACON = 2;
 	STOM_MSG = 3;
+	ROAD_CLOSED = 4;
+	iCLCM = 5;
 };
 
 //

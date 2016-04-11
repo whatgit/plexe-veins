@@ -38,6 +38,16 @@ class PlatoonMergingApp : public BaseApp
 
 	private:
 
+        //message used to tell platoon to make a gap
+        cMessage *makeGap;
+        //message used to tell platoon to change lane
+        cMessage *changeLane;
+        cMessage *ProtocolParUpdates;
+        cMessage *checkGap;
+
+        Veins::TraCIConnection* ds_control;
+        int lane_change_count;
+        double newHeadway;
 		//frequency at which the leader speed is oscillating
 		double leaderOscillationFrequency;
 		//controller to be used for platooning
@@ -47,26 +57,26 @@ class PlatoonMergingApp : public BaseApp
 		//leader average speed
 		double leaderSpeed;
 
-		//message used to tell the leader to continuously change its desired speed
-		cMessage *changeSpeed;
-
-		//message used to tell platoon to make a gap
-		cMessage *makeGap;
-
-		//message used to tell platoon to change lane
-		cMessage *changeLane;
-
-		double newHeadway;
+		double currentCACCSpacing = 10.00; //default spacing is 10 meters
+		double SafeGap = 10.00; //safe gap for platoon merging is 5 meters
+		double vehicleLength = 4.70;
 
 		virtual void handleLowerMsg(cMessage *msg);
+        void SyncSpeedToB();
 
-		Veins::TraCIConnection* ds_control;
+        unsigned long myMIO_ID; //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+        unsigned int myMIO_RANGE; //distance to MIO, 65535 mean n/a
+        int myMIO_speed;
+        unsigned long myFWDPairID; //ID of the forward pair in A2B phase, 0 mean no pair
+        unsigned long myBWDPairID; //ID of the backward pair in A2B phase, 0 mean no pair
+        bool makingGap;
+        bool mergeRequestFlag;
+        bool STOM_flag;
+        bool Merging_flag;
 
-        int lane_change_count;
 
 	public:
 		PlatoonMergingApp() {
-			changeSpeed = 0;
 			makeGap = 0;
 		}
 
