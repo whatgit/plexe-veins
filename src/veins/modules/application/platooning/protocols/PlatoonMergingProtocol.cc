@@ -43,7 +43,7 @@ void PlatoonMergingProtocol::initialize(int stage) {
         scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
         scheduleAt(simTime() + beaconingInterval + beginTime + offset, sendiCLCM);
         scheduleAt(simTime() + SimTime(40), startMerge);
-        scheduleAt(simTime() + SimTime(70), sendSTOMmsg);
+        scheduleAt(simTime() + SimTime(100), sendSTOMmsg);
     }
 }
 
@@ -146,7 +146,7 @@ void PlatoonMergingProtocol::sendiCLCMMessage(int destinatinAddress) {
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
     iCLCM_msg = new ICLCM();
     iCLCM_msg->setStationID(myId); //my vehicle id (OMNeT++ id in this case)
-    iCLCM_msg->setRearAxleLocation(sumoPosX); //rearAxleLocation = 0; Should range from 0 to 4095 meters
+    iCLCM_msg->setRearAxleLocation(sumoPosX-4.70); //this is rear bumper position, should actually be rearAxleLocation and should range from 0 to 4095 meters
     iCLCM_msg->setControllerType(traciVehicle->getActiveController());  //Range from 0 to 3 | 0:Manual | 1:CC | 2:ACC | 3: CACC |
     iCLCM_msg->setDesiredLongitudinalAcceleration(controllerAcceleration); //Should range from -1001 to 1001 m/s2
     iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in front), 0 mean no pair

@@ -27,10 +27,7 @@ class PlatoonMergingProtocol : public BaseProtocol
         virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
         cMessage *sendiCLCM;
         cMessage *startMerge;   //Message to start the scenario
-        cMessage *PairB2A;
-        cMessage *PairA2B;
-        cMessage *PrepareGap;
-        cMessage *sendSTOMmsg;
+        cMessage *sendSTOMmsg;  //Assume they enter merging zone here
         void sendSTOM(int destinationAddress);
         void startMergingScenario(int destinationAddress);
         void sendiCLCMMessage(int destinationAddress);

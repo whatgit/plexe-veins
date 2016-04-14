@@ -33,6 +33,9 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	if (stage == 1) {
 
+	    currentCACCSpacing = 10.00; //default spacing is 10 meters
+        CACCSpacing = 10.00; //default spacing is 10 meters
+        currentGapToFWDPair = 0;
 		//get the oscillation frequency of the leader as parameter
 		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
 
@@ -78,7 +81,6 @@ void PlatoonMergingApp::initialize(int stage) {
 		//Initilize cMessage(s)
 		makeGap = new cMessage("makeGap");
 		changeLane = new cMessage();
-		ProtocolParUpdates = new cMessage("update");
 		checkGap = new cMessage();
 		reformPlatoon = new cMessage();
 
@@ -120,7 +122,8 @@ void PlatoonMergingApp::initialize(int stage) {
 		}
 
 		/** Initialize the rest**/
-
+		GapToFWDPair.setName("gap_to_fwd");
+		nodeIdOut.setName("nodeId");
 		newMIO = 0;
         myMIO_RANGE = 65535; //distance to MIO, 65535 mean n/a
         myMIO_speed = 32767;
@@ -129,6 +132,7 @@ void PlatoonMergingApp::initialize(int stage) {
         mergeRequestFlag = false;
         Merging_flag = false;
         makingGap = false;
+        refineGap = false;
         STOM_flag = false;
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
@@ -142,18 +146,10 @@ void PlatoonMergingApp::initialize(int stage) {
 
 void PlatoonMergingApp::finish() {
 	BaseApp::finish();
-	if (makeGap) {
-	    cancelAndDelete(makeGap);
-	    makeGap = 0;
-	}
 	if (changeLane) {
         cancelAndDelete(changeLane);
         changeLane = 0;
 	}
-	if (ProtocolParUpdates) {
-        cancelAndDelete(ProtocolParUpdates);
-        ProtocolParUpdates = 0;
-    }
 	if (checkGap) {
         cancelAndDelete(checkGap);
         checkGap = 0;
@@ -171,20 +167,6 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	//this takes car of feeding data into CACC and reschedule the self message
 	BaseApp::handleSelfMsg(msg);     //the function actually does nothing
 
-	//if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
-	if (msg == makeGap) {
-	    //make 10m gap or 1 seconds headway
-	    /*if (traciVehicle->getActiveController() == Plexe::CACC) {
-	        traciVehicle->setCACCConstantSpacing(20);
-	    }
-	    else {
-            traciVehicle->setGenericInformation(CC_SET_PLOEG_H,&newHeadway,sizeof(double));
-	    }*/
-	}
-	if (msg == ProtocolParUpdates) {
-
-
-	}
 	if (msg == changeLane) {
 	    if(mySUMOId_int == 0) {
 	        //OPC car shouldn't merge (yet)
@@ -199,6 +181,7 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	}
 	if (msg == checkGap) {
 	    makingGap = false;
+	    refineGap = true;
 	}
 	if (msg == reformPlatoon) {
 	    myMIO_ID = newMIO;
@@ -209,6 +192,7 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	        BaseApp::myPlatoonName = "platoon0"; //change name to another platoon
 	        PlatoonID = 2;
 	    }
+	    makingGap = true;
 	    UpdateProtocolParam();
 	}
 
@@ -267,15 +251,41 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             }
         }
         if(epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0 && !makingGap && !STOM_flag && !Merging_flag) {   //If not making gap and STOM not sent
-            if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap) {
-                currentCACCSpacing = (2*currentCACCSpacing) + vehicleLength;
-                traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
-                makingGap = true;
-                //scheduleAt(simTime() + SimTime(3), checkGap);   //check again in 5 seconds
+
+            if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap && !refineGap) {
+                 currentCACCSpacing = (2*currentCACCSpacing) + myPairvehicleLength;
+                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
+                 makingGap = true;
+                 scheduleAt(simTime() + SimTime(6), checkGap);   //check again in 6 seconds (arbitrary number)
             }
             else {
-                //Gap is already good?
+                //refine the gap
+                if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
+                    currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
+                    traciVehicle->setCACCConstantSpacing(currentCACCSpacing + currentGapToFWDPair);
+                }
+                makingGap = true;
             }
+            /*  CONSTANT GAP APPROACH */
+            /*if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap) {
+                 currentCACCSpacing = (2*currentCACCSpacing) + myPairvehicleLength;
+                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
+                 makingGap = true;
+                //scheduleAt(simTime() + SimTime(3), checkGap);   //check again in 3 seconds
+            }
+            else {
+                //Gap already good
+            }*/
+            /** 'DYNAMIC' GAP APPROACH **/
+            /*makingGap = true;
+            currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
+            GapToFWDPair.record(currentGapToFWDPair);
+            nodeIdOut.record(myId);
+            if(currentGapToFWDPair < 0 || currentGapToFWDPair < SafeGap) {
+                currentCACCSpacing = currentCACCSpacing + 0.1;
+                traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
+            }
+            scheduleAt(simTime() + SimTime(1), checkGap);   //check again in 1 seconds*/
         }
     }
     else if (enc->getKind() == BaseProtocol::iCLCM_TYPE) {

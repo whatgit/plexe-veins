@@ -18,6 +18,7 @@ module(scenario.node[*].prot)
 				OR name(speed)
 				OR name(posx)
 				OR name(posy)
+				OR name(gap_to_fwd)
 			)
 )
 '))
@@ -91,7 +92,7 @@ p2 <-	#ggplot(ss, aes(x=time, y=distance)) +
 		theme(text = element_text(size=35)) +
 		#geom_hline(y = 10, color = "black", size=0.5) +
 		geom_vline(x = 40, color = "black", size=0.5) +
-		geom_vline(x = 70, color = "black", size=0.5) +
+		geom_vline(x = 100, color = "black", size=0.5) +
 		facet_grid(controller~., scales="free_y") + 
 		theme(panel.margin = unit(2, "lines"))
 #print(p2)

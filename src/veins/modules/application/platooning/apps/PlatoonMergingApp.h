@@ -42,7 +42,6 @@ class PlatoonMergingApp : public BaseApp
         cMessage *makeGap;
         //message used to tell platoon to change lane
         cMessage *changeLane;
-        cMessage *ProtocolParUpdates;
         cMessage *checkGap;
         cMessage *reformPlatoon;
 
@@ -58,9 +57,12 @@ class PlatoonMergingApp : public BaseApp
 		//leader average speed
 		double leaderSpeed;
 
-		double currentCACCSpacing = 10.00; //default spacing is 10 meters
+		double currentCACCSpacing; //default spacing is 10 meters
+		double CACCSpacing; //default spacing is 10 meters
 		double SafeGap = 10.00; //safe gap for platoon merging is 10 meters
-		double vehicleLength = 4.70;
+		double myPairvehicleLength = 4.70;
+		double currentGapToFWDPair;
+        cOutVector GapToFWDPair, nodeIdOut;
 
 		virtual void handleLowerMsg(cMessage *msg);
         void SyncSpeedToB();
@@ -74,6 +76,7 @@ class PlatoonMergingApp : public BaseApp
         unsigned long myBWDPairID; //ID of the backward pair, 0 mean no pair
         unsigned char PlatoonID;
         bool makingGap;
+        bool refineGap;
         bool mergeRequestFlag;
         bool STOM_flag;
         bool Merging_flag;
