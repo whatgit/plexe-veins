@@ -75,30 +75,67 @@ void PlatoonMergingApp::initialize(int stage) {
 			traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
 		}
 
-		//new message for making gap
+		//Initilize cMessage(s)
 		makeGap = new cMessage("makeGap");
-		//scheduleAt(simTime() + SimTime(15), makeGap);
-
 		changeLane = new cMessage();
-		//scheduleAt(simTime() + SimTime(70), changeLane);
-
 		ProtocolParUpdates = new cMessage("update");
-		//scheduleAt(simTime() + SimTime(70), ProtocolParUpdates);
 		checkGap = new cMessage();
+		reformPlatoon = new cMessage();
 
-		myMIO_ID = 0; //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+		/** ASSIGN head flag**/
+		if(mySUMOId_int - 1 > 0) { //follower
+		    //myMIO_ID = mySUMOId_int - 1;
+		    headVehicleFlag = false;
+		}
+		else if(mySUMOId_int - 1 == 0) { //'leader' of the platoon after pace-making vehicle
+		    //myMIO_ID = 0;
+		    headVehicleFlag = true; //this one will merge first, if it's in platoon A
+		}
+		else { //The OPC car
+		    //myMIO_ID = 0; //ID of most important object (in front), 0 mean no pair
+		    headVehicleFlag = false;
+		}
+
+		/** ASSIGN MIO_ID**/
+		if(myId -2 > 0) {
+		    myMIO_ID = myId - 2;
+		}
+		else {
+		    myMIO_ID = 0;
+		}
+
+		/** ASSIGN tail flag**/
+		tailVehicleFlag = false;
+		if (strcmp(myPlatoonName.c_str(), "platoon0") == 0) {
+		    PlatoonID = 2; //Platoon B
+		    if(mySUMOId_int == 4) {
+                tailVehicleFlag = true; //last vehicle
+            }
+		}
+		else {
+		    PlatoonID = 1; //Platoon A
+		    if(mySUMOId_int == 3) {
+		        tailVehicleFlag = true; //last vehicle
+		    }
+		}
+
+		/** Initialize the rest**/
+
+		newMIO = 0;
         myMIO_RANGE = 65535; //distance to MIO, 65535 mean n/a
         myMIO_speed = 32767;
-        myFWDPairID = 0; //ID of the forward pair in A2B phase, 0 mean no pair
-        myBWDPairID = 0; //ID of the backward pair in A2B phase, 0 mean no pair
+        myFWDPairID = 0; //ID of the forward pair in another lane, 0 mean no pair
+        myBWDPairID = 0; //ID of the backward pair in another lane, 0 mean no pair
         mergeRequestFlag = false;
+        Merging_flag = false;
         makingGap = false;
-
+        STOM_flag = false;
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
 		newHeadway = 1.0;
 		lane_change_count = 0;
+		UpdateProtocolParam();
 	}
 
 }
@@ -121,6 +158,10 @@ void PlatoonMergingApp::finish() {
         cancelAndDelete(checkGap);
         checkGap = 0;
     }
+	if (reformPlatoon) {
+        cancelAndDelete(reformPlatoon);
+        reformPlatoon = 0;
+    }
 }
 
 void PlatoonMergingApp::onData(WaveShortMessage *wsm) {
@@ -142,27 +183,33 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	}
 	if (msg == ProtocolParUpdates) {
 
-        UnicastMessage *iCLCM_unicast;
-        ICLCM *iCLCM_msg;
 
-        iCLCM_unicast = new UnicastMessage("", iCLCM);
-        iCLCM_unicast->setDestination(-1);
-        iCLCM_unicast->setPriority(2);  //I guess...
-        iCLCM_unicast->setType(5);
-
-        iCLCM_msg = new ICLCM();
-        iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
-        iCLCM_msg->setFWDPairID(myFWDPairID); //ID of the forward pair in A2B phase, 0 mean no pair
-        iCLCM_msg->setBWDPairID(myBWDPairID); //ID of the backward pair in A2B phase, 0 mean no pair
-        iCLCM_unicast->encapsulate(iCLCM_msg);
-        sendDown(iCLCM_unicast);  //send up to the application layer
 	}
 	if (msg == changeLane) {
-        traciVehicle->setFixedLane(0);  //Move to right lane
-        traciVehicle->setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
+	    if(mySUMOId_int == 0) {
+	        //OPC car shouldn't merge (yet)
+	    }
+	    else {
+	        traciVehicle->setFixedLane(0);  //Move to right lane
+            traciVehicle->setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
+	    }
+	    newMIO = myFWDPairID;
+	    headVehicleFlag = false;
+	    UpdateProtocolParam();
 	}
 	if (msg == checkGap) {
 	    makingGap = false;
+	}
+	if (msg == reformPlatoon) {
+	    myMIO_ID = newMIO;
+	    // and reset the gap
+	    currentCACCSpacing = 10;
+	    traciVehicle->setCACCConstantSpacing(10);
+	    if(PlatoonID == 1) {
+	        BaseApp::myPlatoonName = "platoon0"; //change name to another platoon
+	        PlatoonID = 2;
+	    }
+	    UpdateProtocolParam();
 	}
 
 }
@@ -186,67 +233,86 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
 
         PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
         ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
+        if (mySUMOId_int != 0 && epkt->getRelayerId() == myMIO_ID) {
+            traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+        }
         if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
         {
-            //if the message comes from the leader
+            //if the message comes from the pace maker (OPC) [assuming the ID is known, in this case = 0]
             if (epkt->getVehicleId() == 0) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
-            //if the message comes from the vehicle in front
-            if (epkt->getVehicleId() == mySUMOId_int - 1) {
+            //if the message comes from the vehicle in front and I am not a leader
+            //if (mySUMOId_int != 0 && epkt->getVehicleId() == myMIO_ID) {
+            /*if (mySUMOId_int != 0 && epkt->getRelayerId() == myMIO_ID) {
                 traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-            }
+            }*/
         }
         else {  //This message is from a car from the other platoon
-            if(mergeRequestFlag && epkt->getPositionX() > sumoPosX && myMIO_ID == 0 && (strcmp(myPlatoonName.c_str(), "platoon0") == 0)) {
-                //find a pair (B2A)
-                if((epkt->getPositionX() - sumoPosX) < currentCACCSpacing) {
-                    myMIO_ID = epkt->getRelayerId();
-                    scheduleAt(simTime() + SimTime(0.01), ProtocolParUpdates);
-                }
-            }
-            if(myBWDPairID != 0 && epkt->getPositionX() > sumoPosX && myFWDPairID == 0) { //A vehicle chose me as its MIO
-                //find a forward pair (A2B) in other platoon
-                if((epkt->getPositionX() - sumoPosX) < currentCACCSpacing) {
+            if(mergeRequestFlag && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0 && (strcmp(myPlatoonName.c_str(), "platoon0") == 0)) {
+                //find a forward pair (B2A)
+                if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
                     myFWDPairID = epkt->getRelayerId();
-                    scheduleAt(simTime() + SimTime(0.01), ProtocolParUpdates);
+                    UpdateProtocolParam();
+                }
+            }
+            //BWDPair!=0 means someone paired with us, then find our FWDPair
+            //TODO:if there is no car behind the last vehicle of platoonA, it will never find FWDPair
+            if(myBWDPairID != 0 && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0) { //A vehicle chose me as its FWDPair
+                //find a forward pair (A2B) in other platoon
+                if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
+                    myFWDPairID = epkt->getRelayerId();
+                    UpdateProtocolParam();
                 }
             }
         }
-        if(epkt->getRelayerId() == myMIO_ID && myMIO_ID != 0 && !makingGap) {   //If not making gap
-            if((epkt->getPositionX() - sumoPosX) < SafeGap) {
-                currentCACCSpacing = currentCACCSpacing + epkt->getPositionX() - sumoPosX;
+        if(epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0 && !makingGap && !STOM_flag && !Merging_flag) {   //If not making gap and STOM not sent
+            if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap) {
+                currentCACCSpacing = (2*currentCACCSpacing) + vehicleLength;
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
                 makingGap = true;
-                scheduleAt(simTime() + SimTime(5), checkGap);   //check again in 5 seconds
+                //scheduleAt(simTime() + SimTime(3), checkGap);   //check again in 5 seconds
             }
             else {
-                //Gap is already good
-            }
-        }
-        if(epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0 && !makingGap) { //Use OMNeT++ id, it will be unique
-            if((epkt->getPositionX()-sumoPosX) < SafeGap) {
-                currentCACCSpacing = currentCACCSpacing + epkt->getPositionX() - sumoPosX;
-                traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
-                makingGap = true;
-                scheduleAt(simTime() + SimTime(5), checkGap);
-            }
-            else {
-                //Gap is already good
+                //Gap is already good?
             }
         }
     }
     else if (enc->getKind() == BaseProtocol::iCLCM_TYPE) {
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);
         mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
-        if(iclcm_pkt->getMIO_ID() == myId) {
+        if(iclcm_pkt->getFWDPairID() == myId && myBWDPairID == 0) {
            myBWDPairID = iclcm_pkt->getStationID();
+        }
+        //This vehicle is our MIO and is merging and already reform, we should merge next
+        if(iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getMergingFlag() && iclcm_pkt->getPlatoonID() == 2 && !headVehicleFlag) {
+            headVehicleFlag = true;
+            UpdateProtocolParam();
+        }
+        //This vehicle has me as a FWDPair and is sending STOM and we are not merging and we are the head vehicle
+        if(iclcm_pkt->getFWDPairID() == myId && iclcm_pkt->getSTOMFlag() && !Merging_flag && (strcmp(myPlatoonName.c_str(), "platoon1") == 0) && headVehicleFlag) {
+            Merging_flag = true;
+            headVehicleFlag = false;
+            newMIO = myFWDPairID; //Change target
+            UpdateProtocolParam();
+            scheduleAt(simTime() + SimTime(0.05), changeLane);
+            scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
+        }
+        //This vehicle has me as a BWDPair and is merging -> it will come in front of us soon
+        if(iclcm_pkt->getBWDPairID() == myId && iclcm_pkt->getMergingFlag() && !Merging_flag) {
+            Merging_flag = true;    //pretend to be merging (acknowledge the merge)
+            newMIO = iclcm_pkt->getStationID();
+            scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
         }
     }
     else if(enc->getKind() == BaseProtocol::STOM_TYPE) {
         STOM *stom_pkt = dynamic_cast<STOM *>(enc);
-        if((stom_pkt->getVehicleId()+1 == mySUMOId_int) && (strcmp(stom_pkt->getPlatoonName(), myPlatoonName.c_str()) == 0)) { //just example of how second vehicle tell first one to change lane
-            scheduleAt(simTime() + SimTime(0.05), changeLane);
+
+        STOM_flag = true;
+        UpdateProtocolParam();
+        //just example of how the first vehicle tell next one to change lane
+        if((stom_pkt->getVehicleId()+1 == mySUMOId_int) && (strcmp(stom_pkt->getPlatoonName(), myPlatoonName.c_str()) == 0)) {
+            //scheduleAt(simTime() + SimTime(0.05), changeLane);
         }
     }
     else if(enc->getKind() == BaseProtocol::ROAD_CLOSED) {
@@ -261,4 +327,25 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
 
 void PlatoonMergingApp::SyncSpeedToB() {
     traciVehicle->setCruiseControlDesiredSpeed(60 / 3.6);
+}
+
+void PlatoonMergingApp::UpdateProtocolParam() {
+    UnicastMessage *iCLCM_unicast;
+    ICLCM *iCLCM_msg;
+
+    iCLCM_unicast = new UnicastMessage("", iCLCM);
+    iCLCM_unicast->setDestination(-1);
+    iCLCM_unicast->setPriority(2);  //I guess...
+    iCLCM_unicast->setType(5);
+
+    iCLCM_msg = new ICLCM();
+    iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+    iCLCM_msg->setFWDPairID(myFWDPairID); //ID of the forward pair in A2B phase, 0 mean no pair
+    iCLCM_msg->setBWDPairID(myBWDPairID); //ID of the backward pair in A2B phase, 0 mean no pair
+    iCLCM_msg->setMergingFlag(Merging_flag);
+    iCLCM_msg->setSTOMFlag(STOM_flag);
+    iCLCM_msg->setHeadVehicle(headVehicleFlag);
+    iCLCM_msg->setTailVehicle(tailVehicleFlag);
+    iCLCM_unicast->encapsulate(iCLCM_msg);
+    sendDown(iCLCM_unicast);  //send up to the application layer
 }

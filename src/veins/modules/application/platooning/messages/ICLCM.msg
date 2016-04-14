@@ -20,7 +20,7 @@ packet ICLCM {
 	unsigned int vehicleResponseTime = 1001;  //Yet another no idea variable, just put 1001 as info n/a
 	unsigned int vehicleResponseTimeDelay = 1001;  //Yet another no idea variable, just put 1001 as info n/a
 	int desiredLongitudinalAcceleration = 1001; //Should range from -1001 to 1001 m/s2, no idea where it will be used,  just put 1001 as info n/a
-	unsigned long MIO_ID = 0; //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+	unsigned long MIO_ID = 0; //ID of most important object (in front), 0 mean no pair
 	unsigned int MIO_RANGE = 65535; //distance to MIO, 65535 mean n/a
 	unsigned int MIO_BEARING = 1572; //Should range from -1572 to 1572 rad, no idea where it will be used
 	int MIO_RANGE_RATE = 32767;  //Should range from -32767 to 32767 rad, 32767 mean n/a
@@ -29,8 +29,8 @@ packet ICLCM {
 	bool mergeRequestFlag = false; //should be 1 or 0. 
 	bool STOMFlag = false; //Safe-to-merge flag
 	bool mergingFlag = false;  //Merging status of vehicle: gaps are made and indicate vehicle is ready for merging(?)
-	unsigned long FWDPairID = 0; //ID of the forward pair in A2B phase, 0 mean no pair
-	unsigned long BWDPairID = 0; //ID of the backward pair in A2B phase, 0 mean no pair
+	unsigned long FWDPairID = 0; //ID of the forward pair, 0 mean no pair
+	unsigned long BWDPairID = 0; //ID of the backward pair, 0 mean no pair
 	bool tailVehicle = false; //Last vehicle in platoon?
 	bool headVehicle = false; //Leader of the platoon?
 	unsigned char PlatoonID = 0; //PlatoonA = 1, PlatoonB = 2

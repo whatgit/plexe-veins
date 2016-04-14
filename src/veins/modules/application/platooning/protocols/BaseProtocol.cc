@@ -179,10 +179,10 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setSpeed(speed);
 	pkt->setVehicleId(mySUMOId_int);
 	//send SUMO position instead
-	//pkt->setPositionX(position.x);
-	//pkt->setPositionY(position.y);
-	pkt->setPositionX(sumoPosX);
-	pkt->setPositionY(sumoPosY);
+	pkt->setPositionX(position.x);
+	pkt->setPositionY(position.y);
+	pkt->setSUMOpositionX(sumoPosX);
+	pkt->setSUMOpositionY(sumoPosY);
 	//set the time to now
 	pkt->setTime(time);
 	//i generated the message, i send it

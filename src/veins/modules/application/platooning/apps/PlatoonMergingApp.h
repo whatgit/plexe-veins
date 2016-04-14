@@ -44,6 +44,7 @@ class PlatoonMergingApp : public BaseApp
         cMessage *changeLane;
         cMessage *ProtocolParUpdates;
         cMessage *checkGap;
+        cMessage *reformPlatoon;
 
         Veins::TraCIConnection* ds_control;
         int lane_change_count;
@@ -58,27 +59,33 @@ class PlatoonMergingApp : public BaseApp
 		double leaderSpeed;
 
 		double currentCACCSpacing = 10.00; //default spacing is 10 meters
-		double SafeGap = 10.00; //safe gap for platoon merging is 5 meters
+		double SafeGap = 10.00; //safe gap for platoon merging is 10 meters
 		double vehicleLength = 4.70;
 
 		virtual void handleLowerMsg(cMessage *msg);
         void SyncSpeedToB();
 
-        unsigned long myMIO_ID; //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+        int myTargetInPlatoon;
+        unsigned long myMIO_ID; //ID of most important object (in front), 0 mean no pair
+        unsigned long newMIO; //ID of new MIO after mergning, will be used in reforming the platoon
         unsigned int myMIO_RANGE; //distance to MIO, 65535 mean n/a
         int myMIO_speed;
-        unsigned long myFWDPairID; //ID of the forward pair in A2B phase, 0 mean no pair
-        unsigned long myBWDPairID; //ID of the backward pair in A2B phase, 0 mean no pair
+        unsigned long myFWDPairID; //ID of the forward pair, 0 mean no pair
+        unsigned long myBWDPairID; //ID of the backward pair, 0 mean no pair
+        unsigned char PlatoonID;
         bool makingGap;
         bool mergeRequestFlag;
         bool STOM_flag;
         bool Merging_flag;
+        bool headVehicleFlag;
+        bool tailVehicleFlag;
 
 
 	public:
 		PlatoonMergingApp() {
 			makeGap = 0;
 		}
+		void UpdateProtocolParam();
 
 	protected:
 

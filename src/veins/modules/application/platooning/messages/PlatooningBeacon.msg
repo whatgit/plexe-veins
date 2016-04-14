@@ -24,6 +24,8 @@ packet PlatooningBeacon {
 	double speed = 0;
 	double positionX = 0;
 	double positionY = 0;
+	double SUMOpositionX = 0;
+	double SUMOpositionY = 0;
 	double time = 0;
 	int sequenceNumber = 0;
 	string platoonName;

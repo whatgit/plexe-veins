@@ -34,6 +34,8 @@ void PlatoonMergingProtocol::initialize(int stage) {
         mergeRequestFlag = false;
         STOM_flag = false;
         Merging_flag = false;
+        headVehicleFlag = false;
+        tailVehicleFlag = false;
 
         //random start time
         SimTime beginTime = SimTime(uniform(0.001, 1.0));
@@ -61,7 +63,8 @@ void PlatoonMergingProtocol::handleSelfMsg(cMessage *msg) {
         mergeRequestFlag = true;
         //startMergingScenario(-1);
     }
-    if (msg == sendSTOMmsg && strcmp("platoon1", myPlatoonName.c_str()) == 0) {
+    if (msg == sendSTOMmsg && mySUMOId_int == 0 && strcmp("platoon1", myPlatoonName.c_str()) == 0) {
+        //We enter the merging zone
         sendSTOM(-1);
     }
 
@@ -146,14 +149,16 @@ void PlatoonMergingProtocol::sendiCLCMMessage(int destinatinAddress) {
     iCLCM_msg->setRearAxleLocation(sumoPosX); //rearAxleLocation = 0; Should range from 0 to 4095 meters
     iCLCM_msg->setControllerType(traciVehicle->getActiveController());  //Range from 0 to 3 | 0:Manual | 1:CC | 2:ACC | 3: CACC |
     iCLCM_msg->setDesiredLongitudinalAcceleration(controllerAcceleration); //Should range from -1001 to 1001 m/s2
-    iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
+    iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in front), 0 mean no pair
     iCLCM_msg->setMIO_RANGE(myMIO_RANGE); //distance to MIO, 65535 mean n/a
     iCLCM_msg->setMIO_RANGE_RATE(myMIO_speed); //Speed of MIO (?) 32767 = n/a
     iCLCM_msg->setMergeRequestFlag(mergeRequestFlag);
     iCLCM_msg->setSTOMFlag(STOM_flag); //bool STOMFlag = false; //Safe-to-merge flag
     iCLCM_msg->setMergingFlag(Merging_flag); //bool mergingFlag = false;  //Merging status of vehicle: gaps are made and indicate vehicle is ready for merging(?)
-    iCLCM_msg->setFWDPairID(myFWDPairID); //ID of the forward pair in A2B phase, 0 mean no pair
-    iCLCM_msg->setBWDPairID(myBWDPairID); //ID of the backward pair in A2B phase, 0 mean no pair
+    iCLCM_msg->setFWDPairID(myFWDPairID); //ID of the forward pair, 0 mean no pair
+    iCLCM_msg->setBWDPairID(myBWDPairID); //ID of the backward pair, 0 mean no pair
+    iCLCM_msg->setHeadVehicle(headVehicleFlag);
+    iCLCM_msg->setTailVehicle(tailVehicleFlag);
     //bool tailVehicle = false; //Last vehicle in platoon?
     //bool headVehicle = false; //Leader of the platoon? it should merge first
     iCLCM_msg->setPlatoonID(2-traciVehicle->getLaneIndex()); //PlatoonA = 1, PlatoonB = 2
@@ -197,6 +202,10 @@ void PlatoonMergingProtocol::handleUpperMsg(cMessage *msg) {
         myMIO_ID = iclcm_pkt->getMIO_ID();
         myFWDPairID = iclcm_pkt->getFWDPairID();
         myBWDPairID = iclcm_pkt->getBWDPairID();
+        Merging_flag = iclcm_pkt->getMergingFlag();
+        STOM_flag = iclcm_pkt->getSTOMFlag();
+        headVehicleFlag = iclcm_pkt->getHeadVehicle();
+        tailVehicleFlag = iclcm_pkt->getTailVehicle();
         delete unicast;
         delete enc;
     }
