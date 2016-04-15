@@ -33,8 +33,8 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-	    currentCACCSpacing = 10.00; //default spacing is 10 meters
-        CACCSpacing = 10.00; //default spacing is 10 meters
+	    currentCACCSpacing = 15.67; //default spacing is 10 meters
+        CACCSpacing = 15.67; //default spacing is 10 meters
         currentGapToFWDPair = 0;
 		//get the oscillation frequency of the leader as parameter
 		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
@@ -177,7 +177,7 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	    }
 	    newMIO = myFWDPairID;
 	    headVehicleFlag = false;
-	    UpdateProtocolParam();
+	    EV << "vehicle number " << myId << "CHANGED LANE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 	}
 	if (msg == checkGap) {
 	    makingGap = false;
@@ -262,9 +262,15 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
                 //refine the gap
                 if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
                     currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
-                    traciVehicle->setCACCConstantSpacing(currentCACCSpacing + currentGapToFWDPair);
+                    //traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (currentGapToFWDPair));
+                    if(currentGapToFWDPair < SafeGap) {
+                        traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (SafeGap - currentGapToFWDPair));
+                    }
+                    else {
+                        traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (currentGapToFWDPair - SafeGap));
+                    }
                 }
-                makingGap = true;
+                //makingGap = true;
             }
             /*  CONSTANT GAP APPROACH */
             /*if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap) {
@@ -304,7 +310,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             Merging_flag = true;
             headVehicleFlag = false;
             newMIO = myFWDPairID; //Change target
-            UpdateProtocolParam();
+            EV << "vehicle number " << myId << "CHANGED TARGET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
             scheduleAt(simTime() + SimTime(0.05), changeLane);
             scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
         }
@@ -312,6 +318,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
         if(iclcm_pkt->getBWDPairID() == myId && iclcm_pkt->getMergingFlag() && !Merging_flag) {
             Merging_flag = true;    //pretend to be merging (acknowledge the merge)
             newMIO = iclcm_pkt->getStationID();
+            EV << "vehicle number " << myId << "CHANGED TARGET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
             scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
         }
     }

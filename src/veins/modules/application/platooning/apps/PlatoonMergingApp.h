@@ -59,7 +59,7 @@ class PlatoonMergingApp : public BaseApp
 
 		double currentCACCSpacing; //default spacing is 10 meters
 		double CACCSpacing; //default spacing is 10 meters
-		double SafeGap = 10.00; //safe gap for platoon merging is 10 meters
+		double SafeGap = 15.67; //safe gap for platoon merging is 10 meters
 		double myPairvehicleLength = 4.70;
 		double currentGapToFWDPair;
         cOutVector GapToFWDPair, nodeIdOut;
