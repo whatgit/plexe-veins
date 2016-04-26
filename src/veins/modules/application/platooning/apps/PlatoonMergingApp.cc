@@ -33,11 +33,11 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-	    currentCACCSpacing = 22.67;
-        CACCSpacing = 22.67;
+	    currentCACCSpacing = 16.00;
+        CACCSpacing = 16.00;
         currentGapToFWDPair = 0;
         myTargetGap = 0;
-        SafeGap = 22.67;
+        SafeGap = 16.00;
         myPairvehicleLength = 4.70;
 
 		//get the oscillation frequency of the leader as parameter
@@ -213,8 +213,9 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
     //our vehicle's data
-    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime;
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
 
     if (enc->getKind() == BaseProtocol::BEACON_TYPE) {  //Similar to BaseApp
 
@@ -240,30 +241,20 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
                     UpdateProtocolParam();
                 }
             }
-
-            //BWDPair!=0 means someone paired with us, then find our FWDPair
-            //Pair A2B is sequential, so start with leader of platoon A
-            //TODO:if there is no car behind the last vehicle of platoonA, it will never find FWDPair
-            //A vehicle select me as its FWDPair and I am a leader of the platoonA ("platoon1")
-            if(myBWDPairID != 0 && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0 && headVehicleFlag && (strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
-                if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
-                    myFWDPairID = epkt->getRelayerId();
-                    makingGap = true;
-                    traciVehicle->setCruiseControlDesiredSpeed((60) / 3.6); //This actually supposed to already happened when they sync speed
-                    scheduleAt(simTime() + SimTime(12), checkGap);   //assume the gap is done in 12 seconds (arbitrary number)
-                    UpdateProtocolParam();
-                }
-            }
         }
 
         //So, we are making gap and this message is from my FWDPair(that is not 0)
         if(makingGap && epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0) {
             currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
+            GapToFWDPair.record(currentGapToFWDPair);
+            nodeIdOut.record(myId);
+            currentHeadwayToFWDPair = currentGapToFWDPair / speed;
             if(doneGap) { //Done making gap !!
                 //Enter merging state and hand over the flag
                 if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
                     headVehicleFlag = false;
                     Merging_flag = true;
+                    traciVehicle->setCruiseControlDesiredSpeed((60) / 3.6); //Prevent it from speeding up when MIO merge
                 }
                 else {
 
@@ -272,13 +263,13 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
                 UpdateProtocolParam();
             }
             else {
-                currentCACCSpacing = CACCSpacing + (SafeGap - currentGapToFWDPair);
+                currentCACCSpacing = distance + 2*(SafeGap - currentGapToFWDPair);
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
             }
         }
 
         //enter merging zone
-        if(sumoPosX >= 1700 && checkZone) {
+        if(sumoPosX >= 2500 && checkZone) {
             inMergingZone = true;
             doneGap = true;
         }
@@ -295,8 +286,16 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
            UpdateProtocolParam();
         }
         //     - my MIO has its BWDPair already -> start making gap then (for platoon B)
-        if(!doneGap && iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getBWDPairID() != 0 && (strcmp(myPlatoonName.c_str(), "platoon0")==0)) {
+        if(!doneGap && iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getBWDPairID() != 0 && (strcmp(myPlatoonName.c_str(), "platoon0")==0) && myMIO_ID != 0) {
             makingGap = true;
+        }
+        //     - I have a backward pair and I am the leader of platoon A now and this message is from my BWDPair set my FWDPair as its MIO
+        if(myBWDPairID != 0 && myFWDPairID == 0 && headVehicleFlag && (strcmp(myPlatoonName.c_str(), "platoon1") == 0)
+           && iclcm_pkt->getStationID() == myBWDPairID) {
+            myFWDPairID = iclcm_pkt->getMIO_ID();
+            makingGap = true;
+            scheduleAt(simTime() + SimTime(25), checkGap);   //assume the gap is done in 25 seconds (arbitrary number)
+            UpdateProtocolParam();
         }
         //     - I have both FWDPair and BWDPair -> start making gap then (for platoon A)
         //     ---> this is done when receiving CAM (beaconing msg)

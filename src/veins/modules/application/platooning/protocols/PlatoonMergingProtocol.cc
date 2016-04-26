@@ -42,7 +42,7 @@ void PlatoonMergingProtocol::initialize(int stage) {
         SimTime offset = SimTime(uniform(0.001,1.0));
         scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
         scheduleAt(simTime() + beaconingInterval + beginTime + offset, sendiCLCM);
-        scheduleAt(simTime() + SimTime(40), startMerge);
+        scheduleAt(simTime() + SimTime(50), startMerge);
         scheduleAt(simTime() + SimTime(100), sendSTOMmsg);
     }
 }

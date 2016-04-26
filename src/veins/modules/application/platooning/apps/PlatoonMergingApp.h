@@ -55,12 +55,15 @@ class PlatoonMergingApp : public BaseApp
 		//leader average speed
 		double leaderSpeed;
 
+		//for distance controllers
 		double currentCACCSpacing;
 		double CACCSpacing;
 		double myTargetGap;
 		double SafeGap;
 		double myPairvehicleLength;
 		double currentGapToFWDPair;
+		//for time headway controllers
+		double currentHeadwayToFWDPair;
         cOutVector GapToFWDPair, nodeIdOut;
 
 		virtual void handleLowerMsg(cMessage *msg);
@@ -83,7 +86,6 @@ class PlatoonMergingApp : public BaseApp
         bool Merging_flag;
         bool headVehicleFlag;
         bool tailVehicleFlag;
-
 
 	public:
 		PlatoonMergingApp() {
