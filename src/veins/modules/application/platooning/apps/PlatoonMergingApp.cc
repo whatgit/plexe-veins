@@ -33,9 +33,13 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-	    currentCACCSpacing = 15.67; //default spacing is 10 meters
-        CACCSpacing = 15.67; //default spacing is 10 meters
+	    currentCACCSpacing = 22.67;
+        CACCSpacing = 22.67;
         currentGapToFWDPair = 0;
+        myTargetGap = 0;
+        SafeGap = 22.67;
+        myPairvehicleLength = 4.70;
+
 		//get the oscillation frequency of the leader as parameter
 		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
 
@@ -79,7 +83,6 @@ void PlatoonMergingApp::initialize(int stage) {
 		}
 
 		//Initilize cMessage(s)
-		makeGap = new cMessage("makeGap");
 		changeLane = new cMessage();
 		checkGap = new cMessage();
 		reformPlatoon = new cMessage();
@@ -132,7 +135,9 @@ void PlatoonMergingApp::initialize(int stage) {
         mergeRequestFlag = false;
         Merging_flag = false;
         makingGap = false;
-        refineGap = false;
+        doneGap = false;
+        inMergingZone = false;
+        checkZone = true;
         STOM_flag = false;
 		//every car must run on its own lane
 		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
@@ -177,25 +182,23 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	    }
 	    newMIO = myFWDPairID;
 	    headVehicleFlag = false;
-	    EV << "vehicle number " << myId << "CHANGED LANE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	    //EV << "vehicle number " << myId << "CHANGED LANE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 	}
 	if (msg == checkGap) {
-	    makingGap = false;
-	    refineGap = true;
+	    doneGap = true;
 	}
 	if (msg == reformPlatoon) {
 	    myMIO_ID = newMIO;
 	    // and reset the gap
-	    currentCACCSpacing = 10;
-	    traciVehicle->setCACCConstantSpacing(10);
+	    currentCACCSpacing = CACCSpacing;
+	    traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
+	    traciVehicle->setCruiseControlDesiredSpeed((100) / 3.6);
 	    if(PlatoonID == 1) {
 	        BaseApp::myPlatoonName = "platoon0"; //change name to another platoon
 	        PlatoonID = 2;
 	    }
-	    makingGap = true;
 	    UpdateProtocolParam();
 	}
-
 }
 
 void PlatoonMergingApp::onBeacon(WaveShortMessage* wsm) {
@@ -226,13 +229,10 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             if (epkt->getVehicleId() == 0) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
-            //if the message comes from the vehicle in front and I am not a leader
-            //if (mySUMOId_int != 0 && epkt->getVehicleId() == myMIO_ID) {
-            /*if (mySUMOId_int != 0 && epkt->getRelayerId() == myMIO_ID) {
-                traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-            }*/
         }
-        else {  //This message is from a car from the other platoon
+        else {
+            //This message is from a car from the other platoon
+            //if merge is requested and we are in platoon B ("platoon0")
             if(mergeRequestFlag && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0 && (strcmp(myPlatoonName.c_str(), "platoon0") == 0)) {
                 //find a forward pair (B2A)
                 if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
@@ -240,97 +240,99 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
                     UpdateProtocolParam();
                 }
             }
+
             //BWDPair!=0 means someone paired with us, then find our FWDPair
+            //Pair A2B is sequential, so start with leader of platoon A
             //TODO:if there is no car behind the last vehicle of platoonA, it will never find FWDPair
-            if(myBWDPairID != 0 && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0) { //A vehicle chose me as its FWDPair
-                //find a forward pair (A2B) in other platoon
+            //A vehicle select me as its FWDPair and I am a leader of the platoonA ("platoon1")
+            if(myBWDPairID != 0 && epkt->getSUMOpositionX() > sumoPosX && myFWDPairID == 0 && headVehicleFlag && (strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
                 if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
                     myFWDPairID = epkt->getRelayerId();
+                    makingGap = true;
+                    traciVehicle->setCruiseControlDesiredSpeed((60) / 3.6); //This actually supposed to already happened when they sync speed
+                    scheduleAt(simTime() + SimTime(12), checkGap);   //assume the gap is done in 12 seconds (arbitrary number)
                     UpdateProtocolParam();
                 }
             }
         }
-        if(epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0 && !makingGap && !STOM_flag && !Merging_flag) {   //If not making gap and STOM not sent
 
-            if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap && !refineGap) {
-                 currentCACCSpacing = (2*currentCACCSpacing) + myPairvehicleLength;
-                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
-                 makingGap = true;
-                 scheduleAt(simTime() + SimTime(6), checkGap);   //check again in 6 seconds (arbitrary number)
-            }
-            else {
-                //refine the gap
-                if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
-                    currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
-                    //traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (currentGapToFWDPair));
-                    if(currentGapToFWDPair < SafeGap) {
-                        traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (SafeGap - currentGapToFWDPair));
-                    }
-                    else {
-                        traciVehicle->setCACCConstantSpacing(currentCACCSpacing + (currentGapToFWDPair - SafeGap));
-                    }
-                }
-                //makingGap = true;
-            }
-            /*  CONSTANT GAP APPROACH */
-            /*if((epkt->getSUMOpositionX() - sumoPosX) < SafeGap) {
-                 currentCACCSpacing = (2*currentCACCSpacing) + myPairvehicleLength;
-                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
-                 makingGap = true;
-                //scheduleAt(simTime() + SimTime(3), checkGap);   //check again in 3 seconds
-            }
-            else {
-                //Gap already good
-            }*/
-            /** 'DYNAMIC' GAP APPROACH **/
-            /*makingGap = true;
+        //So, we are making gap and this message is from my FWDPair(that is not 0)
+        if(makingGap && epkt->getRelayerId() == myFWDPairID && myFWDPairID != 0) {
             currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
-            GapToFWDPair.record(currentGapToFWDPair);
-            nodeIdOut.record(myId);
-            if(currentGapToFWDPair < 0 || currentGapToFWDPair < SafeGap) {
-                currentCACCSpacing = currentCACCSpacing + 0.1;
+            if(doneGap) { //Done making gap !!
+                //Enter merging state and hand over the flag
+                if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
+                    headVehicleFlag = false;
+                    Merging_flag = true;
+                }
+                else {
+
+                }
+                makingGap = false;
+                UpdateProtocolParam();
+            }
+            else {
+                currentCACCSpacing = CACCSpacing + (SafeGap - currentGapToFWDPair);
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
             }
-            scheduleAt(simTime() + SimTime(1), checkGap);   //check again in 1 seconds*/
         }
+
+        //enter merging zone
+        if(sumoPosX >= 1700 && checkZone) {
+            inMergingZone = true;
+            doneGap = true;
+        }
+
     }
     else if (enc->getKind() == BaseProtocol::iCLCM_TYPE) {
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);
         mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
+
+        // 1. For pairing phase
+        //     - a vehicle has my ID as its FWDPair -> it is my BWDPair
         if(iclcm_pkt->getFWDPairID() == myId && myBWDPairID == 0) {
            myBWDPairID = iclcm_pkt->getStationID();
+           UpdateProtocolParam();
         }
-        //This vehicle is our MIO and is merging and already reform, we should merge next
-        if(iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getMergingFlag() && iclcm_pkt->getPlatoonID() == 2 && !headVehicleFlag) {
+        //     - my MIO has its BWDPair already -> start making gap then (for platoon B)
+        if(!doneGap && iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getBWDPairID() != 0 && (strcmp(myPlatoonName.c_str(), "platoon0")==0)) {
+            makingGap = true;
+        }
+        //     - I have both FWDPair and BWDPair -> start making gap then (for platoon A)
+        //     ---> this is done when receiving CAM (beaconing msg)
+
+        //     - If we are in platoonA and our MIO is merging and we are not the leader -> our turn to pair and make gap
+        if((strcmp(myPlatoonName.c_str(), "platoon1")==0) && iclcm_pkt->getStationID() == myMIO_ID && iclcm_pkt->getMergingFlag() && !headVehicleFlag) {
             headVehicleFlag = true;
             UpdateProtocolParam();
         }
-        //This vehicle has me as a FWDPair and is sending STOM and we are not merging and we are the head vehicle
-        if(iclcm_pkt->getFWDPairID() == myId && iclcm_pkt->getSTOMFlag() && !Merging_flag && (strcmp(myPlatoonName.c_str(), "platoon1") == 0) && headVehicleFlag) {
-            Merging_flag = true;
-            headVehicleFlag = false;
-            newMIO = myFWDPairID; //Change target
-            EV << "vehicle number " << myId << "CHANGED TARGET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-            scheduleAt(simTime() + SimTime(0.05), changeLane);
-            scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
+
+        // 2. For merging and reforming phase
+        // precondition : we are in merging zone
+        //                all vehicle that done with gap making will enter merging state and wait for STOM from its backward pair
+        //     - Platoon A: if my BWDPair set STOM -> merge -> reform
+        if(inMergingZone && (strcmp(myPlatoonName.c_str(), "platoon1")==0) && iclcm_pkt->getStationID() == myBWDPairID && iclcm_pkt->getSTOMFlag()) {
+                newMIO = myFWDPairID; //Change target
+                inMergingZone = false;
+                checkZone = false;
+                scheduleAt(simTime() + SimTime(0.1), changeLane); //Merge
+                scheduleAt(simTime() + SimTime(0.2), reformPlatoon); //Reform
+
         }
-        //This vehicle has me as a BWDPair and is merging -> it will come in front of us soon
-        if(iclcm_pkt->getBWDPairID() == myId && iclcm_pkt->getMergingFlag() && !Merging_flag) {
-            Merging_flag = true;    //pretend to be merging (acknowledge the merge)
-            newMIO = iclcm_pkt->getStationID();
-            EV << "vehicle number " << myId << "CHANGED TARGET !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-            scheduleAt(simTime() + SimTime(0.1), reformPlatoon);
+
+        //     - Platoon B: if my FWDPair is in merging state -> set STOM -> reform
+        if(inMergingZone && (strcmp(myPlatoonName.c_str(), "platoon0")==0) && iclcm_pkt->getStationID() == myFWDPairID && iclcm_pkt->getMergingFlag()) {
+                STOM_flag = true;
+                newMIO = myFWDPairID; //Change target
+                inMergingZone = false;
+                checkZone = false;
+                UpdateProtocolParam();
+                scheduleAt(simTime() + SimTime(0.2), reformPlatoon); //Reform
         }
+
     }
     else if(enc->getKind() == BaseProtocol::STOM_TYPE) {
         STOM *stom_pkt = dynamic_cast<STOM *>(enc);
-
-        STOM_flag = true;
-        UpdateProtocolParam();
-        //just example of how the first vehicle tell next one to change lane
-        if((stom_pkt->getVehicleId()+1 == mySUMOId_int) && (strcmp(stom_pkt->getPlatoonName(), myPlatoonName.c_str()) == 0)) {
-            //scheduleAt(simTime() + SimTime(0.05), changeLane);
-        }
     }
     else if(enc->getKind() == BaseProtocol::ROAD_CLOSED) {
         if((strcmp("platoon1", myPlatoonName.c_str()) == 0)) {
