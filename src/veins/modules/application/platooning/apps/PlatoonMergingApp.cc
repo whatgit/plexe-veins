@@ -35,6 +35,7 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	    CACCSpacing = par("CACCSpacing").doubleValue(); //read from omnetpp.ini file
 	    SafeGap = par("safeGap").doubleValue(); //read from omnetpp.ini file
+	    GapMakingKp = par("gapKp").doubleValue();
 	    currentCACCSpacing = CACCSpacing;
         currentGapToFWDPair = 0;
         myTargetGap = 0;
@@ -263,7 +264,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
                 UpdateProtocolParam();
             }
             else {
-                currentCACCSpacing = distance + 2*(SafeGap - currentGapToFWDPair);
+                currentCACCSpacing = distance + GapMakingKp*(SafeGap - currentGapToFWDPair);
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
             }
         }

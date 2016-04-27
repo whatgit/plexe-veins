@@ -86,6 +86,7 @@ class PlatoonMergingApp : public BaseApp
         bool Merging_flag;
         bool headVehicleFlag;
         bool tailVehicleFlag;
+        double GapMakingKp;
 
 	public:
 		PlatoonMergingApp() {

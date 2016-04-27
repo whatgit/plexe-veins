@@ -44,6 +44,7 @@ simple PlatoonMergingApp like BaseApp
         bool SUMOdisturb = default(false);
         double CACCSpacing = default(10);
         double safeGap = default(10);
+        double gapKp = default(2);
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);

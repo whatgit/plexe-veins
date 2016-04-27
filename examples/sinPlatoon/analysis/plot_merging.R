@@ -56,15 +56,15 @@ p1 <-	ggplot(ss3, aes(x=time, y=speed)) +
 		#labs(col=expression("vehicle")) +
 		#geom_line() +
 		#---------------------------------------------------------------------------------------
-		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175)) +
+		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175,200)) +
 		scale_y_continuous(breaks=c(0,5,10,15,20,25,30)) +
 		#xlim(c(0, 120)) +
 		labs(y=expression("speed" ~ ("m/s"))) +
 		labs(x=expression("time" ~ ("second"))) +
 		#ylim(c(24,31)) +
 		theme(text = element_text(size=35)) +
-		geom_vline(x = 50, color = "black", size=0.5) +
-		geom_vline(x = 150, color = "black", size=0.5) +
+		#geom_vline(x = 50, color = "black", size=0.5) +
+		#geom_vline(x = 150, color = "black", size=0.5) +
 		facet_grid(controller~.) + 
 		theme(panel.margin = unit(2, "lines")) 
 		#scale_x_continuous(breaks=c(25,40,50,60,75,90,120))
@@ -88,15 +88,15 @@ p2 <-	ggplot(ss3, aes(x=time, y=distance)) +
 		#theme(legend.position = "top", legend.box = "horizontal") +
 		#labs(col=expression("gap")) +
 		#---------------------------------------------------------------------------------------
-		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175)) +
+		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175,200)) +
 		scale_y_continuous(breaks=c(0,10,16,20,40,60,80)) +
 		#xlim(c(0, 120)) +
 		labs(y=expression("distance" ~ ("m"))) +
 		labs(x=expression("time" ~ ("second"))) +
 		theme(text = element_text(size=35)) +
 		#geom_hline(y = 10, color = "black", size=0.5) +
-		geom_vline(x = 150, color = "black", size=0.5) +
-		geom_vline(x = 50, color = "black", size=0.5) +
+		#geom_vline(x = 150, color = "black", size=0.5) +
+		#geom_vline(x = 50, color = "black", size=0.5) +
 		facet_grid(controller~., scales="free_y") + 
 		theme(panel.margin = unit(2, "lines"))
 #print(p2)

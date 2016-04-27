@@ -57,7 +57,7 @@ p1 <-	ggplot(allData, aes(x=time, y=gap_to_fwd)) +
 		labs(x=expression("time" ~ ("second"))) +
 		#ylim(c(24,31)) +
 		theme(text = element_text(size=35)) +
-		geom_vline(x = 50, color = "black", size=0.5) +
+		#geom_vline(x = 50, color = "black", size=0.5) +
 		facet_grid(controller~.) + 
 		theme(panel.margin = unit(2, "lines")) 
 		#scale_x_continuous(breaks=c(25,40,50,60,75,90,120))
