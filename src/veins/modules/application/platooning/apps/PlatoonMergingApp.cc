@@ -33,11 +33,11 @@ void PlatoonMergingApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-	    currentCACCSpacing = 16.00;
-        CACCSpacing = 16.00;
+	    CACCSpacing = par("CACCSpacing").doubleValue(); //read from omnetpp.ini file
+	    SafeGap = par("safeGap").doubleValue(); //read from omnetpp.ini file
+	    currentCACCSpacing = CACCSpacing;
         currentGapToFWDPair = 0;
         myTargetGap = 0;
-        SafeGap = 16.00;
         myPairvehicleLength = 4.70;
 
 		//get the oscillation frequency of the leader as parameter

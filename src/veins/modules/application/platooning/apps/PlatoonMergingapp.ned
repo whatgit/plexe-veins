@@ -42,6 +42,8 @@ simple PlatoonMergingApp like BaseApp
 		//To request control value from driving simulator or not
         bool DScontrol = default(false);
         bool SUMOdisturb = default(false);
+        double CACCSpacing = default(10);
+        double safeGap = default(10);
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);
