@@ -27,7 +27,15 @@ module(scenario.node[*].prot)
 #load simulation output files
 #accCloseData <- prepare.vector('../results/Sinusoidal_0_0.3_0.vec')
 #accFarData <- prepare.vector('../results/Sinusoidal_0_1.2_0.vec')
+
+#CACC controller
 platoonMergingData <- prepare.vector('../results/Sinusoidal_1_0.3_0_true.vec')
+#plot from saved vector
+#If got 'index' error >> do scavetool index $filename$
+#platoonMergingData <- prepare.vector('../results/archive/DSC_vec/CACC_11_00_distance/des11_safe20_Kp3/Sinusoidal_1_0.3_0_true.vec')
+
+#PLOEG's controller
+#platoonMergingData <- prepare.vector('../results/Sinusoidal_2_0.0_0_true.vec')
 
 #add a column to distinguish them before merging
 #accCloseData$controller <- "ACC (0.3s)"
@@ -58,7 +66,6 @@ p1 <-	ggplot(ss3, aes(x=time, y=speed)) +
 		#---------------------------------------------------------------------------------------
 		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175,200)) +
 		scale_y_continuous(breaks=c(0,5,10,15,20,25,30)) +
-		#xlim(c(0, 120)) +
 		labs(y=expression("speed" ~ ("m/s"))) +
 		labs(x=expression("time" ~ ("second"))) +
 		#ylim(c(24,31)) +
@@ -89,12 +96,12 @@ p2 <-	ggplot(ss3, aes(x=time, y=distance)) +
 		#labs(col=expression("gap")) +
 		#---------------------------------------------------------------------------------------
 		scale_x_continuous(breaks=c(0,25,50,75,100,125,150,175,200)) +
-		scale_y_continuous(breaks=c(0,10,16,20,40,60,80)) +
+		scale_y_continuous(breaks=c(0,11,20,40,60,80)) +
 		#xlim(c(0, 120)) +
 		labs(y=expression("distance" ~ ("m"))) +
 		labs(x=expression("time" ~ ("second"))) +
 		theme(text = element_text(size=35)) +
-		#geom_hline(y = 10, color = "black", size=0.5) +
+		#geom_hline(y = 11, color = "black", size=0.5) +
 		#geom_vline(x = 150, color = "black", size=0.5) +
 		#geom_vline(x = 50, color = "black", size=0.5) +
 		facet_grid(controller~., scales="free_y") + 

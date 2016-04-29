@@ -40,7 +40,7 @@ void PlatoonMergingApp::initialize(int stage) {
         currentGapToFWDPair = 0;
         myTargetGap = 0;
         myPairvehicleLength = 4.70;
-
+        CACCHeadway = par("ploegH").doubleValue();
 		//get the oscillation frequency of the leader as parameter
 		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
 
@@ -192,6 +192,8 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	    myMIO_ID = newMIO;
 	    // and reset the gap
 	    currentCACCSpacing = CACCSpacing;
+	    currentHeadway = CACCHeadway;
+	    traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
 	    traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
 	    traciVehicle->setCruiseControlDesiredSpeed((100) / 3.6);
 	    if(PlatoonID == 1) {
@@ -249,7 +251,6 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             currentGapToFWDPair = epkt->getSUMOpositionX()- myPairvehicleLength - sumoPosX;
             GapToFWDPair.record(currentGapToFWDPair);
             nodeIdOut.record(myId);
-            currentHeadwayToFWDPair = currentGapToFWDPair / speed;
             if(doneGap) { //Done making gap !!
                 //Enter merging state and hand over the flag
                 if((strcmp(myPlatoonName.c_str(), "platoon1") == 0)) {
@@ -265,6 +266,8 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             }
             else {
                 currentCACCSpacing = distance + GapMakingKp*(SafeGap - currentGapToFWDPair);
+                currentHeadway = (currentCACCSpacing - 2) / speed;
+                traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
             }
         }

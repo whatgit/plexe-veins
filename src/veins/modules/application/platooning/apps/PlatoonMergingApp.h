@@ -63,7 +63,8 @@ class PlatoonMergingApp : public BaseApp
 		double myPairvehicleLength;
 		double currentGapToFWDPair;
 		//for time headway controllers
-		double currentHeadwayToFWDPair;
+		double currentHeadway;
+		double CACCHeadway;
         cOutVector GapToFWDPair, nodeIdOut;
 
 		virtual void handleLowerMsg(cMessage *msg);

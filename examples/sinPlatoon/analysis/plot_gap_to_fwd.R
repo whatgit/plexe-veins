@@ -21,8 +21,13 @@ module(scenario.node[*].appl)
 #load simulation output files
 #accCloseData <- prepare.vector('../results/Sinusoidal_0_0.3_0.vec')
 #accFarData <- prepare.vector('../results/Sinusoidal_0_1.2_0.vec')
+
+#CACC controller
 platoonMergingDataApp <- prepare.vectorApp('../results/Sinusoidal_1_0.3_0_true.vec')
-#platoonMergingDataApp <- prepare.vectorApp('../results/archive/Sinusoidal_1_0.3_0_true.vec')
+
+#PLOEG controller
+#platoonMergingDataApp <- prepare.vectorApp('../results/Sinusoidal_2_0.0_0_true.vec')
+
 
 #add a column to distinguish them before merging
 #accCloseData$controller <- "ACC (0.3s)"
@@ -51,7 +56,7 @@ p1 <-	ggplot(allData, aes(x=time, y=gap_to_fwd)) +
 		#geom_line() +
 		#---------------------------------------------------------------------------------------
 		scale_x_continuous(breaks=c(0,25,40,50,60,75,100,125)) +
-		scale_y_continuous(breaks=c(-5,0,5,10,15,16,20)) +
+		scale_y_continuous(breaks=c(-15,-10,-5,0,5,10,15,20,25)) +
 		#xlim(c(0, 120)) +
 		labs(y=expression("distance" ~ ("m"))) +
 		labs(x=expression("time" ~ ("second"))) +
