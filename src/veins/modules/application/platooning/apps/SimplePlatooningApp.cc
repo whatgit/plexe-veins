@@ -63,7 +63,8 @@ void SimplePlatooningApp::initialize(int stage) {
 
 		if (mySUMOId_int == 0) {
 			//ACC speed is 100 km/h
-			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+			//traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+		    traciVehicle->setCruiseControlDesiredSpeed(30 / 3.6);
 			//leader uses the ACC
 			traciVehicle->setActiveController(Plexe::ACC);
 

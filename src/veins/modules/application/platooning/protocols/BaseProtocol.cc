@@ -91,6 +91,7 @@ void BaseProtocol::initialize(int stage) {
 		posyOut.setName("posy");
 		//vehicle acceleration
 		accelerationOut.setName("acceleration");
+		desiredSpeedOut.setName("des_speed");
 
 		//init data polling. do it at each tenth of a second
 		scheduleAt(SimTime(((int)(ceil((simTime().dbl() + .1) * 10))) / 10.0), dataPolling);
@@ -137,6 +138,13 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 		Coord pos = mobility->getPositionAt(simTime());
 		posxOut.record(pos.x);
 		posyOut.record(pos.y);
+
+        if(simTime() >= 40) {
+            desiredSpeedOut.record(25);
+        }
+        else {
+            desiredSpeedOut.record(30/3.6);
+        }
 
 		scheduleAt(simTime() + SimTime(0.1), dataPolling);
 

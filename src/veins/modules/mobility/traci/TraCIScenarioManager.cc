@@ -364,7 +364,7 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
 	    if (useDS) {
-	        ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //can either end with .19 or . 51
+	        ds_connection = TraCIConnection::connect("194.47.15.47", 8888); //can either end with .19 or . 51
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
@@ -478,8 +478,9 @@ void TraCIScenarioManager::executeOneTimestep() {
 
 	//Some blocking here to wait for sync with VTI
     //ds_connection->sendTCPMessage(makeTraCICommand(0x20, TraCIBuffer()));
+
 	//expected a sync message from VTI
-    ds_resp = ds_connection->receiveMessage();
+    if(useDS)   ds_resp = ds_connection->receiveMessage();
 
 	if (targetTime > round(connectAt.dbl() * 1000)) {
 
