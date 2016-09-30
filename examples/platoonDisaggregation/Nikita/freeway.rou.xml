@@ -1,0 +1,8 @@
+﻿
+
+
+<routes>
+  <vType id="type1" accel="1.0" decel="1.5" sigma="0.5" length="4" minGap="0" maxSpeed="25.00" color="1,0,1" probability="1"></vType>
+  <route id="route1" edges="edge_0_0 edge_0_1 edge_0_4" />
+  <vehicle id="1" route="route1" type="type1" begin="0" departLane="1" depart="0.00" departPos="4800.00" departSpeed="25.00"/>
+</routes>

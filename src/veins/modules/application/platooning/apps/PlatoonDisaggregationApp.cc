@@ -69,6 +69,7 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			traciVehicle->setACCHeadwayTime(accHeadway);
 			traciVehicle->setCACCConstantSpacing(10);
 		}
+		if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
 
 		disAggregateCounter = 1;
         //Disaggregate
@@ -78,8 +79,11 @@ void PlatoonDisaggregationApp::initialize(int stage) {
         //Resume
         resumePlatooning = new cMessage();
 
-		//every car must run on its own lane
-		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+        //every car must run on its own lane
+        //traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+        //if((strcmp("platoon0", myPlatoonName.c_str())) == 0) //this fix the problem, so that normal cars can go to their destination instead of fixed to a lane
+        //if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+
 
 		newHeadway = 1.0;
 
@@ -134,6 +138,11 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 
 void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
 
+    //our vehicle's data
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
+    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
+
     UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
     ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
@@ -158,15 +167,12 @@ void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
         }
     }
 
-    //our vehicle's data
-    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
-    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
-    traciVehicle->getRadarMeasurements(distance, relSpeed);
-
+    /*
     if(sumoPosX >= 1000*disAggregateCounter) {
         disAggregateCounter++;
         scheduleAt(simTime() + SimTime(0.1), disAggregate);
     }
+    */
 
     delete enc;
     delete unicast;

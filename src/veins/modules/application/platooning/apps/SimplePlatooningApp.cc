@@ -28,88 +28,88 @@ Define_Module(SimplePlatooningApp);
 
 void SimplePlatooningApp::initialize(int stage) {
 
-	BaseApp::initialize(stage);
+    BaseApp::initialize(stage);
 
-	if (stage == 1) {
+    if (stage == 1) {
 
-		//get the oscillation frequency of the leader as parameter
-		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
+        //get the oscillation frequency of the leader as parameter
+        leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
 
-		//should the follower use ACC or CACC?
-		const char *strController = par("controller").stringValue();
-		//for now we have only two possibilities
-		if (strcmp(strController, "ACC") == 0) {
-			controller = Plexe::ACC;
-		}
-		else if (strcmp(strController, "CACC") == 0) {
-			controller = Plexe::CACC;
-		}
-		else {
-			controller = Plexe::PLOEG;
-		}
-		//headway time for ACC
-		accHeadway = par("accHeadway").doubleValue();
-		//leader speed
-		leaderSpeed = par("leaderSpeed").doubleValue();
+        //should the follower use ACC or CACC?
+        const char *strController = par("controller").stringValue();
+        //for now we have only two possibilities
+        if (strcmp(strController, "ACC") == 0) {
+            controller = Plexe::ACC;
+        }
+        else if (strcmp(strController, "CACC") == 0) {
+            controller = Plexe::CACC;
+        }
+        else {
+            controller = Plexe::PLOEG;
+        }
+        //headway time for ACC
+        accHeadway = par("accHeadway").doubleValue();
+        //leader speed
+        leaderSpeed = par("leaderSpeed").doubleValue();
 
-		VTIcontrol = par("DScontrol").boolValue();
+        VTIcontrol = par("DScontrol").boolValue();
 
-		SUMO_disturbance = par("SUMOdisturb").boolValue();
+        SUMO_disturbance = par("SUMOdisturb").boolValue();
 
-		//set name for record
-		/*gap_d.setName("gap_d");
-		gap_v.setName("gap_v");
-		speed_fake_controller.setName("speed_fake_control");*/
+        //set name for record
+        /*gap_d.setName("gap_d");
+        gap_v.setName("gap_v");
+        speed_fake_controller.setName("speed_fake_control");*/
 
-		if (mySUMOId_int == 0) {
-			//ACC speed is 100 km/h
-			//traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
-		    traciVehicle->setCruiseControlDesiredSpeed(30 / 3.6);
-			//leader uses the ACC
-			traciVehicle->setActiveController(Plexe::ACC);
+        if (mySUMOId_int == 0) {
+            //ACC speed is 100 km/h
+            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+            //traciVehicle->setCruiseControlDesiredSpeed(30 / 3.6);
+            //leader uses the ACC
+            traciVehicle->setActiveController(Plexe::ACC);
 
-			//leader speed change
-			changeSpeed = new cMessage();
+            //leader speed change
+            changeSpeed = new cMessage();
             scheduleAt(simTime() + SimTime(40), changeSpeed);
             /*
-			if(!(SUMO_disturbance || VTIcontrol)) {
-			    changeSpeed = new cMessage();
-			    scheduleAt(simTime() + SimTime(40), changeSpeed);
-			}
-			else {
-			    changeSpeed = 0;
-			}
-			*/
-		}
-		else {
-			//followers speed is higher
-			traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 30) / 3.6);
-			//followers use controller specified by the user
-			traciVehicle->setActiveController(controller);
-			//use headway time specified by the user (if ACC is employed)
-			traciVehicle->setACCHeadwayTime(accHeadway);
-			traciVehicle->setCACCConstantSpacing(10);
+            if(!(SUMO_disturbance || VTIcontrol)) {
+                changeSpeed = new cMessage();
+                scheduleAt(simTime() + SimTime(40), changeSpeed);
+            }
+            else {
+                changeSpeed = 0;
+            }
+            */
+        }
+        else {
+            //followers speed is higher
+            traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 30) / 3.6);
+            //followers use controller specified by the user
+            traciVehicle->setActiveController(controller);
+            //use headway time specified by the user (if ACC is employed)
+            traciVehicle->setACCHeadwayTime(accHeadway);
+            traciVehicle->setCACCConstantSpacing(10);
 
-			changeSpeed = 0;
-		}
+            changeSpeed = 0;
+        }
 
-		//ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
-		//change to normal CC
+        //ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
+        //change to normal CC
 
-		if (mySUMOId_int == 2 && VTIcontrol) {
-		    traciVehicle->setActiveController(Plexe::ACC);
-		    traciVehicle->setACCHeadwayTime(0.0);
-		    //traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+        if (mySUMOId_int == 2 && VTIcontrol) {
+            traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setACCHeadwayTime(0.0);
+            //traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
             ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), readDS);
-		}
-		else {
-		            //ds_control = 0;
-		            readDS = 0;
-		}
+        }
+        else {
+                    //ds_control = 0;
+                    readDS = 0;
+        }
 
-		//Only to test disturbance
+        //Only to test disturbance
         if (mySUMOId_int == 2 && SUMO_disturbance) {
             //test disturbance from SUMO
             traciVehicle->setActiveController(Plexe::ACC);
@@ -123,16 +123,16 @@ void SimplePlatooningApp::initialize(int stage) {
             disturb = 0;
         }
 
-		//new message for making gap
-		makeGap = new cMessage();
-		scheduleAt(simTime() + SimTime(60), makeGap);
+        //new message for making gap
+        makeGap = new cMessage();
+        scheduleAt(simTime() + SimTime(60), makeGap);
 
-		//every car must run on its own lane
-		traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+        //every car must run on its own lane
+        traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
-		newHeadway = 1.0;
+        newHeadway = 1.0;
 
-	}
+    }
 
 }
 
