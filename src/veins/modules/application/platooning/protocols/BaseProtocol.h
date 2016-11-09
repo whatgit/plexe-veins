@@ -39,6 +39,7 @@ class BaseProtocol : public BaseApplLayer {
 		cOutVector distanceOut, relSpeedOut, nodeIdOut, speedOut, posxOut, posyOut, accelerationOut, desiredSpeedOut;
 
 	protected:
+		cOutVector nodeIdOutout, msgevent;
 
 		//id of this vehicle
 		int myId;
@@ -68,7 +69,7 @@ class BaseProtocol : public BaseApplLayer {
 		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
 
 		//messages for scheduleAt
-		cMessage *sendBeacon, *dataPolling;
+		cMessage *sendBeacon, *dataPolling, *CheckCamGen;
 
 		/**
 		 * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
@@ -126,6 +127,7 @@ class BaseProtocol : public BaseApplLayer {
 		BaseProtocol() {
 			sendBeacon = 0;
 			dataPolling = 0;
+			CheckCamGen = 0;
 		}
 		virtual ~BaseProtocol();
 
