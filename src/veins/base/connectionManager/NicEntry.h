@@ -25,8 +25,8 @@
 #include <omnetpp.h>
 #include <map>
 
-#include "veins/base/utils/MiXiMDefs.h"
-#include "veins/base/utils/Coord.h"
+#include "/home/mayara/src/GCDC2016-plexe/plexe-veins/src/veins/base/utils/MiXiMDefs.h"
+#include "/home/mayara/src/GCDC2016-plexe/plexe-veins/src/veins/base/utils/Coord.h"
 
 namespace Veins {
 class ChannelAccess;

@@ -22,7 +22,7 @@
 #ifndef NICENTRYDIRECT_H
 #define NICENTRYDIRECT_H
 
-#include "veins/base/connectionManager/NicEntry.h"
+#include "/home/mayara/src/GCDC2016-plexe/plexe-veins/src/veins/base/connectionManager/NicEntry.h"
 
 
 /**

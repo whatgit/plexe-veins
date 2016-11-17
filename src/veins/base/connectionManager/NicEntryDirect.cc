@@ -20,8 +20,10 @@
  **************************************************************************/
 
 
-#include "veins/base/connectionManager/NicEntryDirect.h"
-#include "veins/base/connectionManager/ChannelAccess.h"
+//#include "veins/base/connectionManager/NicEntryDirect.h"
+//#include "veins/base/connectionManager/ChannelAccess.h"
+#include "/home/mayara/src/GCDC2016-plexe/plexe-veins/src/veins/base/connectionManager/NicEntryDirect.h"
+#include "/home/mayara/src/GCDC2016-plexe/plexe-veins/src/veins/base/connectionManager/ChannelAccess.h"
 
 #ifndef nicEV
 #define nicEV (ev.isDisabled()||!coreDebug) ? ev : ev << "NicEntry: "

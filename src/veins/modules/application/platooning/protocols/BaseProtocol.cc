@@ -31,6 +31,7 @@ void BaseProtocol::initialize(int stage) {
 		sendBeacon = 0;
 		seq_n = 0;
 		dataPolling = 0;
+		CheckCamGen = 0;
 
 		//get gates
 		upperLayerIn = findGate("upperLayerIn");
@@ -65,6 +66,7 @@ void BaseProtocol::initialize(int stage) {
 		//init messages for scheduleAt
 		sendBeacon = new cMessage("sendBeacon");
 		dataPolling = new cMessage("dataPolling");
+		CheckCamGen = new cMessage("CheckCamGen");
 
 		//get traci interface
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());

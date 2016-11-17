@@ -101,14 +101,14 @@ void PlatoonDisaggregationApp::finish() {
 	    cancelAndDelete(resumePlatooning);
 	    resumePlatooning = 0;
 	}
-	if (readDS) {
-        cancelAndDelete(readDS);
-        readDS = 0;
-    }
-	if (disturb) {
-        cancelAndDelete(disturb);
-        disturb = 0;
-    }
+//	if (readDS) {
+//        cancelAndDelete(readDS);
+//        readDS = 0;
+//    }
+//	if (disturb) {
+//        cancelAndDelete(disturb);
+//        disturb = 0;
+//    }
 }
 
 void PlatoonDisaggregationApp::onData(WaveShortMessage *wsm) {
@@ -127,7 +127,7 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
         traciVehicle->setCACCConstantSpacing(50);
 
 	    //Resume in 20 seconds
-		scheduleAt(simTime() + SimTime(20), resumePlatooning);
+		//scheduleAt(simTime() + SimTime(20), resumePlatooning);
 	}
 	if (msg == resumePlatooning) {
 

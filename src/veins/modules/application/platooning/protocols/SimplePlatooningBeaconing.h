@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2012-2014 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -33,6 +33,15 @@ class SimplePlatooningBeaconing : public BaseProtocol
 
 		virtual void initialize(int stage);
 		virtual void finish();
+//	private:
+//		struct pre_data{
+//		           double pre_speed;
+//		           double pre_PosX;
+//		           double pre_PosY;
+//		           double pre_time;
+//		        }pre_Data;
+//
+//		static std::vector<struct pre_data> data_list;
 };
 
 #endif /* SIMPLEPLATOONINGBEACONING_H_ */

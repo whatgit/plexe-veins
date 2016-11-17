@@ -71,6 +71,9 @@ class BaseProtocol : public BaseApplLayer {
 		//messages for scheduleAt
 		cMessage *sendBeacon, *dataPolling, *CheckCamGen;
 
+		int Non;
+		bool nomsg_scheduled;
+
 		/**
 		 * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
 		 * method prior processing the message. For example, the start communication event is handled by the

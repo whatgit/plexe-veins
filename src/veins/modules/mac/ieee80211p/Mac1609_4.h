@@ -24,7 +24,6 @@
 #include <assert.h>
 #include <omnetpp.h>
 #include <queue>
-#include <stdint.h>
 #include "veins/base/modules/BaseLayer.h"
 #include "veins/base/phyLayer/MacToPhyControlInfo.h"
 #include "veins/modules/phy/PhyLayer80211p.h"
@@ -34,8 +33,7 @@
 #include "veins/modules/messages/Mac80211Pkt_m.h"
 #include "veins/modules/messages/WaveShortMessage_m.h"
 #include "veins/base/modules/BaseMacLayer.h"
-
-#include "veins/modules/utility/ConstsPhy.h"
+#include "veins/modules/mobility/traci/TraCIMobility.h"
 
 /**
  * @brief
@@ -55,210 +53,246 @@
  * @see Decider80211p
  */
 class Mac1609_4 : public BaseMacLayer,
-	public WaveAppToMac1609_4Interface {
+    public WaveAppToMac1609_4Interface {
 
-	public:
+    private:
+        cOutVector M_state,C_load,nodeIDout,PAC,nodeIDout2,nodeIDout3,collisiontime,botime,pkt_rec,data_a,pkt_timestamp, num_pack_cbr;
 
-		enum t_access_category {
-			AC_BK = 0,
-			AC_BE = 1,
-			AC_VI = 2,
-			AC_VO = 3
-		};
+    public:
 
-		class EDCA {
-			public:
-				class EDCAQueue {
-					public:
+        enum t_access_category {
+            AC_BK = 0,
+            AC_BE = 1,
+            AC_VI = 2,
+            AC_VO = 3
+        };
 
-						std::queue<WaveShortMessage*> queue;
-						int aifsn; //number of aifs slots for this queue
-						int cwMin; //minimum contention window
-						int cwMax; //maximum contention size
-						int cwCur; //current contention window
-						int currentBackoff; //current Backoff value for this queue
-						bool txOP;
+        class EDCA {
+            public:
+                class EDCAQueue {
+                    public:
 
-						EDCAQueue() {	};
-						EDCAQueue(int aifsn,int cwMin, int cwMax, t_access_category ac):aifsn(aifsn),cwMin(cwMin),cwMax(cwMax),cwCur(cwMin),currentBackoff(0),txOP(false) {
-						};
-				};
+                        std::queue<WaveShortMessage*> queue;
+                        int aifsn; //number of aifs slots for this queue
+                        int cwMin; //minimum contention window
+                        int cwMax; //maximum contention size
+                        int cwCur; //current contention window
+                        int currentBackoff; //current Backoff value for this queue
+                        bool txOP;
 
-				EDCA(t_channel channelType,int maxQueueLength = 0):numQueues(0),maxQueueSize(maxQueueLength),channelType(channelType) {
-					statsNumInternalContention = 0;
-					statsNumBackoff = 0;
-					statsSlotsBackoff = 0;
-				};
-				/*
-				 * Currently you have to call createQueue in the right order. First Call is priority 0, second 1 and so on...
-				 */
-				int createQueue(int aifsn, int cwMin, int cwMax,t_access_category);
-				int queuePacket(t_access_category AC,WaveShortMessage* cmsg);
-				void backoff(t_access_category ac);
-				simtime_t startContent(simtime_t idleSince, bool guardActive);
-				void stopContent(bool allowBackoff, bool generateTxOp);
-				void postTransmit(t_access_category);
-				void revokeTxOPs();
+                        EDCAQueue() {   };
+                        EDCAQueue(int aifsn,int cwMin, int cwMax, t_access_category ac):aifsn(aifsn),cwMin(cwMin),cwMax(cwMax),cwCur(cwMin),currentBackoff(0),txOP(false) {
+                        };
+                };
 
-				void cleanUp();
+                EDCA(t_channel channelType,int maxQueueLength = 0):numQueues(0),maxQueueSize(maxQueueLength),channelType(channelType) {
+                    statsNumInternalContention = 0;
+                    statsNumBackoff = 0;
+                    statsSlotsBackoff = 0;
 
-				/** @brief return the next packet to send, send all lower Queues into backoff */
-				WaveShortMessage* initiateTransmit(simtime_t idleSince);
+                    statsNumBackoff1 = 0;
+                    statsNumBackoff2 = 0;
+                    statsNumBackoff3 = 0;
 
-			public:
-				std::map<t_access_category,EDCAQueue> myQueues;
-				int numQueues;
-				uint32_t maxQueueSize;
-				simtime_t lastStart; //when we started the last contention;
-				t_channel channelType;
+                };
+                /*
+                 * Currently you have to call createQueue in the right order. First Call is priority 0, second 1 and so on...
+                 */
+                int createQueue(int aifsn, int cwMin, int cwMax,t_access_category);
+                int queuePacket(t_access_category AC,WaveShortMessage* cmsg);
+                void backoff(t_access_category ac);
+                simtime_t startContent(simtime_t idleSince, bool guardActive);
+                void stopContent(bool allowBackoff, bool generateTxOp);
+                void postTransmit(t_access_category);
+                void postTransmitbuff(t_access_category);
+                void revokeTxOPs();
 
-				/** @brief Stats */
-				long statsNumInternalContention;
-				long statsNumBackoff;
-				long statsSlotsBackoff;
+                void cleanUp();
+                void cleanonce();
+                /** @brief return the next packet to send, send all lower Queues into backoff */
+                WaveShortMessage* initiateTransmit(simtime_t idleSince);
 
-				/** @brief Id for debug messages */
-				std::string myId;
-		};
+            public:
+                std::map<t_access_category,EDCAQueue> myQueues;
+                int numQueues;
+                uint32_t maxQueueSize;
+                simtime_t lastStart; //when we started the last contention;
+                t_channel channelType;
+                SimTime measuring_interval;
+                /** @brief Stats */
+                long statsNumInternalContention;
+                long statsNumBackoff;
 
-	public:
-		~Mac1609_4() { };
+                long statsNumBackoff1;
+                long statsNumBackoff2;
+                long statsNumBackoff3;
 
-		void changeServiceChannel(int channelNumber);
-
-		/**
-		 * @brief Change the default tx power the NIC card is using
-		 *
-		 * @param txPower_mW the tx power to be set in mW
-		 */
-		void setTxPower(double txPower_mW);
-
-		/**
-		 * @brief Change the default MCS the NIC card is using
-		 *
-		 * @param mcs the default modulation and coding scheme
-		 * to use
-		 */
-		void setMCS(enum PHY_MCS mcs);
-
-		/**
-		 * @brief Change the phy layer carrier sense threshold.
-		 *
-		 * @param ccaThreshold_dBm the cca threshold in dBm
-		 */
-		void setCCAThreshold(double ccaThreshold_dBm);
-
-	protected:
-		/** @brief States of the channel selecting operation.*/
-
-	protected:
-		/** @brief Initialization of the module and some variables.*/
-		virtual void initialize(int);
-
-		/** @brief Delete all dynamically allocated objects of the module.*/
-		virtual void finish();
-
-		/** @brief Handle messages from lower layer.*/
-		virtual void handleLowerMsg(cMessage*);
-
-		/** @brief Handle messages from upper layer.*/
-		virtual void handleUpperMsg(cMessage*);
-
-		/** @brief Handle control messages from upper layer.*/
-		virtual void handleUpperControl(cMessage* msg);
+                long statsSlotsBackoff;
 
 
-		/** @brief Handle self messages such as timers.*/
-		virtual void handleSelfMsg(cMessage*);
+                /** @brief Id for debug messages */
+                std::string myId;
+        };
 
-		/** @brief Handle control messages from lower layer.*/
-		virtual void handleLowerControl(cMessage* msg);
+    public:
+        ~Mac1609_4() { };
 
-		/** @brief Set a state for the channel selecting operation.*/
-		void setActiveChannel(t_channel state);
+        void changeServiceChannel(int channelNumber);
 
-		simtime_t timeLeftInSlot() const;
-		simtime_t timeLeftTillGuardOver() const;
+        /**
+         * @brief Change the tx power the NIC card is using
+         *
+         * @param txPower_mW the tx power to be set in mW
+         */
+        void setTxPower(double txPower_mW);
 
-		bool guardActive() const;
+    protected:
+        /** @brief States of the channel selecting operation.*/
 
-		void attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequency, uint64_t datarate, double txPower_mW);
-		Signal* createSignal(simtime_t start, simtime_t length, double power, uint64_t bitrate, double frequency);
+    protected:
+        /** @brief Initialization of the module and some variables.*/
+        virtual void initialize(int);
 
-		/** @brief maps a application layer priority (up) to an EDCA access category. */
-		t_access_category mapPriority(int prio);
+        /** @brief Delete all dynamically allocated objects of the module.*/
+        virtual void finish();
 
-		void channelBusy();
-		void channelBusySelf(bool generateTxOp);
-		void channelIdle(bool afterSwitch = false);
+        /** @brief Handle messages from lower layer.*/
+        virtual void handleLowerMsg(cMessage*);
 
-		void setParametersForBitrate(uint64_t bitrate);
+        /** @brief Handle messages from upper layer.*/
+        virtual void handleUpperMsg(cMessage*);
 
-		simtime_t getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs = MCS_DEFAULT) const;
+        /** @brief Handle control messages from upper layer.*/
+        virtual void handleUpperControl(cMessage* msg);
 
-	protected:
-		/** @brief Self message to indicate that the current channel shall be switched.*/
-		cMessage* nextChannelSwitch;
 
-		/** @brief Self message to wake up at next MacEvent */
-		cMessage* nextMacEvent;
+        /** @brief Handle self messages such as timers.*/
+        virtual void handleSelfMsg(cMessage*);
 
-		/** @brief Last time the channel went idle */
-		simtime_t lastIdle;
-		simtime_t lastBusy;
+        /** @brief Handle control messages from lower layer.*/
+        virtual void handleLowerControl(cMessage* msg);
 
-		/** @brief Current state of the channel selecting operation.*/
-		t_channel activeChannel;
+        /** @brief Set a state for the channel selecting operation.*/
+        void setActiveChannel(t_channel state);
 
-		/** @brief access category of last sent packet */
-		t_access_category lastAC;
+        simtime_t timeLeftInSlot() const;
+        simtime_t timeLeftTillGuardOver() const;
 
-		/** @brief Stores the frequencies in Hz that are associated to the channel numbers.*/
-		std::map<int,double> frequency;
+        bool guardActive() const;
 
-		int headerLength;
+        void attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequency);
+        Signal* createSignal(simtime_t start, simtime_t length, double power, double bitrate, double frequency);
 
-		bool useSCH;
-		int mySCH;
+        /** @brief maps a application layer priority (up) to an EDCA access category. */
+        t_access_category mapPriority(int prio);
 
-		std::map<t_channel,EDCA*> myEDCA;
+        void channelBusy();
+        void channelBusySelf(bool generateTxOp);
+        void channelIdle(bool afterSwitch = false);
 
-		bool idleChannel;
+        void checkBitrate(int bitrate)  const;
+//      double subtate_stateup_1(double CL) const;
+//      double subtate_statedown_1(double CL_max) const;
+//      double bound_cal_1(int stateID, int ID) const;
+        double subtate_stateup_3(double CL) const;
+        double subtate_statedown_3(double CL_max) const;
+        double bound_cal_3(int stateID,int ID) const;
+        double subtate_stateup_5(double CL) const;
+        double subtate_statedown_5(double CL_max) const;
+        double bound_cal_5(int stateID,int ID) const;
 
-		/** @brief stats */
-		long statsReceivedPackets;
-		long statsReceivedBroadcasts;
-		long statsSentPackets;
-		long statsTXRXLostPackets;
-		long statsSNIRLostPackets;
-		long statsDroppedPackets;
-		long statsNumTooLittleTime;
-		long statsNumInternalContention;
-		long statsNumBackoff;
-		long statsSlotsBackoff;
-		simtime_t statsTotalBusyTime;
+    protected:
+        //add measuring interval message
+        cMessage* measuring;
+        /** @brief Self message to indicate that the current channel shall be switched.*/
+        cMessage* nextChannelSwitch;
 
-		/** @brief This MAC layers MAC address.*/
-		int myMacAddress;
+        /** @brief Self message to wake up at next MacEvent */
+        cMessage* nextMacEvent;
 
-		/** @brief The power (in mW) to transmit with.*/
-		double txPower;
+        /** @brief Last time the channel went idle */
+        simtime_t lastIdle;
+        simtime_t lastBusy;
+        simtime_t lastBusy_reset;
+        /** @brief Current state of the channel selecting operation.*/
+        t_channel activeChannel;
 
-		/** @brief the bit rate at which we transmit */
-		uint64_t bitrate;
+        /** @brief access category of last sent packet */
+        t_access_category lastAC;
 
-		/** @brief N_DBPS, derived from bitrate, for frame length calculation */
-		double n_dbps;
+        /** @brief Stores the frequencies in Hz that are associated to the channel numbers.*/
+        std::map<int,double> frequency;
+        WaveShortMessage buff;
+        int headerLength;
+        bool ptkinbuff;
+        bool useSCH;
+        int mySCH;
 
-		/** @brief Id for debug messages */
-		std::string myId;
+        std::map<t_channel,EDCA*> myEDCA;
 
-		Mac80211pToPhy11pInterface* phy11p;
+        bool idleChannel;
 
-		//tell to anybody which is interested when the channel turns busy or idle
-		simsignal_t sigChannelBusy;
-		//tell to anybody which is interested when a collision occurred
-		simsignal_t sigCollision;
+        /** @brief stats */
+        long statsReceivedPackets;
+        long statsReceivedBroadcasts;
+        long statsSentPackets;
+        long statsTXRXLostPackets;
+        long statsSNIRLostPackets;
+        long statsDroppedPackets;
+        long statsNumTooLittleTime;
+        long statsNumInternalContention;
+        long statsNumBackoff;
+
+        long statsNumBackoff1;
+        long statsNumBackoff2;
+        long statsNumBackoff3;
+
+        long statsSlotsBackoff;
+        simtime_t statsTotalBusyTime;
+        long rejectNum;
+        long stateswitch;
+        long last_veh_mac;
+
+        /** @brief This MAC layers MAC address.*/
+        int myMacAddress;
+        std::vector<double> CL_list_up;
+        std::vector<double> CL_list_down;
+        std::vector<double> CL_list;
+        int stateID;
+
+//      static std::vector<int> sendcam;
+//      static std::vector<int> lostcam;
+//      std::vector<int> pre_sendcam;
+//      std::vector<int> pre_lostcam;
+        double CL_pre;
+        int increase_count;
+        int decrease_count;
+
+        double max_load;
+        double min_load;
+        bool permit;
+
+
+        /**@brief the time stamp last message send. */
+        double timestamp;
+        int ID;
+
+
+        /** @brief The power (in mW) to transmit with.*/
+        double txPower;
+
+        /** @brief the bit rate at which we transmit */
+        double bitrate;
+
+        /** @brief Id for debug messages */
+        std::string myId;
+
+        Mac80211pToPhy11pInterface* phy11p;
+
+        //tell to anybody which is interested when the channel turns busy or idle
+        simsignal_t sigChannelBusy;
+        //tell to anybody which is interested when a collision occurred
+        simsignal_t sigCollision;
 };
 
 #endif /* ___MAC1609_4_H_*/

@@ -23,3 +23,5 @@ examples/**/results
 examples/**/.tkenvrc
 examples/**/.tkenvlog
 examples/**/valgrind.out
+*.anf
+.settings/*
