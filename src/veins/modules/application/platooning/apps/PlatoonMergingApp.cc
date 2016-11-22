@@ -53,8 +53,11 @@ void PlatoonMergingApp::initialize(int stage) {
 		else if (strcmp(strController, "CACC") == 0) {
 			controller = Plexe::CACC;
 		}
-		else {
+		else if (strcmp(strController, "PLOEG") == 0){
 			controller = Plexe::PLOEG;
+		}
+		else {
+		    controller = Plexe::PLOEG;
 		}
 		//headway time for ACC
 		accHeadway = par("accHeadway").doubleValue();

@@ -57,6 +57,7 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+
         //Get the SUMO ID of the vehicle.
         mySUMOId = mobility->getExternalId();
         dotIndex = mySUMOId.find_last_of('.');

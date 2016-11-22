@@ -38,6 +38,10 @@ simple PlatoonDisaggregationApp like BaseApp
         double ploegH @unit("s") = default(0.5 s);
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
+        double qichen_Kv = default(0.4);
+        double qichen_Kr = default(0.01);
+        double qichen_Rdes = default(10);
+        
         
         //To request control value from driving simulator or not
         bool DScontrol = default(false);

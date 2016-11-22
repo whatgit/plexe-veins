@@ -32,7 +32,12 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-		//should the follower use ACC or CACC?
+
+        qichen_Kv = par("qichen_Kv").doubleValue();
+        qichen_Kr = par("qichen_Kr").doubleValue();
+        qichen_Rdes = par("qichen_Rdes").doubleValue();
+
+	    //should the follower use ACC or CACC?
 		const char *strController = par("controller").stringValue();
 		//for now we have only two possibilities
 		if (strcmp(strController, "ACC") == 0) {
@@ -42,7 +47,7 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			controller = Plexe::CACC;
 		}
 		else {
-			controller = Plexe::PLOEG;
+			controller = Plexe::QICHEN;
 		}
 		//headway time for ACC
 		accHeadway = par("accHeadway").doubleValue();
@@ -87,6 +92,10 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 
 		newHeadway = 1.0;
 
+        traciVehicle->setGenericInformation(CC_SET_QICHEN_KV, &qichen_Kv, sizeof(double));
+        traciVehicle->setGenericInformation(CC_SET_QICHEN_KR, &qichen_Kr, sizeof(double));
+        traciVehicle->setGenericInformation(CC_SET_QICHEN_RDES, &qichen_Rdes, sizeof(double));
+
 	}
 
 }
@@ -118,13 +127,17 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	//this takes car of feeding data into CACC and reschedule the self message
 	BaseApp::handleSelfMsg(msg);
 
+	double bigR = 50;
+	double normalR = 10;
+
 	if (msg == disAggregate) {
 
 	    //DO THE DISAGRREGATE
 	    //For time headway
 	    //traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
 	    //For fixed distance controller
-        traciVehicle->setCACCConstantSpacing(50);
+        //traciVehicle->setCACCConstantSpacing(50);
+	    traciVehicle->setGenericInformation(CC_SET_QICHEN_RDES, &bigR, sizeof(double));
 
 	    //Resume in 20 seconds
 		//scheduleAt(simTime() + SimTime(20), resumePlatooning);
@@ -132,7 +145,8 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	if (msg == resumePlatooning) {
 
 	    //RESUME TO NORMAL PLATOONING
-	    traciVehicle->setCACCConstantSpacing(10);
+	    //traciVehicle->setCACCConstantSpacing(10);
+	    traciVehicle->setGenericInformation(CC_SET_QICHEN_RDES, &normalR, sizeof(double));
 	}
 }
 

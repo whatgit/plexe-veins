@@ -48,6 +48,9 @@ class PlatoonDisaggregationApp : public BaseApp
 
         int disAggregateCounter;
 
+        //parameters for QiChen's controller
+        double qichen_Kv, qichen_Kr, qichen_Rdes;
+
         //message used to tell the vehicle to dis-aggregate from platoon
         cMessage *disAggregate;
 
