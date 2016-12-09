@@ -69,6 +69,8 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			traciVehicle->setACCHeadwayTime(accHeadway);
 			traciVehicle->setCACCConstantSpacing(10);
 		}
+
+		//Prevent all platooning vehicles from changing lane
 		if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
 
 		disAggregateCounter = 1;
