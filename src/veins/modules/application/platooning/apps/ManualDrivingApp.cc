@@ -20,6 +20,7 @@
 #include "veins/modules/messages/WaveShortMessage_m.h"
 #include "veins/base/messages/MacPkt_m.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+#include "veins/modules/mobility/traci/TraCIConstants.h"
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
@@ -82,9 +83,9 @@ void ManualDrivingApp::initialize(int stage) {
         //Initialize the reading from driving simulator (assuming car is driving with ACC)
         if (myPlatoonName.find("platoon") == std::string::npos && VTIcontrol) {
             traciVehicle->setActiveController(Plexe::DRIVER);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
+            ds_control = Veins::TraCIConnection::connect("194.47.15.47", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
-            scheduleAt(simTime() + SimTime(0.1), readDS);
+            scheduleAt(simTime() + SimTime(0.01), readDS);
         }
         else {
             readDS = 0;
@@ -149,9 +150,12 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
     if (msg == readDS) {
         uint8_t read_a_byte;
         double speed;
-        int laneID;
+        int laneID = 0;
         std::string ds_resp;
         double radar_distance, rel_speed;
+
+        int number = 6;
+
         traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
 
         //send command to request control values from ds (basically speed and laneID of ego vehicle)
@@ -168,15 +172,18 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 //        buf >> read_a_byte;
 //        buf >> laneID;
 
+        Veins::TraCIBuffer data = Veins::TraCIBuffer() << TYPE_COMPOUND << number << TYPE_STRING << "edge_0_0" << TYPE_INTEGER << laneID << TYPE_DOUBLE << 10.18 << TYPE_DOUBLE << 244.07 << TYPE_DOUBLE << 0.00 << TYPE_BYTE << 0;
+
         //Control the vehicle with received speed
         //traciVehicle->setACCHeadwayTime(0.0);
-        traciVehicle->setSpeed(speed);
+        //traciVehicle->setSpeed(speed);
+        traciVehicle->setGenericInformation(0xb4, &data, sizeof(data));
         //traciVehicle->setFixedLane(laneID);
 
         /*gap_v.record(radar_distance);
         speed_fake_controller.record(speed);*/
 
-        scheduleAt(simTime() + SimTime(0.1), readDS);
+        scheduleAt(simTime() + SimTime(0.01), readDS);
     }
 }
 
