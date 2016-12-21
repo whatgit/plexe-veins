@@ -1,6 +1,6 @@
 ﻿
 <routes>
-	<vType id="vtypeauto" accel="2.0" decel="2.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1">
+	<vType id="vtypeauto" accel="3.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1">
 		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="2" ccAccel="2.0"/>
 	</vType>
 	<vType id="type1" accel="1.0" decel="1.5" sigma="0.5" length="4" minGap="0" maxSpeed="25.00" color="1,0,1" probability="1">
@@ -8,7 +8,7 @@
 	</vType>
   
     <route id="route1" edges="edge_0_0 edge_0_1 edge_0_4" />
-	<route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2"/>
+	<route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2 edge_0_3 edge_1_0"/>
 
 	<!--vehicle id="car" route="route1" type="type1" begin="0" departLane="1" depart="0" departPos="4800.00" departSpeed="25.00"/-->
 	<flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" departPos="0" number="5" departSpeed="27.77"/>
