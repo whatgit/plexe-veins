@@ -10,6 +10,8 @@
     <route id="route1" edges="edge_0_0 edge_0_1 edge_0_4" />
 	<route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2 edge_0_3 edge_1_0"/>
 
-	<!--vehicle id="car" route="route1" type="type1" begin="0" departLane="1" depart="0" departPos="4800.00" departSpeed="25.00"/-->
-	<flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" departPos="0" number="5" departSpeed="27.77"/>
+	
+	<flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" departPos="4500.00" number="5" departSpeed="10"/>
+	<vehicle id="car" route="route1" type="type1" begin="0" departLane="1" depart="15" departPos="4800.00" departSpeed="25.00"/>
+
 </routes>

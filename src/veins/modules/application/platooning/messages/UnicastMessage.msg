@@ -22,6 +22,7 @@ enum UnicastMessageType {
 	STOM_MSG = 3;
 	ROAD_CLOSED = 4;
 	iCLCM = 5;
+	REQ_RAMP = 6;
 };
 
 //

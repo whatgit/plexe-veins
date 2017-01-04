@@ -37,6 +37,8 @@ void PlatoonDisaggregationApp::initialize(int stage) {
         qichen_Kr = par("qichen_Kr").doubleValue();
         qichen_Rdes = par("qichen_Rdes").doubleValue();
 
+        disAggregate = new cMessage();
+
 	    //should the follower use ACC or CACC?
 		const char *strController = par("controller").stringValue();
 		//for now we have only two possibilities
@@ -76,8 +78,7 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 
 			disAggregateCounter = 1;
             //Disaggregate
-            disAggregate = new cMessage();
-            scheduleAt(simTime() + SimTime(150), disAggregate);
+            //scheduleAt(simTime() + SimTime(150), disAggregate);
 		}
 		if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
 
@@ -153,16 +154,16 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 
 void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
 
-    //our vehicle's data
-    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
-    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
-    traciVehicle->getRadarMeasurements(distance, relSpeed);
-
     UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
     ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
     cPacket *enc = unicast->decapsulate();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    //our vehicle's data
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
+    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
 
     if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
 
@@ -181,13 +182,11 @@ void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
 
         }
     }
+    else if(enc->getKind() == BaseProtocol::REQRAMP_TYPE) {
+        RequestRamp *epkt = dynamic_cast<RequestRamp *>(enc);
 
-    /*
-    if(sumoPosX >= 1000*disAggregateCounter) {
-        disAggregateCounter++;
-        scheduleAt(simTime() + SimTime(0.1), disAggregate);
+        scheduleAt(simTime() + SimTime(1), disAggregate);
     }
-    */
 
     delete enc;
     delete unicast;

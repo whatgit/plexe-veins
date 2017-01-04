@@ -213,6 +213,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 	PlatooningBeacon *epkt;
 	STOM *stom_pkt;
 	ICLCM *iCLCM_pkt;
+	RequestRamp *reqRamp_pkt;
 
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
@@ -230,6 +231,9 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 	}
 	else if (unicast->getType() == UnicastMessageType::iCLCM) {
 	    iCLCM_pkt = dynamic_cast<ICLCM *>(enc);
+	}
+	else if (unicast->getType() == UnicastMessageType::REQ_RAMP) {
+	    reqRamp_pkt = dynamic_cast<RequestRamp *>(enc);
 	}
 	else {
         stom_pkt = dynamic_cast<STOM *>(enc);

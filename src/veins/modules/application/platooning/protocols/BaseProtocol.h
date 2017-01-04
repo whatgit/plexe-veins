@@ -25,6 +25,7 @@
 #include "veins/modules/application/platooning/messages/STOM_m.h"
 #include "veins/modules/application/platooning/messages/RoadClosed_m.h"
 #include "veins/modules/application/platooning/messages/ICLCM_m.h"
+#include "veins/modules/application/platooning/messages/RequestRamp_m.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
@@ -126,6 +127,7 @@ class BaseProtocol : public BaseApplLayer {
 		static const int STOM_TYPE = 11111;
 		static const int ROAD_CLOSED = 10000;
 		static const int iCLCM_TYPE = 20000;
+		static const int REQRAMP_TYPE = 30000;
 
 		BaseProtocol() {
 			sendBeacon = 0;
