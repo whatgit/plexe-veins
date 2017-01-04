@@ -130,7 +130,7 @@ void SimplePlatooningApp::initialize(int stage) {
         //every car must run on its own lane
         traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
 
-        newHeadway = 1.0;
+        newHeadway = 0.6;
 
     }
 

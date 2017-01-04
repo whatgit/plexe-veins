@@ -12,5 +12,4 @@
 
 	<!--vehicle id="car" route="route1" type="type1" begin="0" departLane="1" depart="0" departPos="4800.00" departSpeed="25.00"/-->
 	<flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" departPos="0" number="5" departSpeed="27.77"/>
-	
 </routes>

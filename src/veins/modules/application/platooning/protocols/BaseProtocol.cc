@@ -73,11 +73,11 @@ void BaseProtocol::initialize(int stage) {
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
         //Get the SUMO ID of the vehicle.
-        mySUMOId = mobility->getExternalId();
+        mySUMOId = mobility->getExternalId(); //platoon0.2
         dotIndex = mySUMOId.find_last_of('.');
-        myPlatoonName = mySUMOId.substr(0,dotIndex);
+        myPlatoonName = mySUMOId.substr(0,dotIndex); //platoon0
         mystrId = mySUMOId.substr(dotIndex + 1);
-        mySUMOId_int = strtol(mystrId.c_str(), 0, 10);
+        mySUMOId_int = strtol(mystrId.c_str(), 0, 10); // 2
 
 		//set names for output vectors
 		//distance from front vehicle

@@ -69,7 +69,7 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			//followers speed is higher
 			traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 30) / 3.6);
 			//followers use controller specified by the user
-			//traciVehicle->setActiveController(controller);
+			traciVehicle->setActiveController(controller);
 			//use headway time specified by the user (if ACC is employed)
 			traciVehicle->setACCHeadwayTime(accHeadway);
 			traciVehicle->setCACCConstantSpacing(10);
@@ -77,7 +77,7 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			disAggregateCounter = 1;
             //Disaggregate
             disAggregate = new cMessage();
-            scheduleAt(simTime() + SimTime(2), disAggregate);
+            scheduleAt(simTime() + SimTime(150), disAggregate);
 		}
 		if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
 
@@ -133,7 +133,6 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	double normalR = 10;
 
 	if (msg == disAggregate) {
-	    traciVehicle->setActiveController(controller);
 	    //DO THE DISAGRREGATE
 	    //For time headway
 	    //traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
@@ -142,7 +141,7 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	    traciVehicle->setGenericInformation(CC_SET_QICHEN_RDES, &bigR, sizeof(double));
 
 	    //Resume in 20 seconds
-		scheduleAt(simTime() + SimTime(20), resumePlatooning);
+		scheduleAt(simTime() + SimTime(50), resumePlatooning);
 	}
 	if (msg == resumePlatooning) {
 
