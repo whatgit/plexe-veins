@@ -61,7 +61,7 @@ class PlatoonDisaggregationApp : public BaseApp
         cMessage *readDS;
 
         //message to test disturbance
-        cMessage *disturb;
+        cMessage *sendSomething;
 
         double newHeadway;
 
@@ -69,7 +69,15 @@ class PlatoonDisaggregationApp : public BaseApp
 
         bool SUMO_disturbance;
 
+        //car's parameter
+        double d_car, v_car, t_car;
+
+        //platoon's parameter
+        double d_platoon, v_platoon, t_platoon_front, t_platoon_rear;
+        double L_HDV = 25;
+
         Veins::TraCIConnection* ds_control;
+        void Optimal_Speed(double &speed_profile, double &acceleration_profile, double &travel_distance, double &travel_time);
 
     public:
         PlatoonDisaggregationApp() {

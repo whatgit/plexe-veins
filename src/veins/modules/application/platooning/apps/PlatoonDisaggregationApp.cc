@@ -32,7 +32,6 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-
         qichen_Kv = par("qichen_Kv").doubleValue();
         qichen_Kr = par("qichen_Kr").doubleValue();
         qichen_Rdes = par("qichen_Rdes").doubleValue();
@@ -60,12 +59,14 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 
 		SUMO_disturbance = par("SUMOdisturb").boolValue();
 
-		if (mySUMOId_int == 0) {
+		if (mySUMOId_int == 0 && (strcmp("platoon0", myPlatoonName.c_str()) == 0)) {
 			//ACC speed is 100 km/h
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
 			//leader uses the ACC
 			traciVehicle->setActiveController(Plexe::ACC);
-
+			ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
+            sendSomething = new cMessage();
+            scheduleAt(simTime() + SimTime(1), sendSomething);
 		}
 		else {
 			//followers speed is higher
@@ -76,13 +77,18 @@ void PlatoonDisaggregationApp::initialize(int stage) {
 			traciVehicle->setACCHeadwayTime(accHeadway);
 			traciVehicle->setCACCConstantSpacing(10);
 
+			if(mySUMOId_int == 2) {
+			    sendSomething = 0;
+			}
+			else {
+			    sendSomething = 0;
+			}
 			disAggregateCounter = 1;
             //Disaggregate
             //scheduleAt(simTime() + SimTime(150), disAggregate);
 		}
+
 		if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
-
-
 
         //Resume
         resumePlatooning = new cMessage();
@@ -113,6 +119,10 @@ void PlatoonDisaggregationApp::finish() {
 	    cancelAndDelete(resumePlatooning);
 	    resumePlatooning = 0;
 	}
+	if (sendSomething) {
+        cancelAndDelete(sendSomething);
+        sendSomething = 0;
+    }
 //	if (readDS) {
 //        cancelAndDelete(readDS);
 //        readDS = 0;
@@ -130,8 +140,10 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	//this takes car of feeding data into CACC and reschedule the self message
 	BaseApp::handleSelfMsg(msg);
 
-	double bigR = 50;
+	double bigR = 80;
 	double normalR = 10;
+	std::string ds_resp;
+	std::string ds_send;
 
 	if (msg == disAggregate) {
 	    //DO THE DISAGRREGATE
@@ -149,6 +161,12 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 	    //RESUME TO NORMAL PLATOONING
 	    //traciVehicle->setCACCConstantSpacing(10);
 	    traciVehicle->setGenericInformation(CC_SET_QICHEN_RDES, &normalR, sizeof(double));
+	}
+	if (msg == sendSomething) {
+	    ds_send = Veins::makeTraCICommand(0x10, Veins::TraCIBuffer());
+	    ds_control->sendTCPMessage(ds_send);  //Command without distance
+	    ds_resp = ds_control->receiveTCPMessage();
+	    scheduleAt(simTime() + SimTime(1), sendSomething);
 	}
 }
 
@@ -185,7 +203,28 @@ void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
     else if(enc->getKind() == BaseProtocol::REQRAMP_TYPE) {
         RequestRamp *epkt = dynamic_cast<RequestRamp *>(enc);
 
-        scheduleAt(simTime() + SimTime(1), disAggregate);
+        if(myPlatoonName.find("platoon") != std::string::npos) {
+            d_car = epkt->getRampX() - epkt->getSUMOpositionX();
+            v_car = epkt->getSpeed();
+            t_car = d_car/v_car;
+            d_platoon = epkt->getRampX() - sumoPosX;
+            v_platoon = speed;
+            t_platoon_front = d_platoon/v_platoon;
+            t_platoon_rear = (d_platoon + L_HDV)/v_platoon;
+
+
+            //TODO:check it later
+            if((t_car >= t_platoon_front) && (t_car <= t_platoon_rear)) {
+
+            }
+            else {
+
+            }
+        }
+        else {
+
+        }
+        //scheduleAt(simTime() + SimTime(1), disAggregate);
     }
 
     delete enc;
@@ -194,5 +233,9 @@ void PlatoonDisaggregationApp::handleLowerMsg(cMessage *msg) {
 
 
 void PlatoonDisaggregationApp::onBeacon(WaveShortMessage* wsm) {
+
+}
+
+void PlatoonDisaggregationApp::Optimal_Speed(double &speed_profile, double &acceleration_profile, double &travel_distance, double &travel_time) {
 
 }

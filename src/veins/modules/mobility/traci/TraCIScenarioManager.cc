@@ -364,6 +364,7 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
 	    if (useDS) {
+	        //ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //ip of computer running the DS
 	        ds_connection = TraCIConnection::connect("194.47.15.19", 8888); //ip of computer running the DS
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
@@ -758,6 +759,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 	if (numRead != 5) return;
 
 	//Send vehicle's data to the driving simulator
+	std::string test = makeTraCICommand(0x02, TraCIBuffer() << objectId << px << py << speed);
 	if (useDS) ds_connection->sendTCPMessage(makeTraCICommand(0x02, TraCIBuffer() << objectId << px << py << speed));
 
 	Coord p = connection->traci2omnet(TraCICoord(px, py));

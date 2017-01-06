@@ -265,4 +265,13 @@ void TraCIConnection::sendTCPMessage(std::string msg){
     ::send(socket(socketPtr), msg.c_str(), msg.length(), 0);
 }
 
+std::string TraCIConnection::receiveTCPMessage(){
+    int size = 5;
+    char buf[size];
+
+    ::recv(socket(socketPtr), reinterpret_cast<char*>(&buf), size, 0);
+
+    return std::string(buf);
+}
+
 }
