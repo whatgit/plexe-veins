@@ -200,6 +200,7 @@ void TraCIScenarioManager::initialize(int stage) {
 	std::string roiRoads_s = par("roiRoads");
 	std::string roiRects_s = par("roiRects");
 	useDS = par("useDrivingSimulator");
+	ipAddress = par("IPDS").stdstringValue();
 
 	numVehicles = par("numVehicles").longValue();
 
@@ -362,9 +363,11 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 }
 
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
+	//std::string ipAddress = "192.168.164.10";
 	if (msg == connectAndStartTrigger) {
+
 	    if (useDS) {
-	        ds_connection = TraCIConnection::connect("194.47.15.47", 8888); //can either end with .19 or . 51
+	        ds_connection = TraCIConnection::connect(ipAddress.c_str(), 8888); //can either end with .19 or . 51
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
