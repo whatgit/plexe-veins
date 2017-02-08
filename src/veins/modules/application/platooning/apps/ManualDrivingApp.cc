@@ -170,15 +170,15 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         buf >> read_a_byte;
         buf >> speed;
 //        buf >> read_a_byte;
-//        buf >> laneID;
+        buf >> laneID;
 
         Veins::TraCIBuffer data = Veins::TraCIBuffer() << TYPE_COMPOUND << number << TYPE_STRING << "edge_0_0" << TYPE_INTEGER << laneID << TYPE_DOUBLE << 10.18 << TYPE_DOUBLE << 244.07 << TYPE_DOUBLE << 0.00 << TYPE_BYTE << 0;
 
         //Control the vehicle with received speed
         //traciVehicle->setACCHeadwayTime(0.0);
-        //traciVehicle->setSpeed(speed);
-        traciVehicle->setGenericInformation(0xb4, &data, sizeof(data));
-        //traciVehicle->setFixedLane(laneID);
+        traciVehicle->setSpeed(speed);
+        //traciVehicle->setGenericInformation(0xb4, &data, sizeof(data));
+        traciVehicle->setFixedLane(laneID);
 
         /*gap_v.record(radar_distance);
         speed_fake_controller.record(speed);*/
