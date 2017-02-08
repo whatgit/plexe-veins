@@ -136,6 +136,7 @@ class TraCIScenarioManager : public cSimpleModule
 		std::string host;
 		int port;
 		bool useDS; /**< whether to use driving simulator*/
+		std::string ipAddress; //ip address of DS
 
 		cMessage* myAddVehicleTimer;
 
