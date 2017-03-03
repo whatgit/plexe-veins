@@ -45,6 +45,7 @@ simple ManualDrivingApp like BaseApp
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);
+        string IP_DS = default("192.168.0.0");
 
         @display("i=block/app2");
         @class(ManualDrivingApp);

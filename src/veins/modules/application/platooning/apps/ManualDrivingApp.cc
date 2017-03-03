@@ -34,7 +34,7 @@ void ManualDrivingApp::initialize(int stage) {
 
         //get the oscillation frequency of the leader as parameter
         leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
-
+        ipAddress = par("IP_DS").stdstringValue();
         //should the follower use ACC or CACC?
         const char *strController = par("controller").stringValue();
         //for now we have only two possibilities
@@ -83,7 +83,7 @@ void ManualDrivingApp::initialize(int stage) {
         //Initialize the reading from driving simulator (assuming car is driving with ACC)
         if (myPlatoonName.find("platoon") == std::string::npos && VTIcontrol) {
             traciVehicle->setActiveController(Plexe::DRIVER);
-            ds_control = Veins::TraCIConnection::connect("194.47.15.47", 8855); //can either end with .19 or . 51
+            ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.01), readDS);
         }

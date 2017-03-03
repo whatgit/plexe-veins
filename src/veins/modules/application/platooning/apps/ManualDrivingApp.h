@@ -63,6 +63,8 @@ private:
 
     bool VTIcontrol;
 
+    std::string ipAddress; //ip address of DS
+
     Veins::TraCIConnection* ds_control;
 
 };

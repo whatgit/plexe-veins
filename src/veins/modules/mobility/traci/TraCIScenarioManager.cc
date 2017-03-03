@@ -367,7 +367,7 @@ void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
 
 	    if (useDS) {
-	        ds_connection = TraCIConnection::connect(ipAddress.c_str(), 8888); //can either end with .19 or . 51
+	        ds_connection = TraCIConnection::connect(ipAddress.c_str(), 8888); //now ip address is in config file
 	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
