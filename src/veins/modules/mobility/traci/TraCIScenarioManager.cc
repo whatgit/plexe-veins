@@ -824,7 +824,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 			mDisplayString = "";
 		}
 
-		if (mType != "") {
+		if (mType != "manual_car") {
 			addModule(objectId, mType, mName, mDisplayString, p, edge, speed, angle);
 			MYDEBUG << "Added vehicle #" << objectId << endl;
 		}

@@ -1,15 +1,15 @@
 <routes>
-	<vType id="vtypeauto" accel="3.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
+	<vType id="vtypeauto" accel="2.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
 		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="2.0"/>
 	</vType>
 
-	<vType id="manual_car" accel="2.0" decel="2.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
-		<carFollowing-CC tauEngine="1" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="2.0"/>
+	<vType id="manual_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
+		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
 	</vType>
 
 	<route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2 edge_0_3 edge_1_0 edge_1_1 edge_1_2 edge_1_3 edge_2_0 edge_2_1 edge_2_2 edge_2_3 edge_3_0 edge_3_1 edge_3_2 edge_3_3 edge_4_0 edge_4_1 edge_4_4 edge_4_6 absorption_4"/>
 	
-	<!--flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" number="5" departSpeed="27.77"/-->
+	<flow id="platoon0" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" number="3" departSpeed="27.77"/>
 	<vehicle id="car" route="platoon_route" type="manual_car" begin="0" departLane="1" depart="0" departSpeed="0"/>
 	<!--flow id="platoon1" route="platoon_route" type="vtypeauto" begin="0.5" period="1" departLane="1" number="4" departSpeed="27.77"/-->
 </routes>

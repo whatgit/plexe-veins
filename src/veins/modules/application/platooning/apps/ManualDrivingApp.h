@@ -26,8 +26,6 @@ class ManualDrivingApp : public BaseApp
 
 public:
     ManualDrivingApp(){
-        changeSpeed = 0;
-        makeGap = 0;
     }
     virtual void initialize(int stage);
     virtual void finish();
@@ -50,14 +48,10 @@ private:
     //leader average speed
     double leaderSpeed;
 
-    //message used to tell the leader to continuously change its desired speed
-    cMessage *changeSpeed;
+    double CACCSpacing;
 
     //message used to tell to read control input from driving simulator
     cMessage *readDS;
-
-    //message used to tell platoon to make a gap
-    cMessage *makeGap;
 
     double newHeadway;
 

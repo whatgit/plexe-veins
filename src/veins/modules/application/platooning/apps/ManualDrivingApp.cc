@@ -52,6 +52,7 @@ void ManualDrivingApp::initialize(int stage) {
         //leader speed
         leaderSpeed = par("leaderSpeed").doubleValue();
         VTIcontrol = par("DScontrol").boolValue();
+        CACCSpacing =  par("CACCSpacing").doubleValue();
 
         //set name for record
         /*gap_d.setName("gap_d");
@@ -64,9 +65,6 @@ void ManualDrivingApp::initialize(int stage) {
             //traciVehicle->setCruiseControlDesiredSpeed(30 / 3.6);
             //leader uses the ACC
             traciVehicle->setActiveController(Plexe::ACC);
-            //leader speed change
-            changeSpeed = new cMessage();
-            scheduleAt(simTime() + SimTime(40), changeSpeed);
         }
         else {
             //followers speed is higher
@@ -75,25 +73,19 @@ void ManualDrivingApp::initialize(int stage) {
             traciVehicle->setActiveController(controller);
             //use headway time specified by the user (if ACC is employed)
             traciVehicle->setACCHeadwayTime(accHeadway);
-            traciVehicle->setCACCConstantSpacing(10);
-
-            changeSpeed = 0;
+            traciVehicle->setCACCConstantSpacing(CACCSpacing);
         }
 
         //Initialize the reading from driving simulator (assuming car is driving with ACC)
         if (myPlatoonName.find("platoon") == std::string::npos && VTIcontrol) {
-            traciVehicle->setActiveController(Plexe::DRIVER);
-            ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855); //can either end with .19 or . 51
+            traciVehicle->setActiveController(Plexe::CC);
+            ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855);
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.01), readDS);
         }
         else {
             readDS = 0;
         }
-
-        //new message for making gap
-        makeGap = new cMessage();
-        scheduleAt(simTime() + SimTime(60), makeGap);
 
         //Prevent all platooning vehicles from changing lane
         if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
@@ -106,14 +98,6 @@ void ManualDrivingApp::initialize(int stage) {
 
 void ManualDrivingApp::finish() {
     BaseApp::finish();
-    if (changeSpeed) {
-        cancelAndDelete(changeSpeed);
-        changeSpeed = 0;
-    }
-    if (makeGap) {
-        cancelAndDelete(makeGap);
-        makeGap = 0;
-    }
     if (readDS) {
         cancelAndDelete(readDS);
         readDS = 0;
@@ -127,26 +111,6 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
     //this takes car of feeding data into CACC and reschedule the self message
     BaseApp::handleSelfMsg(msg);
 
-    if (msg == changeSpeed && mySUMOId_int == 0) {
-        //make leader speed oscillate
-        //traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
-        if(simTime() < 60) {
-            traciVehicle->setCruiseControlDesiredSpeed(25);
-        }
-        else {
-            traciVehicle->setCruiseControlDesiredSpeed(30);
-        }
-        scheduleAt(simTime() + SimTime(60), changeSpeed);
-    }
-    if (msg == makeGap && !(strcmp("platoon0", myPlatoonName.c_str()))) {
-        //make 10m gap or 1 seconds headway
-        if (traciVehicle->getActiveController() == Plexe::CACC) {
-            traciVehicle->setCACCConstantSpacing(20);
-        }
-        else {
-            traciVehicle->setGenericInformation(CC_SET_PLOEG_H,&newHeadway,sizeof(double));
-        }
-    }
     if (msg == readDS) {
         uint8_t read_a_byte;
         double speed;
@@ -177,6 +141,8 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         //Control the vehicle with received speed
         //traciVehicle->setACCHeadwayTime(0.0);
         traciVehicle->setSpeed(speed);
+        //traciVehicle->setCruiseControlDesiredSpeed(speed);
+        //traciVehicle->setFixedAcceleration(1,speed);
         //traciVehicle->setGenericInformation(0xb4, &data, sizeof(data));
         traciVehicle->setFixedLane(laneID);
 
