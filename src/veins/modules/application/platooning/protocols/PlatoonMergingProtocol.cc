@@ -195,7 +195,6 @@ void PlatoonMergingProtocol::handleUpperMsg(cMessage *msg) {
     unicast = dynamic_cast<UnicastMessage *>(msg);
     assert(unicast);
 
-
     if (unicast->getType() == UnicastMessageType::iCLCM) {  //get some updates before sending down
         cPacket *enc = unicast->decapsulate();
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);

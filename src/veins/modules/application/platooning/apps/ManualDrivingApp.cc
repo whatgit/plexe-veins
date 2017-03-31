@@ -23,6 +23,7 @@
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
+#include "veins/modules/application/platooning/protocols/ManualDrivingProtocol.h"
 
 Define_Module(ManualDrivingApp);
 
@@ -89,7 +90,7 @@ void ManualDrivingApp::initialize(int stage) {
 
         //Prevent all platooning vehicles from changing lane
         if(myPlatoonName.find("platoon") != std::string::npos) traciVehicle->setLaneChangeAction(Plexe::STAY_IN_CURRENT_LANE);
-
+        closeTheGap = new cMessage();
         //every car must run on its own lane
         //traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
     }
@@ -102,9 +103,60 @@ void ManualDrivingApp::finish() {
         cancelAndDelete(readDS);
         readDS = 0;
     }
+    if (closeTheGap) {
+        cancelAndDelete(closeTheGap);
+        closeTheGap = 0;
+    }
 }
 
 void ManualDrivingApp::onData(WaveShortMessage *wsm) {
+}
+
+void ManualDrivingApp::handleLowerMsg(cMessage *msg) {
+
+    UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
+    ASSERT2(unicast, "received a frame not of type UnicastMessage");
+
+    cPacket *enc = unicast->decapsulate();
+    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    //our vehicle's data
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
+    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
+
+    if (enc->getKind() == BaseProtocol::BEACON_TYPE) {  //Similar to BaseApp
+
+        PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
+        ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
+        if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
+        {
+            //if the message comes from the leader
+            if (epkt->getVehicleId() == 0) {
+                traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+            //if the message comes from the vehicle in front
+            if (epkt->getVehicleId() == mySUMOId_int - 1) {
+                traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+
+        }
+
+        //Maybe add something like tracking the vehicle, making gap, timeouts and so on
+
+    }
+    else if (enc->getKind() == BaseProtocol::DENM_TYPE) {
+        DENM *denm_pkt = dynamic_cast<DENM *>(enc);
+
+        //then variables can be accessed by
+        //mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
+        traciVehicle->setCACCConstantSpacing(2*CACCSpacing);
+        if(!closeTheGap->isScheduled()) scheduleAt(simTime() + SimTime(10), closeTheGap);
+    }
+
+    delete enc;
+    delete unicast;
+
 }
 
 void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
@@ -115,10 +167,9 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         uint8_t read_a_byte;
         double speed;
         int laneID = 0;
+        int intention = 0;
         std::string ds_resp;
         double radar_distance, rel_speed;
-
-        int number = 6;
 
         traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
 
@@ -133,26 +184,41 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         buf >> read_a_byte;
         buf >> read_a_byte;
         buf >> speed;
-//        buf >> read_a_byte;
         buf >> laneID;
-
-        Veins::TraCIBuffer data = Veins::TraCIBuffer() << TYPE_COMPOUND << number << TYPE_STRING << "edge_0_0" << TYPE_INTEGER << laneID << TYPE_DOUBLE << 10.18 << TYPE_DOUBLE << 244.07 << TYPE_DOUBLE << 0.00 << TYPE_BYTE << 0;
+        buf >> intention;
 
         //Control the vehicle with received speed
-        //traciVehicle->setACCHeadwayTime(0.0);
         traciVehicle->setSpeed(speed);
-        //traciVehicle->setCruiseControlDesiredSpeed(speed);
-        //traciVehicle->setFixedAcceleration(1,speed);
-        //traciVehicle->setGenericInformation(0xb4, &data, sizeof(data));
         traciVehicle->setFixedLane(laneID);
+        if(intention != 0)  TriggerDENM(intention, laneID);
 
+        //do something with the received intention
         /*gap_v.record(radar_distance);
         speed_fake_controller.record(speed);*/
 
         scheduleAt(simTime() + SimTime(0.01), readDS);
+    }
+    else if (msg == closeTheGap) {
+        traciVehicle->setCACCConstantSpacing(CACCSpacing);
     }
 }
 
 void ManualDrivingApp::onBeacon(WaveShortMessage* wsm) {
 }
 
+void ManualDrivingApp::TriggerDENM(int myIntention, int myLane) {
+    UnicastMessage *DENM_unicast;
+    DENM *DENM_msg;
+
+    DENM_unicast = new UnicastMessage("", DENM_event);
+    DENM_unicast->setDestination(-1);
+    DENM_unicast->setPriority(2);
+    DENM_unicast->setType(6);
+
+    DENM_msg = new DENM();
+    DENM_msg->setIntention(myIntention);
+    DENM_msg->setMyLane(myLane);
+
+    DENM_unicast->encapsulate(DENM_msg);
+    sendDown(DENM_unicast);
+}

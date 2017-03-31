@@ -20,6 +20,7 @@
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 #include "veins/modules/mobility/traci/TraCIConnection.h"
 #include "veins/modules/mobility/traci/TraCIBuffer.h"
+#include "veins/modules/application/platooning/protocols/ManualDrivingProtocol.h"
 
 class ManualDrivingApp : public BaseApp
 {
@@ -34,6 +35,7 @@ protected:
     virtual void onBeacon(WaveShortMessage* wsm);
     virtual void onData(WaveShortMessage* wsm);
     virtual void handleSelfMsg(cMessage *msg);
+    virtual void handleLowerMsg(cMessage *msg);
 
 private:
 
@@ -51,7 +53,7 @@ private:
     double CACCSpacing;
 
     //message used to tell to read control input from driving simulator
-    cMessage *readDS;
+    cMessage *readDS, *closeTheGap;
 
     double newHeadway;
 
@@ -60,6 +62,8 @@ private:
     std::string ipAddress; //ip address of DS
 
     Veins::TraCIConnection* ds_control;
+
+    void TriggerDENM(int myIntention, int myLane);
 
 };
 
