@@ -93,6 +93,7 @@ void ManualDrivingApp::initialize(int stage) {
         closeTheGap = new cMessage();
         //every car must run on its own lane
         //traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+        mySUMOLeader = 0;
     }
 
 }
@@ -132,7 +133,7 @@ void ManualDrivingApp::handleLowerMsg(cMessage *msg) {
         if(strcmp(epkt->getPlatoonName(), myPlatoonName.c_str()) == 0)
         {
             //if the message comes from the leader
-            if (epkt->getVehicleId() == 0) {
+            if (epkt->getVehicleId() == mySUMOLeader) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
             //if the message comes from the vehicle in front
@@ -150,8 +151,25 @@ void ManualDrivingApp::handleLowerMsg(cMessage *msg) {
 
         //then variables can be accessed by
         //mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
-        traciVehicle->setCACCConstantSpacing(2*CACCSpacing);
-        if(!closeTheGap->isScheduled()) scheduleAt(simTime() + SimTime(10), closeTheGap);
+
+        //Let's try to make the leader speed up
+        if (mySUMOId_int == 0) {
+            //ACC speed is now 120 km/h
+            traciVehicle->setCruiseControlDesiredSpeed(120 / 3.6);
+        }
+        if (mySUMOId_int == 1) {
+            //Switch to ACC
+            traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
+        }
+        if (mySUMOId_int == 2) {
+            //change leader
+            mySUMOLeader = 1;
+        }
+
+        //How to make a gap
+        //traciVehicle->setCACCConstantSpacing(2*CACCSpacing);
+        //if(!closeTheGap->isScheduled()) scheduleAt(simTime() + SimTime(10), closeTheGap);
     }
 
     delete enc;

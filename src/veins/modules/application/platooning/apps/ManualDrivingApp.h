@@ -52,6 +52,8 @@ private:
 
     double CACCSpacing;
 
+    int mySUMOLeader;
+
     //message used to tell to read control input from driving simulator
     cMessage *readDS, *closeTheGap;
 
