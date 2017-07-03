@@ -69,8 +69,8 @@ void SimplePlatooningApp::initialize(int stage) {
             traciVehicle->setActiveController(Plexe::ACC);
 
             //leader speed change
-            changeSpeed = new cMessage();
-            scheduleAt(simTime() + SimTime(40), changeSpeed);
+            //changeSpeed = new cMessage();
+            //scheduleAt(simTime() + SimTime(40), changeSpeed);
             /*
             if(!(SUMO_disturbance || VTIcontrol)) {
                 changeSpeed = new cMessage();
@@ -99,7 +99,7 @@ void SimplePlatooningApp::initialize(int stage) {
         if (mySUMOId_int == 2 && VTIcontrol) {
             traciVehicle->setActiveController(Plexe::ACC);
             traciVehicle->setACCHeadwayTime(0.0);
-            //traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
             ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             readDS = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), readDS);
@@ -114,6 +114,7 @@ void SimplePlatooningApp::initialize(int stage) {
             //test disturbance from SUMO
             traciVehicle->setActiveController(Plexe::ACC);
             traciVehicle->setACCHeadwayTime(0.0);
+            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
             ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855); //can either end with .19 or . 51
             disturb = new cMessage();
             scheduleAt(simTime() + SimTime(0.1), disturb);
@@ -124,8 +125,8 @@ void SimplePlatooningApp::initialize(int stage) {
         }
 
         //new message for making gap
-        makeGap = new cMessage();
-        scheduleAt(simTime() + SimTime(60), makeGap);
+        //makeGap = new cMessage();
+        //scheduleAt(simTime() + SimTime(60), makeGap);
 
         //every car must run on its own lane
         traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
@@ -186,6 +187,8 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	if (msg == readDS) {
         uint8_t read_a_byte;
         double speed;
+        int laneID = 0;
+        int intention = 0;
         std::string ds_resp;
         double radar_distance, rel_speed;
         traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
@@ -202,6 +205,8 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
         buf >> read_a_byte;
         buf >> read_a_byte;
         buf >> speed;
+        buf >> laneID;
+        buf >> intention;
 
         //Control the vehicle with received speed
         //traciVehicle->setACCHeadwayTime(0.0);
@@ -217,6 +222,8 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	    uint8_t read_a_byte;
         double distance;
         double speed;
+        int laneID = 0;
+        int intention = 0;
         std::string ds_resp;
 
         ds_control->sendTCPMessage(Veins::makeTraCICommand(0x20, Veins::TraCIBuffer()));   //send command to request control values from ds (basically speed of ego vehicle)
@@ -228,6 +235,10 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
         buf >> read_a_byte;
         buf >> read_a_byte;
         buf >> distance;
+        buf >> laneID;
+        buf >> intention;
+
+        std::cout << "received" << distance << std::endl;
 
 	    double radar_distance, rel_speed;
 	    double mySpeed, myAcc, controlAcc, posX, posY, time;
@@ -242,6 +253,7 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	        speed = 120/3.6;
 	        traciVehicle->setCruiseControlDesiredSpeed(120/3.6);
 	    }
+	    std::cout << "setting speed " << speed << std::endl;
 
 	    /*gap_d.record(distance);
         gap_v.record(radar_distance);
