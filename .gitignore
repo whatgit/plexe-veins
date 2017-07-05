@@ -3,6 +3,9 @@ src/*.so
 src/**/*_m.h
 src/**/*_m.cc
 
+examples/**/analysis/Makefile
+examples/**/analysis/*.pdf
+
 doc/doxy
 doc/neddoc
 
