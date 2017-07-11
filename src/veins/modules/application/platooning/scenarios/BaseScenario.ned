@@ -38,6 +38,7 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegH @unit("s");
         double ploegKp;
         double ploegKd;
+        double caccSpacing;
 
         //location of the file with vehicle parameters
         string vehicleFile;

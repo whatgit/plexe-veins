@@ -170,6 +170,13 @@ class TraCIScenarioManager : public cSimpleModule
 		BaseWorldUtility* world;
 		BaseConnectionManager* cc;
 
+		/*--- Variables added for connecting with driving simulator ---*/
+        bool useDS; /**< whether to use driving simulator*/
+        std::string ipAddress; //ip address of DS
+		TraCIConnection* ds_connection; //connection for the driving simulator
+		std::string ds_vehicle_id; //id of the vehicle to be controlled by the driving simulator
+		/*---End of variables added for connecting with driving simulator----*/
+
 		uint32_t getCurrentTimeMs(); /**< get current simulation time (in ms) */
 
 		void executeOneTimestep(); /**< read and execute all commands for the next timestep */

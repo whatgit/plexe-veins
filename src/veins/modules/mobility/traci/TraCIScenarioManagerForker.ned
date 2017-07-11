@@ -58,5 +58,8 @@ simple TraCIScenarioManagerForker
         string configFile = default("my.sumo.cfg"); // substitution for $configFile parameter
         int seed = default(-1); // substitution for $seed parameter (-1: current run number)
         int port = default(-1);  // substitution for $port parameter (-1: autodetect)
+        
+        bool useDrivingSimulator = default(false);
+		string IPDS = default("192.168.0.0");
 }
 

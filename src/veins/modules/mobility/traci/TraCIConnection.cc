@@ -276,4 +276,8 @@ double TraCIConnection::omnet2traciAngle(double angle) const {
 	return angle;
 }
 
+void TraCIConnection::sendTCPMessage(std::string msg) {
+    ::send(socket(socketPtr), msg.c_str(), msg.length(), 0);
+}
+
 }

@@ -3,9 +3,11 @@ src/*.so
 src/**/*_m.h
 src/**/*_m.cc
 
+*.anf
+.metadata/*
+
 examples/**/analysis/Makefile
 examples/**/analysis/*.pdf
-#test ssh
 
 doc/doxy
 doc/neddoc

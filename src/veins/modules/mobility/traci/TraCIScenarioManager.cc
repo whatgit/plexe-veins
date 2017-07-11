@@ -198,6 +198,12 @@ void TraCIScenarioManager::initialize(int stage) {
 	std::string roiRoads_s = par("roiRoads");
 	std::string roiRects_s = par("roiRects");
 
+	/* Initialization for connection to driving simulation*/
+	useDS = par("useDrivingSimulator");
+	ipAddress = par("IPDS").stdstringValue();
+	ds_vehicle_id = "platoon0.2"; //id of the vehicle to be controlled by the driving simulator
+	/* End of initialization */
+
 	numVehicles = par("numVehicles").longValue();
 
 	myAddVehicleTimer = new cMessage("myAddVehicleTimer");
@@ -233,6 +239,7 @@ void TraCIScenarioManager::initialize(int stage) {
 	parkingVehicleCount = 0;
 	drivingVehicleCount = 0;
 	autoShutdownTriggered = false;
+
 
 	world = FindModule<BaseWorldUtility*>::findGlobalModule();
 
@@ -355,6 +362,9 @@ void TraCIScenarioManager::handleMessage(cMessage *msg) {
 
 void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 	if (msg == connectAndStartTrigger) {
+	    if (useDS) {
+	        ds_connection = TraCIConnection::connect(ipAddress.c_str(), 8888); //now ip address is in config file
+	    }
 		connection = TraCIConnection::connect(host.c_str(), port);
 		commandIfc = new TraCICommandInterface(*connection);
 		init_traci();
@@ -477,6 +487,10 @@ void TraCIScenarioManager::executeOneTimestep() {
 	MYDEBUG << "Triggering TraCI server simulation advance to t=" << simTime() <<endl;
 
 	uint32_t targetTime = getCurrentTimeMs();
+	std::string ds_resp;
+
+	//This will block here until it receives a message from driving simulator
+	if(useDS) ds_resp = ds_connection->receiveMessage();
 
 	if (targetTime > round(connectAt.dbl() * 1000)) {
 		TraCIBuffer buf = connection->query(CMD_SIMSTEP2, TraCIBuffer() << targetTime);
@@ -747,6 +761,9 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 
 	// make sure we got updates for all attributes
 	if (numRead != 5) return;
+
+	//Send vehicle's data to the driving simulator
+	if (useDS) ds_connection->sendTCPMessage(makeTraCICommand(0x02, TraCIBuffer() << objectId << px << py << speed));
 
 	Coord p = connection->traci2omnet(TraCICoord(px, py));
 	if ((p.x < 0) || (p.y < 0)) error("received bad node position (%.2f, %.2f), translated to (%.2f, %.2f)", px, py, p.x, p.y);

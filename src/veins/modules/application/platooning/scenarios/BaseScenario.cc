@@ -33,6 +33,7 @@ void BaseScenario::initialize(int stage) {
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
+		caccSpacing = par("caccSpacing").doubleValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
 		if (useRealisticEngine) {
@@ -75,6 +76,7 @@ void BaseScenario::initialize(int stage) {
 		else {
 			traciVehicle->setActiveController(controller);
 			traciVehicle->setACCHeadwayTime(accHeadway);
+			traciVehicle->setCACCConstantSpacing(caccSpacing);
 		}
 		//set the current lane
 		traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
