@@ -28,7 +28,6 @@ class PlatoonMergingProtocol : public BaseProtocol
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
 		cMessage *sendiCLCM;
-		cMessage *startMerge; //Event to start the scenario
 		void sendiCLCMMessage(int destinationAddress);
 
         unsigned long myMIO_ID; //ID of most important object (in front), 0 mean no pair
@@ -45,7 +44,6 @@ class PlatoonMergingProtocol : public BaseProtocol
 	public:
 		PlatoonMergingProtocol(){
 		    sendiCLCM = 0;
-		    startMerge = 0;
 		}
 		virtual ~PlatoonMergingProtocol();
 

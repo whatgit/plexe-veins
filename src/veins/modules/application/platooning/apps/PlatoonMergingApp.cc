@@ -40,6 +40,7 @@ void PlatoonMergingApp::initialize(int stage) {
         changeLane = new cMessage("changeLane");
         checkGap = new cMessage("checkGap");
         reformPlatoon = new cMessage("reformPlatoon");
+        startMerge = new cMessage("startMerge");
 
         /** Initialize the rest**/
         GapToFWDPair.setName("gap_to_fwd");
@@ -83,7 +84,7 @@ void PlatoonMergingApp::initialize(int stage) {
         if (myId == 7 || myId == 8) {
             tailVehicleFlag = true; //last vehicle
         }
-
+        scheduleAt(simTime() + SimTime(50), startMerge);
     }
 }
 
@@ -91,9 +92,11 @@ void PlatoonMergingApp::finish() {
     cancelAndDelete(changeLane);
     cancelAndDelete(checkGap);
     cancelAndDelete(reformPlatoon);
+    cancelAndDelete(startMerge);
     changeLane = 0;
     checkGap = 0;
     reformPlatoon = 0;
+    startMerge = 0;
 	BaseApp::finish();
 }
 
@@ -103,6 +106,10 @@ void PlatoonMergingApp::onData(WaveShortMessage *wsm) {
 void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 	BaseApp::handleSelfMsg(msg);
 
+
+    if (msg == startMerge) {
+        mergeRequestFlag = true;
+    }
     if (msg == changeLane) {
         //if(mySUMOId_int == 0) {
         if(1 == 0) {
@@ -172,18 +179,16 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
     double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
     traciVehicle->getRadarMeasurements(distance, relSpeed);
-
     if (enc->getKind() == BaseProtocol::BEACON_TYPE) {  //Similar to BaseApp
-
         PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
         ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
-        if (!positionHelper->isLeader() && epkt->getVehicleId() == myMIO_ID) {
+        if (!(positionHelper->isLeader()) && epkt->getVehicleId() == myMIO_ID) {
             traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
         }
-        if(epkt->getMyPlatoonID() == positionHelper->getPlatoonId())
+        if(positionHelper->isInSamePlatoon(epkt->getVehicleId()))
         {
             //if the message comes from the pace maker (OPC), position 0 in the platoon
-            if (epkt->getVehicleId() == positionHelper->getMemberId(0)) {
+            if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
             }
         }
@@ -233,6 +238,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
 
     }
     else if (enc->getKind() == BaseProtocol::iCLCM_TYPE) {
+        std::cout<< "I received ICLCM Message !!!!" << std::endl;
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);
         mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
 

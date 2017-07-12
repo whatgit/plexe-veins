@@ -16,6 +16,8 @@
 
 #include "PlatoonMergingProtocol.h"
 
+#include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+
 Define_Module(PlatoonMergingProtocol)
 
 void PlatoonMergingProtocol::initialize(int stage) {
@@ -24,7 +26,6 @@ void PlatoonMergingProtocol::initialize(int stage) {
 	if (stage == 0) {
 
        sendiCLCM = new cMessage("sendiCLCM");
-       startMerge = new cMessage("startMerge");
 
        myMIO_ID = 0; //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
        myMIO_RANGE = 65535; //distance to MIO, 65535 mean n/a
@@ -42,7 +43,6 @@ void PlatoonMergingProtocol::initialize(int stage) {
        SimTime offset = SimTime(uniform(0.001,1.0));
        scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
        scheduleAt(simTime() + beaconingInterval + beginTime + offset, sendiCLCM);
-       scheduleAt(simTime() + SimTime(50), startMerge);
 
 	}
 }
@@ -50,14 +50,15 @@ void PlatoonMergingProtocol::initialize(int stage) {
 void PlatoonMergingProtocol::handleSelfMsg(cMessage *msg) {
 
 	BaseProtocol::handleSelfMsg(msg);
-
-	 if (msg == sendiCLCM) {
+	if (msg == sendBeacon) {
+        sendPlatooningMessage(-1);
+        scheduleAt(simTime() + beaconingInterval, sendBeacon);
+    }
+	if (msg == sendiCLCM) {
 	    sendiCLCMMessage(-1);
         scheduleAt(simTime() + beaconingInterval, sendiCLCM);
     }
-    if (msg == startMerge) {
-        mergeRequestFlag = true;
-	}
+
 }
 
 void PlatoonMergingProtocol::sendiCLCMMessage(int destinatinAddress) {
@@ -71,7 +72,7 @@ void PlatoonMergingProtocol::sendiCLCMMessage(int destinatinAddress) {
     iCLCM_unicast = new UnicastMessage("", iCLCM_TYPE);
     iCLCM_unicast->setDestination(-1);
     iCLCM_unicast->setPriority(priority);
-    iCLCM_unicast->setType(5);
+    iCLCM_unicast->setChannel(Channels::CCH);
 
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
     iCLCM_msg = new ICLCM();
@@ -106,7 +107,7 @@ void PlatoonMergingProtocol::handleUpperMsg(cMessage *msg) {
     unicast = dynamic_cast<UnicastMessage *>(msg);
     assert(unicast);
 
-    if (unicast->getType() == UnicastMessageType::iCLCM) {  //get some updates before sending down
+    if (unicast->getKind() == iCLCM_TYPE) {  //get some updates before sending down
         cPacket *enc = unicast->decapsulate();
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);
         myMIO_ID = iclcm_pkt->getMIO_ID();

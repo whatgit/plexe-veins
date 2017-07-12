@@ -5,6 +5,7 @@ src/**/*_m.cc
 
 *.anf
 .metadata/*
+*.tkenvlog
 
 examples/**/analysis/Makefile
 examples/**/analysis/*.pdf

@@ -45,6 +45,7 @@ class PlatoonMergingApp : public BaseApp
         cMessage *changeLane;
         cMessage *checkGap;
         cMessage *reformPlatoon;
+        cMessage *startMerge; //Event to start the scenario
 
 		virtual void handleSelfMsg(cMessage *msg);
 

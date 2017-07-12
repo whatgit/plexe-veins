@@ -209,37 +209,41 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	PlatooningBeacon *epkt;
+	ICLCM *iCLCM_pkt;
 
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
 	cPacket *enc = unicast->decapsulate();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-	epkt = dynamic_cast<PlatooningBeacon *>(enc);
+	if (unicast->getKind() == BEACON_TYPE) {
+	    epkt = dynamic_cast<PlatooningBeacon *>(enc);
+        if (epkt) {
 
-	if (epkt) {
+            //invoke messageReceived() method of subclass
+            messageReceived(epkt, unicast);
 
-		//invoke messageReceived() method of subclass
-		messageReceived(epkt, unicast);
+            if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
+                //check if this is at least the second message we have received
+                if (lastLeaderMsgTime.dbl() > 0) {
+                    leaderDelayOut.record(simTime() - lastLeaderMsgTime);
+                    leaderDelayIdOut.record(myId);
+                }
+                lastLeaderMsgTime = simTime();
 
-		if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
-			//check if this is at least the second message we have received
-			if (lastLeaderMsgTime.dbl() > 0) {
-				leaderDelayOut.record(simTime() - lastLeaderMsgTime);
-				leaderDelayIdOut.record(myId);
-			}
-			lastLeaderMsgTime = simTime();
-
-		}
-		if (positionHelper->getFrontId() == epkt->getVehicleId()) {
-			//check if this is at least the second message we have received
-			if (lastFrontMsgTime.dbl() > 0) {
-				frontDelayOut.record(simTime() - lastFrontMsgTime);
-				frontDelayIdOut.record(myId);
-			}
-			lastFrontMsgTime = simTime();
-		}
-
+            }
+            if (positionHelper->getFrontId() == epkt->getVehicleId()) {
+                //check if this is at least the second message we have received
+                if (lastFrontMsgTime.dbl() > 0) {
+                    frontDelayOut.record(simTime() - lastFrontMsgTime);
+                    frontDelayIdOut.record(myId);
+                }
+                lastFrontMsgTime = simTime();
+            }
+        }
+	}
+	else if (unicast->getKind() == iCLCM_TYPE) {
+	    iCLCM_pkt = dynamic_cast<ICLCM *>(enc);
 	}
 
 	//find the application responsible for this beacon
