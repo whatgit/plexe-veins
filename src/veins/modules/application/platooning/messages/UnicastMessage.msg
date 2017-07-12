@@ -18,6 +18,7 @@
 enum UnicastMessageType {
 	DATA = 0;
 	ACK = 1;
+	iCLCM = 2;
 };
 
 //

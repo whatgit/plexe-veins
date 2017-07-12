@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2014-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -87,7 +86,6 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
                 automated.position = currentPos + laneOffset[l];
                 automated.lane = l;
                 addVehicleToQueue(0, automated);
-                std::cout << "when adding, the currentPos is " << currentPos << " m" << std::endl;
             }
             currentCar++;
             if (currentCar == platoonSize && i != (nCars/nLanes)-1) {
@@ -100,10 +98,7 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
                 currentPos -= (4 + distance);
             }
     }
-    std::cout << "at the end of loop, currentPos is " << currentPos << " m" << std::endl;
     if (nCars % nLanes != 0) {
-        std::cout << "not equal platoon with " << nCars % nLanes << " more car(s)" << std::endl;
-        std::cout << "extra vehicle currentPos is " << currentPos << " m" << std::endl;
         automated.position = currentPos + laneOffset[0];
         automated.lane = 0;
         addVehicleToQueue(0, automated);

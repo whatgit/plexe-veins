@@ -189,6 +189,8 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setVehicleId(myId);
 	pkt->setPositionX(position.x);
 	pkt->setPositionY(position.y);
+	pkt->setSUMOpositionX(sumoPosX);
+	pkt->setSUMOpositionY(sumoPosY);
 	//set the time to now
 	pkt->setTime(time);
 	//i generated the message, i send it
@@ -196,6 +198,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setKind(BEACON_TYPE);
 	pkt->setByteLength(packetSize);
 	pkt->setSequenceNumber(seq_n++);
+	pkt->setMyPlatoonID(positionHelper->getPlatoonId());
 
 	//put platooning beacon into the message for the UnicastProtocol
 	unicast->encapsulate(pkt);
