@@ -84,6 +84,10 @@ void PlatoonMergingApp::initialize(int stage) {
         if (myId == 7 || myId == 8) {
             tailVehicleFlag = true; //last vehicle
         }
+
+        //Register application !!, otherwise no message will be received
+        protocol->registerApplication(BaseProtocol::iCLCM_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
+
         scheduleAt(simTime() + SimTime(50), startMerge);
     }
 }
@@ -238,7 +242,6 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
 
     }
     else if (enc->getKind() == BaseProtocol::iCLCM_TYPE) {
-        std::cout<< "I received ICLCM Message !!!!" << std::endl;
         ICLCM *iclcm_pkt = dynamic_cast<ICLCM *>(enc);
         mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
 
