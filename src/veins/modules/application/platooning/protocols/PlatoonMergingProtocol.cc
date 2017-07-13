@@ -113,6 +113,7 @@ void PlatoonMergingProtocol::handleUpperMsg(cMessage *msg) {
         myMIO_ID = iclcm_pkt->getMIO_ID();
         myFWDPairID = iclcm_pkt->getFWDPairID();
         myBWDPairID = iclcm_pkt->getBWDPairID();
+        mergeRequestFlag = iclcm_pkt->getMergeRequestFlag();
         Merging_flag = iclcm_pkt->getMergingFlag();
         STOM_flag = iclcm_pkt->getSTOMFlag();
         headVehicleFlag = iclcm_pkt->getHeadVehicle();

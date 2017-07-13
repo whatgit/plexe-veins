@@ -31,6 +31,8 @@ void PlatoonMergingApp::initialize(int stage) {
     if (stage == 1) {
         normalCACCSpacing = par("caccSpacing").doubleValue();
         normalHeadway = par("ploegH").doubleValue();
+        GapMakingKp = par("gapKp").doubleValue();
+        SafeGap = par("safeGap").doubleValue();
 
         currentGapToFWDPair = 0;
         myTargetGap = 0;
@@ -113,6 +115,7 @@ void PlatoonMergingApp::handleSelfMsg(cMessage *msg) {
 
     if (msg == startMerge) {
         mergeRequestFlag = true;
+        UpdateProtocolParam();
     }
     if (msg == changeLane) {
         //if(mySUMOId_int == 0) {
@@ -157,18 +160,20 @@ void PlatoonMergingApp::UpdateProtocolParam() {
     iCLCM_unicast = new UnicastMessage("", BaseProtocol::iCLCM_TYPE);
     iCLCM_unicast->setDestination(-1);
     iCLCM_unicast->setPriority(2);  //I guess...
-    iCLCM_unicast->setType(5);
+    iCLCM_unicast->setChannel(Channels::CCH);
 
     iCLCM_msg = new ICLCM();
     iCLCM_msg->setMIO_ID(myMIO_ID); //ID of most important object (in another lane), basically your pair in B2A phase, 0 mean no pair
     iCLCM_msg->setFWDPairID(myFWDPairID); //ID of the forward pair in A2B phase, 0 mean no pair
     iCLCM_msg->setBWDPairID(myBWDPairID); //ID of the backward pair in A2B phase, 0 mean no pair
+    iCLCM_msg->setMergeRequestFlag(mergeRequestFlag);
     iCLCM_msg->setMergingFlag(Merging_flag);
     iCLCM_msg->setSTOMFlag(STOM_flag);
     iCLCM_msg->setHeadVehicle(headVehicleFlag);
     iCLCM_msg->setTailVehicle(tailVehicleFlag);
+    iCLCM_msg->setKind(BaseProtocol::iCLCM_TYPE);
     iCLCM_unicast->encapsulate(iCLCM_msg);
-    sendDown(iCLCM_unicast);  //send up to the application layer
+    sendDown(iCLCM_unicast);  //send up to the protocol layer
 }
 
 void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
@@ -189,8 +194,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
         if (!(positionHelper->isLeader()) && epkt->getVehicleId() == myMIO_ID) {
             traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
         }
-        if(positionHelper->isInSamePlatoon(epkt->getVehicleId()))
-        {
+        if(positionHelper->isInSamePlatoon(epkt->getVehicleId())) {
             //if the message comes from the pace maker (OPC), position 0 in the platoon
             if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
                 traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
@@ -201,7 +205,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             //if merge is requested and we are in platoon 0 ("right lane")
             if(mergeRequestFlag && (epkt->getSUMOpositionX() > sumoPosX) && (myFWDPairID == 0) && (positionHelper->getPlatoonId() == 0)) {
                 //find a forward pair (B2A)
-                if((epkt->getSUMOpositionX() - sumoPosX) < currentCACCSpacing) {
+                if((epkt->getSUMOpositionX() - sumoPosX) < (normalCACCSpacing+4)) { //4 is length of the vehicle
                     myFWDPairID = epkt->getVehicleId();
                     UpdateProtocolParam();
                 }
@@ -229,6 +233,7 @@ void PlatoonMergingApp::handleLowerMsg(cMessage *msg) {
             else {
                 currentCACCSpacing = distance + GapMakingKp*(SafeGap - currentGapToFWDPair);
                 currentHeadway = (currentCACCSpacing - 2) / speed;
+                //std::cout << "Setting spacing to " << currentCACCSpacing << std::endl;
                 traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
                 traciVehicle->setCACCConstantSpacing(currentCACCSpacing);
             }

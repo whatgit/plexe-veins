@@ -26,6 +26,8 @@ simple PlatoonMergingApp like BaseApp
         double simulationDuration @unit("s");
         double caccSpacing;
         double ploegH;
+        double gapKp = default(2);
+        double safeGap = default(20);
 
         @display("i=block/app2");
         @class(PlatoonMergingApp);
