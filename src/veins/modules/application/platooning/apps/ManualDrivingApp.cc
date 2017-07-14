@@ -30,7 +30,7 @@ void ManualDrivingApp::initialize(int stage) {
 	if (stage == 1) {
 	    ipAddress = par("IP_DS").stdstringValue();
 	    if (traciVehicle->getVType() == "manual_car") {
-            traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setActiveController(Plexe::CC);
             ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855);
             readDS = new cMessage("readDS");
             scheduleAt(simTime() + SimTime(0.01), readDS);
