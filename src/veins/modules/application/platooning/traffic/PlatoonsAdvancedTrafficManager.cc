@@ -34,7 +34,11 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		platoonLeaderHeadway = par("platoonLeaderHeadway").doubleValue();
 		platooningVType = par("platooningVType").stdstringValue();
 		insertPlatoonMessage = new cMessage("");
+		insertManualCarMessage = new cMessage("");
+		nManualCars = par("nManualCars").longValue();
+		laneManualCars = par("laneManualCars").longValue();
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
+		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 
 	}
 
@@ -45,6 +49,7 @@ void PlatoonsAdvancedTrafficManager::scenarioLoaded() {
 	automated.lane = -1;
 	automated.position = 0;
 	automated.speed = platoonInsertSpeed/3.6;
+
 }
 
 void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
@@ -54,6 +59,9 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
 	if (msg == insertPlatoonMessage) {
 		insertPlatoons();
 	}
+	if (msg == insertManualCarMessage) {
+        insertManualCars();
+    }
 
 }
 
@@ -108,10 +116,22 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 
 }
 
+void PlatoonsAdvancedTrafficManager::insertManualCars() {
+    manual.id = findVehicleTypeIndex("manual_car");
+    manual.lane = 1;
+    manual.position = 0;
+    manual.speed = 0;
+    addVehicleToQueue(0, manual);
+}
+
 void PlatoonsAdvancedTrafficManager::finish() {
 	TraCIBaseTrafficManager::finish();
 	if (insertPlatoonMessage) {
 		cancelAndDelete(insertPlatoonMessage);
 		insertPlatoonMessage = 0;
 	}
+	if (insertManualCarMessage) {
+        cancelAndDelete(insertManualCarMessage);
+        insertManualCarMessage = 0;
+    }
 }

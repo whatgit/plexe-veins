@@ -32,6 +32,11 @@ simple PlatoonsAdvancedTrafficManager like TraCIBaseTrafficManager {
         int nLanes;
         //sumo vehicle type for platooning cars
         string platooningVType;
+        
+        //for driving simulator integration
+        int nManualCars = default(0);
+        int laneManualCars = default(1);         
+        
         //insert distance and headway. distance is computed as:
         //dist = insertHeadway * insertSpeed + insertDistance
         double platoonInsertDistance @unit("m") = default(5m);

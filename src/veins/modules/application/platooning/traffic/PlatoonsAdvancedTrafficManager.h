@@ -29,6 +29,7 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 
 		PlatoonsAdvancedTrafficManager() {
 			insertPlatoonMessage = 0;
+			insertManualCarMessage = 0;
 			platoonInsertDistance = 0;
 			platoonInsertHeadway = 0;
 			platoonInsertSpeed = 0;
@@ -37,21 +38,24 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 			platoonSize = 0;
 			nCars = 0;
 			nLanes = 0;
+			nManualCars = 0;
+			laneManualCars = 0;
 		}
 
 	protected:
 
 		//this is used to start traffic generation
-		cMessage *insertPlatoonMessage;
+		cMessage *insertPlatoonMessage, *insertManualCarMessage;
 
 		void insertPlatoons();
+		void insertManualCars();
 
 		virtual void handleSelfMsg(cMessage *msg);
 
 		SimTime platoonInsertTime;
 		double platoonInsertSpeed;
 		//vehicles to be inserted
-		struct Vehicle automated;
+		struct Vehicle automated, manual;
 
 		//total number of vehicles to be injected
 		int nCars;
@@ -65,6 +69,10 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 		double platoonInsertHeadway;
 		//headway for leader vehicles
 		double platoonLeaderHeadway;
+		//number of manual car(s) driven by driving simulator
+		int nManualCars;
+		//which lane to put it?
+		int laneManualCars;
 		//sumo vehicle type of platooning cars
 		std::string platooningVType;
 

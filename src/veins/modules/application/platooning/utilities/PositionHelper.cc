@@ -24,14 +24,24 @@ void PositionHelper::initialize(int stage) {
 	BasePositionHelper::initialize(stage);
 
 	if (stage == 0) {
-		nCars = par("nCars").longValue();
-		myId = getIdFromExternalId(getExternalId());
-		leaderId = getPlatoonLeader(myId, nLanes, platoonSize);
-		leader = myId == leaderId;
-		frontId = getFrontVehicle(myId, nLanes, platoonSize);
-		position = getPositionInPlatoon(myId, nLanes, platoonSize);
-		platoonId = getPlatoonNumber(myId, nLanes, platoonSize);
-		platoonLane = getPlatoonLane(myId, nLanes);
+	    nCars = par("nCars").longValue();
+	    if (strcmp(traciVehicle->getVType().c_str(), "platoon_vehicle") == 0) {
+            myId = getIdFromExternalId(getExternalId());
+            leaderId = getPlatoonLeader(myId, nLanes, platoonSize);
+            leader = myId == leaderId;
+            frontId = getFrontVehicle(myId, nLanes, platoonSize);
+            position = getPositionInPlatoon(myId, nLanes, platoonSize);
+            platoonId = getPlatoonNumber(myId, nLanes, platoonSize);
+            platoonLane = getPlatoonLane(myId, nLanes);
+	    }
+	    else {
+	        myId = getIdFromExternalId(getExternalId()) + nCars;
+	        leaderId = -1;
+	        frontId = -1;
+	        platoonId = -1;
+	        platoonLane = -1;
+	        position = -1;
+	    }
 	}
 
 }
