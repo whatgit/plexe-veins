@@ -68,6 +68,10 @@ class PlatoonsTrafficManager : public TraCIBaseTrafficManager
 		double platoonLeaderHeadway;
 		//sumo vehicle type of platooning cars
 		std::string platooningVType;
+		//if you don't want platoon to start at 0
+		double platoonInsertOffset;
+		//lenght of the vehicle
+		double platooningVehiclesLength;
 
 		virtual void scenarioLoaded();
 

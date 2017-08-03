@@ -6,6 +6,12 @@ src/**/*_m.cc
 *.anf
 .metadata/*
 *.tkenvlog
+.csettings/*
+.nedexclusions
+.oppfeaturestate
+.settings/*
+.cproject
+.oppbuildspec
 
 examples/**/analysis/Makefile
 examples/**/analysis/*.pdf

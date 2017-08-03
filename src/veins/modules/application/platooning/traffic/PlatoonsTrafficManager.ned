@@ -39,5 +39,7 @@ simple PlatoonsTrafficManager like TraCIBaseTrafficManager {
         double platoonInsertDistance @unit("m") = default(5m);
         double platoonInsertHeadway @unit("s") = default(0s);
         double platoonLeaderHeadway @unit("s") = default(1.2s);
+        double platoonOffset @unit("m") = default(0m);
+        double platoonVLength @unit("m") = default(4m);
         @class(PlatoonsTrafficManager);
 }

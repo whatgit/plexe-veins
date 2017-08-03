@@ -25,6 +25,7 @@ void PlatoonsTrafficManager::initialize(int stage) {
 
 	if (stage == 0) {
 
+
 		nCars = par("nCars").longValue();
 		platoonSize = par("platoonSize").longValue();
 		nLanes = par("nLanes").longValue();
@@ -34,6 +35,9 @@ void PlatoonsTrafficManager::initialize(int stage) {
 		platoonInsertHeadway = par("platoonInsertHeadway").doubleValue();
 		platoonLeaderHeadway = par("platoonLeaderHeadway").doubleValue();
 		platooningVType = par("platooningVType").stdstringValue();
+		platoonInsertOffset = par("platoonOffset").doubleValue();
+        platooningVehiclesLength = par("platoonVLength").doubleValue();
+
 		insertPlatoonMessage = new cMessage("");
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 
@@ -65,7 +69,7 @@ void PlatoonsTrafficManager::insertPlatoons() {
 	//total number of platoons per lane
 	int nPlatoons = nCars / platoonSize / nLanes;
 	//length of 1 platoon
-	double platoonLength = platoonSize * 4 + (platoonSize - 1) * distance;
+	double platoonLength = platoonSize * platooningVehiclesLength + (platoonSize - 1) * distance;
 	//inter-platoon distance
 	double platoonDistance = platoonInsertSpeed / 3.6 * platoonLeaderHeadway;
 	//total length for one lane
@@ -76,7 +80,9 @@ void PlatoonsTrafficManager::insertPlatoons() {
 	for (int l = 0; l < nLanes; l++)
 		laneOffset[l] = uniform(0, 20);
 
-	double currentPos = totalLength;
+	std::cout << "Offset is " << platoonInsertOffset;
+
+	double currentPos = platoonInsertOffset + totalLength;
 	int currentCar = 0;
 	for (int i = 0; i < nCars/nLanes; i++) {
 		for (int l = 0; l < nLanes; l++) {
@@ -88,11 +94,11 @@ void PlatoonsTrafficManager::insertPlatoons() {
 		if (currentCar == platoonSize) {
 			currentCar = 0;
 			//add inter platoon gap
-			currentPos -= (platoonDistance + 4);
+			currentPos -= (platoonDistance + platooningVehiclesLength);
 		}
 		else {
 			//add intra platoon gap
-			currentPos -= (4 + distance);
+			currentPos -= (platooningVehiclesLength + distance);
 		}
 	}
 
