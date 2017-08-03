@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -19,18 +18,14 @@ package org.car2x.veins.modules.application.platooning.scenarios;
 
 import org.car2x.veins.modules.application.platooning.scenarios.BaseScenario;
 
-simple SinusoidalScenario like BaseScenario
+simple PlatoonMergingScenario like BaseScenario
 {
     parameters:
 
-        //oscillation frequency
-        double leaderOscillationFrequency @unit("Hz") = default(0.2Hz);
-        //oscillation ampliture
-        double oscillationAmplitude @unit("kmph") = default(10kmph);
         //average speed
         double leaderSpeed @unit("kmph") = default(100kmph);
         //start oscillation at time
-        double startOscillating @unit("s") = default(5s);
+        double startMerging @unit("s") = default(5s);
 
         //base scenario inherited parameters
         //controller used by followers
@@ -60,7 +55,7 @@ simple SinusoidalScenario like BaseScenario
         int headerLength @unit("bit") = default(0bit);
 
         @display("i=block/app2");
-        @class(SinusoidalScenario);
+        @class(PlatoonMergingScenario);
 
     gates:
         input lowerLayerIn; // from network layer

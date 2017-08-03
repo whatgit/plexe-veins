@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,17 +14,25 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-packet PlatooningBeacon {
-	//id of the originator
-	int vehicleId = 0;
-	//id of the sender. relayerId == vehicleId on first hope
-	int relayerId = 0;
-	double acceleration = 0;
-	double speed = 0;
-	double positionX = 0;
-	double positionY = 0;
-	double SUMOpositionX = 0;
-	double SUMOpositionY = 0;
-	double time = 0;
-	int sequenceNumber = 0;
-}
+#ifndef PLATOONMERGINGSCENARIO_H_
+#define PLATOONMERGINGSCENARIO_H_
+
+#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
+
+class PlatoonMergingScenario : public BaseScenario
+{
+
+	public:
+
+		virtual void initialize(int stage);
+		virtual void finish();
+
+		PlatoonMergingScenario() {}
+
+	protected:
+
+		virtual void handleSelfMsg(cMessage *msg);
+
+};
+
+#endif

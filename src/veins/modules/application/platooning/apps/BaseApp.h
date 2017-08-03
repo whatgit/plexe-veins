@@ -22,6 +22,7 @@
 
 #include "veins/modules/application/platooning/UnicastProtocol.h"
 #include "veins/modules/application/platooning/messages/PlatooningBeacon_m.h"
+#include "veins/modules/application/platooning/messages/ICLCM_m.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 

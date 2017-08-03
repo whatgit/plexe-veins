@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,17 +14,26 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-packet PlatooningBeacon {
-	//id of the originator
-	int vehicleId = 0;
-	//id of the sender. relayerId == vehicleId on first hope
-	int relayerId = 0;
-	double acceleration = 0;
-	double speed = 0;
-	double positionX = 0;
-	double positionY = 0;
-	double SUMOpositionX = 0;
-	double SUMOpositionY = 0;
-	double time = 0;
-	int sequenceNumber = 0;
+package org.car2x.veins.modules.application.platooning.apps;
+
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
+
+simple PlatoonMergingApp like BaseApp
+{
+    parameters:
+        int headerLength @unit("bit") = default(0 bit);
+        //duration of simulation
+        double simulationDuration @unit("s");
+        double caccSpacing;
+        double ploegH;
+        double gapKp = default(2);
+        double safeGap = default(20);
+
+        @display("i=block/app2");
+        @class(PlatoonMergingApp);
+    gates:
+        input lowerLayerIn;
+        output lowerLayerOut;
+        input lowerControlIn;
+        output lowerControlOut;
 }
