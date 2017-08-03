@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<basedir path="examples/platooning/sumocfg" />
+	<copy file="offramp.net.xml" />
+	<copy file="offramp.rou.xml" />
+	<copy file="offramp.sumo.cfg" type="config" />
+</launch>
