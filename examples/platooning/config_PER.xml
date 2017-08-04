@@ -4,7 +4,7 @@
 	
 		<AnalogueModel type="PERModel">
 			<parameter name="carrierFrequency" type="double" value="5.890e+9"/>
-			<parameter name="packetErrorRate" type="double" value="0"/>
+			<parameter name="packetErrorRate" type="double" value="0.8"/>
 		</AnalogueModel>
 
 	</AnalogueModels>
