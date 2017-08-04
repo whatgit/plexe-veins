@@ -132,7 +132,7 @@ class Decider80211p: public BaseDecider {
 		virtual DeciderResult* checkIfSignalOk(AirFrame* frame);
 
 		virtual simtime_t processNewSignal(AirFrame* frame);
-
+		cOutVector recordRxPower;
 		/**
 		 * @brief Processes a received AirFrame.
 		 *
@@ -207,7 +207,7 @@ class Decider80211p: public BaseDecider {
 			collisions(0) {
 			phy11p = dynamic_cast<Decider80211pToPhy80211pInterface*>(phy);
 			assert(phy11p);
-
+			recordRxPower.setName("ReceivedRSSI");
 		}
 
 		void setPath(std::string myPath) {
