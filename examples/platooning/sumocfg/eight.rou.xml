@@ -1,7 +1,13 @@
 <routes>
+
+    
 	<vType id="vtypeauto" accel="2.5" decel="6.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" >
-		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="1.5"/>
+		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="2" ccAccel="1.5"/>
 	</vType>
-	<route id="platoon_route" edges="edge_0_0"/>
+	
+	<route id="platoon_route" edges="a1_7to1 a2_1to2 a2_2to3 a2_3to4 a2_4to5 a2_5to6 a2_6to7 a2_7to1 a1_1to2 a1_2to3 a1_3to4 a1_4to5 a1_5to6 a1_6to7"/>	
+	
 	<!--<flow id="platoon" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" number="8" departSpeed="27.77"/>-->
+    
 </routes>
+

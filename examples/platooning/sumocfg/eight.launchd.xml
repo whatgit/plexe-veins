@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<basedir path="examples/platooning/sumocfg" />
+	<copy file="eight.net.xml" />
+	<copy file="eight.rou.xml" />
+	<copy file="eight.sumo.cfg" type="config" />
+</launch>
