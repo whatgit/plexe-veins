@@ -40,6 +40,8 @@ class PlatoonDisaggregationApp : public BaseApp
         //message used to tell the vehicle to resume normal platooning
         cMessage *resumePlatooning;
 
+        double GapSize;
+
 
     public:
         PlatoonDisaggregationApp() {

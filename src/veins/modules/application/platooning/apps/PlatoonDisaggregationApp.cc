@@ -32,6 +32,8 @@ void PlatoonDisaggregationApp::initialize(int stage) {
         disAggregate = new cMessage();
         resumePlatooning = new cMessage();
 
+        GapSize = par("GapSize").doubleValue();
+
         scheduleAt(simTime() + SimTime(10), disAggregate);
 	}
 
@@ -59,10 +61,10 @@ void PlatoonDisaggregationApp::handleSelfMsg(cMessage *msg) {
 
 	if (msg == disAggregate) {
 
-        traciVehicle->setCACCConstantSpacing(50);
+        traciVehicle->setCACCConstantSpacing(GapSize);
 
 	    //Resume in 20 seconds
-		scheduleAt(simTime() + SimTime(20), resumePlatooning);
+		scheduleAt(simTime() + SimTime(40), resumePlatooning);
 	}
 	if (msg == resumePlatooning) {
 
