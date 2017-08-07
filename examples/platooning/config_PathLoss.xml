@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<AnalogueModels>
-	
-		<AnalogueModel type="PERModel">
+		<AnalogueModel type="SimplePathlossModel">
 			<parameter name="carrierFrequency" type="double" value="5.890e+9"/>
-			<parameter name="packetErrorRate" type="double" value="0.8"/>
+			<parameter name="alpha" type="double" value="2"/>
 		</AnalogueModel>
-
 	</AnalogueModels>
 	<Decider type="Decider80211p">
 		<!-- The center frequency on which the phy listens-->

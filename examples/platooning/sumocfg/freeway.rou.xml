@@ -1,5 +1,5 @@
 <routes>
-	<vType id="vtypeauto" vClass="trailer" accel="2.5" decel="6.0" sigma="0.5" length="10" minGap="0" maxSpeed="41" color="0,0,1" probability="1" >
+	<vType id="vtypeauto" vClass="trailer" accel="2.5" decel="6.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="0,0,1" probability="1" >
 		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="5" lanesCount="4" ccAccel="1.5"/>
 	</vType>
 	
