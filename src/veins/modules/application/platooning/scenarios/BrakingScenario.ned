@@ -47,6 +47,14 @@ simple BrakingScenario like BaseScenario
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
         double caccSpacing = default(5);
+        
+        double gcdcKP1 = default(0.872);
+        double gcdcKP2 = default(2.9497);
+        double gcdcKI2 = default(4.3615);
+        double gcdcKP3 = default(0.4981);
+        double gcdcAlpha = default(0.3);
+        double gcdcBeta = default(30);
+        double gcdcDesiredGap = default(20);
 
         //location of the file with vehicle parameters
         string vehicleFile = default("./vehicles.xml");

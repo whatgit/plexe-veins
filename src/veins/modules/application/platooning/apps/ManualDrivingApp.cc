@@ -68,7 +68,6 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         //send command to request control values from ds (basically speed and laneID of ego vehicle)
         ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));
         ds_resp = ds_control->receiveMessage();
-
         Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
         buf >> read_a_byte;
         buf >> read_a_byte;

@@ -35,6 +35,14 @@ void BaseScenario::initialize(int stage) {
 		ploegKd = par("ploegKd").doubleValue();
 		caccSpacing = par("caccSpacing").doubleValue();
 
+		gcdcKP1 = par("gcdcKP1").doubleValue();
+		gcdcKP2 = par("gcdcKP2").doubleValue();
+		gcdcKI2 = par("gcdcKI2").doubleValue();
+		gcdcKP3 = par("gcdcKP3").doubleValue();
+		gcdcAlpha = par("gcdcAlpha").doubleValue();
+		gcdcBeta = par("gcdcBeta").doubleValue();
+		gcdcDesiredGap = par("gcdcDesiredGap").doubleValue();
+
 		useRealisticEngine = par("useRealisticEngine").boolValue();
 		if (useRealisticEngine) {
 			vehicleFile = par("vehicleFile").stdstringValue();
@@ -54,6 +62,9 @@ void BaseScenario::initialize(int stage) {
 		}
 		else if (strcmp(strController, "CONSENSUS") == 0) {
 			controller = Plexe::CONSENSUS;
+		}
+		else if (strcmp(strController, "HH_GCDC") == 0) {
+		   controller = Plexe::HH_GCDC;
 		}
 		else {
 			throw cRuntimeError("Invalid controller selected");
@@ -102,6 +113,15 @@ void BaseScenario::initializeControllers() {
 	traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
 	traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
 	traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+
+	//GCDC's parameters
+    traciVehicle->setGenericInformation(CC_SET_GCDC_KP1, &gcdcKP1, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_KP2, &gcdcKP2, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_KI2, &gcdcKI2, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_KP3, &gcdcKP3, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_OA_alph, &gcdcAlpha, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_OA_beta, &gcdcBeta, sizeof(double));
+    traciVehicle->setGenericInformation(CC_SET_GCDC_GAP, &gcdcDesiredGap, sizeof(double));
 	//consensus parameters
 	int position = positionHelper->getPosition();
 	traciVehicle->setGenericInformation(CC_SET_VEHICLE_POSITION, &position, sizeof(int));

@@ -39,6 +39,14 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegKp;
         double ploegKd;
         double caccSpacing;
+        
+        double gcdcKP1;
+        double gcdcKP2;
+        double gcdcKI2;
+        double gcdcKP3;
+        double gcdcAlpha;
+        double gcdcBeta;
+        double gcdcDesiredGap;
 
         //location of the file with vehicle parameters
         string vehicleFile;
