@@ -19,6 +19,8 @@ doc/neddoc
 
 /out
 
+.csettings/
+
 tests/**/results
 tests/**/.tkenvrc
 tests/**/out.tmp

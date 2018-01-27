@@ -1,9 +1,13 @@
 <routes>
-	<vType id="platoon_vehicle" accel="2.5" decel="6.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" >
-		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="1.5"/>
+	<vType id="platoon_vehicle" accel="2.5" decel="5.88" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" >
+		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="5.88" lanesCount="4" ccAccel="1.5"/>
 	</vType>
 
 	<vType id="manual_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
+		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
+	</vType>
+
+	<vType id="obstacle_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
 		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
 	</vType>
 	
