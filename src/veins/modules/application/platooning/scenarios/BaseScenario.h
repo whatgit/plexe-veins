@@ -35,6 +35,8 @@ class BaseScenario : public BaseApplLayer
 		virtual void finish();
 
 	protected:
+		//id of this vehicle
+		int myId;
 
 		//traci interfaces
 		Veins::TraCIMobility* mobility;

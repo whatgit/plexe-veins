@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 02/21/18 15:43:31 by SUMO netconvert Version 0.30.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <node-files value="opposite.nod.xml"/>
+        <edge-files value="opposite.edg.xml"/>
+    </input>
+
+    <output>
+        <output-file value="opposite.net.xml"/>
+    </output>
+
+</configuration>
+-->
+
+<net version="0.27" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="0.00,0.00,1000.00,0.00" origBoundary="0.00,0.00,1000.00,0.00" projParameter="!"/>
+
+    <edge id=":a_0" function="internal">
+        <lane id=":a_0_0" index="0" speed="90.11" length="4.82" shape="0.00,1.65 -1.24,0.83 -1.65,0.00 -1.24,-0.83 0.00,-1.65"/>
+    </edge>
+    <edge id=":b_0" function="internal">
+        <lane id=":b_0_0" index="0" speed="90.11" length="4.82" shape="1000.00,-1.65 1001.24,-0.83 1001.65,0.00 1001.24,0.83 1000.00,1.65"/>
+    </edge>
+
+    <edge id="e1" from="a" to="b" priority="1">
+        <lane id="e1_0" index="0" speed="90.11" length="1000.00" shape="0.00,-1.65 1000.00,-1.65">
+            <neigh lane="e2_0"/>
+        </lane>
+    </edge>
+    <edge id="e2" from="b" to="a" priority="1">
+        <lane id="e2_0" index="0" speed="90.11" length="1000.00" shape="1000.00,1.65 0.00,1.65">
+            <neigh lane="e1_0"/>
+        </lane>
+    </edge>
+
+    <junction id="a" type="priority" x="0.00" y="0.00" incLanes="e2_0" intLanes=":a_0_0" shape="0.00,-0.05 0.00,3.25 0.00,0.05">
+        <request index="0" response="0" foes="0" cont="0"/>
+    </junction>
+    <junction id="b" type="priority" x="1000.00" y="0.00" incLanes="e1_0" intLanes=":b_0_0" shape="1000.00,0.05 1000.00,-3.25 1000.00,-0.05">
+        <request index="0" response="0" foes="0" cont="0"/>
+    </junction>
+
+    <connection from="e1" to="e2" fromLane="0" toLane="0" via=":b_0_0" dir="t" state="M"/>
+    <connection from="e2" to="e1" fromLane="0" toLane="0" via=":a_0_0" dir="t" state="M"/>
+
+    <connection from=":a_0" to="e1" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from=":b_0" to="e2" fromLane="0" toLane="0" dir="s" state="M"/>
+
+</net>

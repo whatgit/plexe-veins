@@ -77,6 +77,7 @@ void BaseScenario::initialize(int stage) {
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+		myId = positionHelper->getId();
 		initializeControllers();
 
 		//set the active controller

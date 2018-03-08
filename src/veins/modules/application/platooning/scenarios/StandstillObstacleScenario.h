@@ -55,6 +55,8 @@ class StandstillObstacleScenario : public BaseScenario
 
 		double notification_distance;
 
+		double currentHeadway;
+
 	public:
 		StandstillObstacleScenario() {
 			leaderSpeed = 0;

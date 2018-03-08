@@ -58,9 +58,16 @@ void StandstillObstacleScenario::initialize(int stage) {
             traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
             startingPos = sumoPosX;
             //let the vehicle start from standstill
-            traciVehicle->setCruiseControlDesiredSpeed(0);
-            scheduleAt(startAccelerating, startAccelerationMsg);
+            traciVehicle->setCruiseControlDesiredSpeed(90/3.6);
             scheduleAt(simTime() + startBraking, startBrakingMsg);
+        }
+        else {
+            traciVehicle->setCruiseControlDesiredSpeed(90/3.6);
+        }
+        if (myId == 1) {
+            currentHeadway = (notification_distance-2)/25;    //for 90 km/h
+            traciVehicle->setCACCConstantSpacing(notification_distance);
+            traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &currentHeadway, sizeof(double));
         }
     }
 
@@ -85,12 +92,16 @@ void StandstillObstacleScenario::handleSelfMsg(cMessage *msg) {
         double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime;
         traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
 
-        if(sumoPosX >= startingPos+800-notification_distance) {
+        if(sumoPosX >= startingPos+800) {
             //reached notification distance
-            std::string route_id = traciVehicle->getRouteId();
+            //std::string route_id = traciVehicle->getRouteId();
             //put the obstacle
-            traci->addVehicle("obstacle", "obstacle_car", route_id, simTime(), (sumoPosX+notification_distance+6),0, 0);
+            //traci->addVehicle("obstacle", "obstacle_car", route_id, simTime(), (sumoPosX+notification_distance+6),0, 0);
             //scheduleAt(simTime() + SimTime(0.01), checkMaxBrakingMsg);
+
+            traciVehicle->setSpeed(0);
+            traciVehicle->setFixedAcceleration(1,-5.88);
+            scheduleAt(simTime() + SimTime(0.01), checkMaxBrakingMsg);
         }
         else {
             //keep checking every 0.1 second
@@ -98,6 +109,8 @@ void StandstillObstacleScenario::handleSelfMsg(cMessage *msg) {
         }
     }
     if (msg == checkMaxBrakingMsg) {
-
+        traciVehicle->setSpeed(0);
+        traciVehicle->setFixedAcceleration(1,-5.88);
+        scheduleAt(simTime() + SimTime(0.01), checkMaxBrakingMsg);
     }
 }

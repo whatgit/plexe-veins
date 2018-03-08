@@ -80,7 +80,7 @@ void PlatoonsTrafficManager::insertPlatoons() {
 	int currentCar = 0;
 	for (int i = 0; i < nCars/nLanes; i++) {
 		for (int l = 0; l < nLanes; l++) {
-			automated.position = currentPos + laneOffset[l];
+		    automated.position = currentPos + laneOffset[l];
 			automated.lane = l;
 			addVehicleToQueue(0, automated);
 		}

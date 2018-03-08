@@ -1,0 +1,8 @@
+<edges>
+    <edge id="e1" from="a" to="b" priority="1">
+		<neigh lane="e2_0"/>
+    </edge>
+    <edge id="e2" from="b" to="a" priority="1">
+		<neigh lane="e1_0"/>
+    </edge>
+</edges>

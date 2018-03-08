@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<basedir path="examples/overtaking/sumocfg" />
+	<copy file="opposite.net.xml" />
+	<copy file="opposite.rou.xml" />
+	<copy file="opposite.sumo.cfg" type="config" />
+</launch>
