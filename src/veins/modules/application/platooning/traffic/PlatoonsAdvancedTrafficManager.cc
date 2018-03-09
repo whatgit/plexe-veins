@@ -86,7 +86,7 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 	for (int l = 0; l < nLanes; l++)
 		laneOffset[l] = uniform(0, 20);
 
-	double currentPos = totalLength;
+	double currentPos = totalLength + 4; //+4 in case inserting manual car behind the platoon
 	int currentCar = 0;
 
     for (int i = 0; i < nCars/nLanes; i++) {
@@ -118,7 +118,7 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 
 void PlatoonsAdvancedTrafficManager::insertManualCars() {
     manual.id = findVehicleTypeIndex("manual_car");
-    manual.lane = 1;
+    manual.lane = 0;
     manual.position = 0;
     manual.speed = 0;
     addVehicleToQueue(0, manual);

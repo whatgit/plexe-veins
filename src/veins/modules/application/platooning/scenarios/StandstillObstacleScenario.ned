@@ -18,14 +18,22 @@ package org.car2x.veins.modules.application.platooning.scenarios;
 
 import org.car2x.veins.modules.application.platooning.scenarios.BaseScenario;
 
-simple PlatoonMergingScenario like BaseScenario
+simple StandstillObstacleScenario like BaseScenario
 {
     parameters:
 
         //average speed
-        double leaderSpeed @unit("kmph") = default(100kmph);
-        //start oscillation at time
-        double startMerging @unit("s") = default(5s);
+        double leaderSpeed @unit("kmph") = default(0kmph);
+        //braking deceleration
+        double brakingDeceleration @unit("mpsps") = default(4mpsps);
+        //acceleration deceleration
+        double acceleration @unit("mpsps") = default(4mpsps);
+        //start accelerating at time
+        double startAccelerating @unit("s") = default(5s);
+        //start braking at time
+        double startBraking @unit("s") = default(30s);
+        
+        double notification_d = default(150);
 
         //base scenario inherited parameters
         //controller used by followers
@@ -63,7 +71,7 @@ simple PlatoonMergingScenario like BaseScenario
         int headerLength @unit("bit") = default(0bit);
 
         @display("i=block/app2");
-        @class(PlatoonMergingScenario);
+        @class(StandstillObstacleScenario);
 
     gates:
         input lowerLayerIn; // from network layer

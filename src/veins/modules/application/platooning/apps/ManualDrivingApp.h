@@ -35,6 +35,7 @@ class ManualDrivingApp : public BaseApp
 		cMessage *readDS;
 		std::string ipAddress; //ip address of DS
 		Veins::TraCIConnection* ds_control;
+		bool oppositeDrive;
 
 	public:
 		ManualDrivingApp() {}

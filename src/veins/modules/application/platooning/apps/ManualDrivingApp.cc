@@ -33,6 +33,7 @@ void ManualDrivingApp::initialize(int stage) {
             traciVehicle->setActiveController(Plexe::CC);
             ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855);
             readDS = new cMessage("readDS");
+            oppositeDrive = true;
             scheduleAt(simTime() + SimTime(0.01), readDS);
             std::cout << "found a manual car" << std::endl;
         }
@@ -68,7 +69,6 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         //send command to request control values from ds (basically speed and laneID of ego vehicle)
         ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));
         ds_resp = ds_control->receiveMessage();
-
         Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
         buf >> read_a_byte;
         buf >> read_a_byte;
@@ -81,7 +81,20 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
-        traciVehicle->setFixedLane(laneID);
+        if (oppositeDrive) {
+            if (laneID == 1) {
+                traciVehicle->setFixedLane(-1);
+                traciVehicle->changeRoute("e2",10);
+                std::cout << "trying to change lane from " << traciVehicle->getRoadId() << std::endl;
+            }
+            else {
+                traciVehicle->changeRoute("e1",10);
+            }
+        }
+        else {
+            traciVehicle->setFixedLane(laneID);
+        }
+
         //if(intention != 0)  TriggerDENM(intention, laneID);
 
         //do something with the received intention

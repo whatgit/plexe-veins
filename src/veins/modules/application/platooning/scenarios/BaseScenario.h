@@ -35,6 +35,8 @@ class BaseScenario : public BaseApplLayer
 		virtual void finish();
 
 	protected:
+		//id of this vehicle
+		int myId;
 
 		//traci interfaces
 		Veins::TraCIMobility* mobility;
@@ -61,6 +63,9 @@ class BaseScenario : public BaseApplLayer
 		double ploegH;
 		double ploegKp;
 		double ploegKd;
+
+		//parameters for GCDC controller
+		double gcdcKP1, gcdcKP2, gcdcKI2, gcdcKP3, gcdcAlpha, gcdcBeta, gcdcDesiredGap;
 
 		//location of the file with vehicle parameters
 		std::string vehicleFile;
