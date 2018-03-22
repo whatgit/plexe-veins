@@ -88,21 +88,15 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 	for (int l = 0; l < nLanes; l++)
 		laneOffset[l] = uniform(0, 20);
 
-	double currentPos = totalLength + 4; //+4 in case inserting manual car behind the platoon
+	double currentPos = totalLength; //totalLength + 4 in case inserting manual car behind the platoon
 	int currentCar = 0;
-
-	std::cout << ".......... Rout has " << routeIds.size() << "routes "<< std::endl;
 
     //Go through all the defined routes
     for (int kk = 0; kk < routeIds.size(); kk++) {
-        std::cout << ".......... Comparing " << platoon_route << " with "<< routeIds.at(kk).c_str() << std::endl;
         if(strcmp(platoon_route,routeIds.at(kk).c_str()) == 0) {
             platoon_routeId = kk;
-            std::cout << "************ found the platoon route **********" << std::endl;
         }
-        //std::cout << "The " << kk << "th index is: "<< routeIds.at(kk) << std::endl;
     }
-
 
     for (int i = 0; i < nCars/nLanes; i++) {
             for (int l = 0; l < nLanes; l++) {
@@ -132,11 +126,20 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 }
 
 void PlatoonsAdvancedTrafficManager::insertManualCars() {
+
+    //Go through all the defined routes
+    for (int kk = 0; kk < routeIds.size(); kk++) {
+        if(strcmp(manual_route,routeIds.at(kk).c_str()) == 0) {
+            manual_routeId = kk;
+            std::cout << "********** found manual route **********" << std::endl;
+        }
+    }
+
     manual.id = findVehicleTypeIndex("manual_car");
     manual.lane = 0;
     manual.position = 0;
     manual.speed = 0;
-    addVehicleToQueue(0, manual);
+    addVehicleToQueue(manual_routeId, manual);
 }
 
 void PlatoonsAdvancedTrafficManager::finish() {
