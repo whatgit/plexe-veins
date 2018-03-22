@@ -138,6 +138,7 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
 		for (std::list<std::string>::const_iterator i = routes.begin(); i != routes.end(); ++i) {
 			std::string routeId = *i;
 			EV << routeId << std::endl;
+			std::cout << "Sumo route id " << routeId << " with index " << routeIds.size() << "\n";
 			routeIds.push_back(routeId);
 			std::list<std::string> routeEdges = commandInterface->route(routeId).getRoadIds();
 			std::string firstEdge = *(routeEdges.begin());

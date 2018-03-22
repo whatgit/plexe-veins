@@ -33,13 +33,15 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		platoonInsertHeadway = par("platoonInsertHeadway").doubleValue();
 		platoonLeaderHeadway = par("platoonLeaderHeadway").doubleValue();
 		platooningVType = par("platooningVType").stdstringValue();
+		platoon_route = par("platoonRoute").stringValue();
+		manual_route = par("manualRoute").stringValue();
 		insertPlatoonMessage = new cMessage("");
 		insertManualCarMessage = new cMessage("");
 		nManualCars = par("nManualCars").longValue();
 		laneManualCars = par("laneManualCars").longValue();
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
-		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 
+		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}
 
 }
@@ -89,11 +91,24 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 	double currentPos = totalLength + 4; //+4 in case inserting manual car behind the platoon
 	int currentCar = 0;
 
+	std::cout << ".......... Rout has " << routeIds.size() << "routes "<< std::endl;
+
+    //Go through all the defined routes
+    for (int kk = 0; kk < routeIds.size(); kk++) {
+        std::cout << ".......... Comparing " << platoon_route << " with "<< routeIds.at(kk).c_str() << std::endl;
+        if(strcmp(platoon_route,routeIds.at(kk).c_str()) == 0) {
+            platoon_routeId = kk;
+            std::cout << "************ found the platoon route **********" << std::endl;
+        }
+        //std::cout << "The " << kk << "th index is: "<< routeIds.at(kk) << std::endl;
+    }
+
+
     for (int i = 0; i < nCars/nLanes; i++) {
             for (int l = 0; l < nLanes; l++) {
                 automated.position = currentPos + laneOffset[l];
                 automated.lane = l;
-                addVehicleToQueue(0, automated);
+                addVehicleToQueue(platoon_routeId, automated);
             }
             currentCar++;
             if (currentCar == platoonSize && i != (nCars/nLanes)-1) {
@@ -109,7 +124,7 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
     if (nCars % nLanes != 0) {
         automated.position = currentPos + laneOffset[0];
         automated.lane = 0;
-        addVehicleToQueue(0, automated);
+        addVehicleToQueue(platoon_routeId, automated);
     }
 
 	delete [] laneOffset;
