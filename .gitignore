@@ -3,6 +3,7 @@ src/*.so
 src/**/*_m.h
 src/**/*_m.cc
 
+*.settings
 *.anf
 .metadata/*
 *.tkenvlog
