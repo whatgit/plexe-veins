@@ -33,7 +33,7 @@ void ManualDrivingApp::initialize(int stage) {
             traciVehicle->setActiveController(Plexe::CC);
             ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855);
             readDS = new cMessage("readDS");
-            oppositeDrive = true;
+            oppositeDrive = false;
             scheduleAt(simTime() + SimTime(0.01), readDS);
             std::cout << "found a manual car" << std::endl;
         }
@@ -92,7 +92,8 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
             }
         }
         else {
-            traciVehicle->setFixedLane(laneID);
+            //std::cout << "receiving lane " << laneID << std::endl;
+            traciVehicle->setFixedLane(0);
         }
 
         //if(intention != 0)  TriggerDENM(intention, laneID);

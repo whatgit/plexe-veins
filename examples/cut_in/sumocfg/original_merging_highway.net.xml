@@ -54,10 +54,10 @@
     <junction id="gneJ4" type="unregulated" x="4200.00" y="0.00" incLanes="gneE2_0 gneE2_1" intLanes="" shape="4200.00,-6.55 4200.00,-0.05"/>
     <junction id="gneJ5" type="unregulated" x="87.86" y="-44.61" incLanes="" intLanes="" shape="87.86,-44.66 88.10,-47.85"/>
 
-    <connection from="gneE0" to="gneE1" fromLane="0" toLane="1" dir="s" state="M"/>
-    <connection from="gneE0" to="gneE1" fromLane="1" toLane="2" dir="s" state="M"/>
+    <connection from="gneE0" to="gneE1" fromLane="0" toLane="1" pass="1" dir="s" state="M"/>
+    <connection from="gneE0" to="gneE1" fromLane="1" toLane="2" pass="1" dir="s" state="M"/>
     <connection from="gneE1" to="gneE2" fromLane="0" toLane="0" dir="s" state="M"/>
-    <connection from="gneE1" to="gneE2" fromLane="1" toLane="0" dir="s" state="M"/>
-    <connection from="gneE3" to="gneE1" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from="gneE1" to="gneE2" fromLane="1" toLane="1" dir="s" state="M"/>
+    <connection from="gneE3" to="gneE1" fromLane="0" toLane="0" pass="1" dir="s" state="M"/>
 
 </net>

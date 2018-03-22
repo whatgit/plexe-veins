@@ -4,14 +4,14 @@
 	</vType>
 
 	<vType id="manual_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
-		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
+		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="2" ccAccel="5.0"/>
 	</vType>
 
 	<vType id="obstacle_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
 		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
 	</vType>
 
-	<!-- flow id="manual" type="manual_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
+	<!--flow id="manual" type="manual_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
 		<route id="manual_route" edges="gneE3 gneE1 gneE2"/>
 	</flow-->
 
