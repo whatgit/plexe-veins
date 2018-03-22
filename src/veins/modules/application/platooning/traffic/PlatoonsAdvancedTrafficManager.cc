@@ -131,7 +131,6 @@ void PlatoonsAdvancedTrafficManager::insertManualCars() {
     for (int kk = 0; kk < routeIds.size(); kk++) {
         if(strcmp(manual_route,routeIds.at(kk).c_str()) == 0) {
             manual_routeId = kk;
-            std::cout << "********** found manual route **********" << std::endl;
         }
     }
 
