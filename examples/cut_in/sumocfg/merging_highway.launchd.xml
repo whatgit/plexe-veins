@@ -2,7 +2,7 @@
 <!-- debug config -->
 <launch>
 	<basedir path="examples/cut_in/sumocfg" />
-	<copy file="merging_highway.net.xml" />
+	<copy file="new_merging.net.xml" />
 	<copy file="merging_highway.rou.xml" />
 	<copy file="merging_highway.sumo.cfg" type="config" />
 </launch>
