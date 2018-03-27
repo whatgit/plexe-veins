@@ -33,7 +33,6 @@ void ManualDrivingApp::initialize(int stage) {
             traciVehicle->setActiveController(Plexe::CC);
             ds_control = Veins::TraCIConnection::connect(ipAddress.c_str(), 8855);
             readDS = new cMessage("readDS");
-            oppositeDrive = false;
             scheduleAt(simTime() + SimTime(0.01), readDS);
             std::cout << "found a manual car" << std::endl;
         }
@@ -81,24 +80,14 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
-        if (oppositeDrive) {
-            if (laneID == 1) {
-                traciVehicle->setFixedLane(-1);
-                traciVehicle->changeRoute("e2",10);
-                std::cout << "trying to change lane from " << traciVehicle->getRoadId() << std::endl;
-            }
-            else {
-                traciVehicle->changeRoute("e1",10);
-            }
-        }
-        else {
-            //std::cout << "receiving lane " << laneID << std::endl;
-            traciVehicle->setFixedLane(0);
+        traciVehicle->setFixedLane(0);  //replace with this after fixing the laneID traciVehicle->setFixedLane(laneID);
+        if(intention != 0) {
+            //do something with the received intention
+            // ADD THE PLATOON HERE
+            //std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
         }
 
-        //if(intention != 0)  TriggerDENM(intention, laneID);
 
-        //do something with the received intention
         /*gap_v.record(radar_distance);
         speed_fake_controller.record(speed);*/
 
