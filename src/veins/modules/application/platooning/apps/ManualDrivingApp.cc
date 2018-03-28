@@ -80,7 +80,7 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
-        traciVehicle->setFixedLane(0);  //replace with this after fixing the laneID traciVehicle->setFixedLane(laneID);
+        traciVehicle->setFixedLane(laneID);
         if(intention != 0) {
             //do something with the received intention
             // ADD THE PLATOON HERE
