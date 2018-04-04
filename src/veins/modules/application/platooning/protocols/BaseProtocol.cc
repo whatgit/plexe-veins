@@ -210,6 +210,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	PlatooningBeacon *epkt;
 	ICLCM *iCLCM_pkt;
+	Intersection *intersect_pkt;
 
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
@@ -244,6 +245,9 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 	}
 	else if (unicast->getKind() == iCLCM_TYPE) {
 	    iCLCM_pkt = dynamic_cast<ICLCM *>(enc);
+	}
+	else if (unicast->getKind() == INTER_TYPE) {
+	    intersect_pkt = dynamic_cast<Intersection *>(enc);
 	}
 
 	//find the application responsible for this beacon

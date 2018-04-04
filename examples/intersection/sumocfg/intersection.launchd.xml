@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<basedir path="examples/intersection/sumocfg" />
+	<copy file="intersection.net.xml" />
+	<copy file="intersection.rou.xml" />
+	<copy file="intersection.sumo.cfg" type="config" />
+</launch>
