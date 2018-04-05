@@ -14,35 +14,23 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef MANUALDRIVINGAPP_H_
-#define MANUALDRIVINGAPP_H_
+package org.car2x.veins.modules.application.platooning.apps;
 
-#include "veins/modules/application/platooning/apps/BaseApp.h"
-#include <veins/modules/mobility/traci/TraCIBaseTrafficManager.h>
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 
-class ManualDrivingApp : public BaseApp
+simple IntersectionApp like BaseApp
 {
+    parameters:
+        int headerLength @unit("bit") = default(0 bit);
+        //duration of simulation
+        double simulationDuration @unit("s");
+        string IP_DS = default("192.168.0.0");
 
-	public:
-
-		virtual void initialize(int stage);
-		virtual void finish();
-
-	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-
-		cMessage *readDS;
-		std::string ipAddress; //ip address of DS
-		Veins::TraCIConnection* ds_control;
-
-	public:
-		ManualDrivingApp() {}
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
-
-};
-
-#endif /* MANUALDRIVINGAPP_H_ */
+        @display("i=block/app2");
+        @class(IntersectionApp);
+    gates:
+        input lowerLayerIn;
+        output lowerLayerOut;
+        input lowerControlIn;
+        output lowerControlOut;
+}

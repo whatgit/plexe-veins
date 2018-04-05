@@ -14,7 +14,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "veins/modules/application/platooning/apps/ManualDrivingApp.h"
+#include "veins/modules/application/platooning/apps/IntersectionApp.h"
 
 #include "veins/modules/messages/WaveShortMessage_m.h"
 #include "veins/base/messages/MacPkt_m.h"
@@ -22,9 +22,9 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
-Define_Module(ManualDrivingApp);
+Define_Module(IntersectionApp);
 
-void ManualDrivingApp::initialize(int stage) {
+void IntersectionApp::initialize(int stage) {
 	BaseApp::initialize(stage);
 
 	if (stage == 1) {
@@ -39,10 +39,13 @@ void ManualDrivingApp::initialize(int stage) {
         else {
             readDS = 0;
 	    }
+
+	    //Register intersection type
+	    protocol->registerApplication(BaseProtocol::INTER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
 	}
 }
 
-void ManualDrivingApp::finish() {
+void IntersectionApp::finish() {
 	BaseApp::finish();
 	if (readDS) {
         cancelAndDelete(readDS);
@@ -50,10 +53,10 @@ void ManualDrivingApp::finish() {
 	}
 }
 
-void ManualDrivingApp::onData(WaveShortMessage *wsm) {
+void IntersectionApp::onData(WaveShortMessage *wsm) {
 }
 
-void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
+void IntersectionApp::handleSelfMsg(cMessage *msg) {
 	BaseApp::handleSelfMsg(msg);
 	if (msg == readDS) {
         uint8_t read_a_byte;
@@ -95,5 +98,40 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 	}
 }
 
-void ManualDrivingApp::onBeacon(WaveShortMessage* wsm) {
+void IntersectionApp::onBeacon(WaveShortMessage* wsm) {
+}
+
+void IntersectionApp::handleLowerMsg(cMessage *msg) {
+
+    UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
+    ASSERT2(unicast, "received a frame not of type UnicastMessage");
+
+    cPacket *enc = unicast->decapsulate();
+    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    //our vehicle's data
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
+    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
+    if (enc->getKind() == BaseProtocol::BEACON_TYPE) {  //Similar to BaseApp
+        PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
+        ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
+        if(positionHelper->isInSamePlatoon(epkt->getVehicleId())) {
+            //if the message comes from the pace maker (OPC), position 0 in the platoon
+            if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
+                traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+            }
+        }
+        else {
+            //This message is from a car from the other platoon
+        }
+    }
+    else if (enc->getKind() == BaseProtocol::INTER_TYPE) {
+        Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);
+        //do stuff here
+        std::cout << "got a message from " << intersect_pkt->getId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
+    }
+
+    delete enc;
+    delete unicast;
 }

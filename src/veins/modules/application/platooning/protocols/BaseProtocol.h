@@ -23,6 +23,7 @@
 #include "veins/modules/application/platooning/UnicastProtocol.h"
 #include "veins/modules/application/platooning/messages/PlatooningBeacon_m.h"
 #include "veins/modules/application/platooning/messages/ICLCM_m.h"
+#include "veins/modules/application/platooning/messages/Intersection_m.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
@@ -174,6 +175,7 @@ class BaseProtocol : public BaseApplLayer {
 		static const int BEACON_TYPE = 12345;
 		static const int iCLCM_TYPE = 20000;
 		static const int STOM_TYPE = 30000;
+		static const int INTER_TYPE = 40000;
 
 		BaseProtocol() {
 			sendBeacon = 0;

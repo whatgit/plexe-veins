@@ -14,13 +14,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef MANUALDRIVINGAPP_H_
-#define MANUALDRIVINGAPP_H_
+#ifndef INTERSECTIONSCENARIO_H_
+#define INTERSECTIONSCENARIO_H_
 
-#include "veins/modules/application/platooning/apps/BaseApp.h"
-#include <veins/modules/mobility/traci/TraCIBaseTrafficManager.h>
+#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 
-class ManualDrivingApp : public BaseApp
+class IntersectionScenario : public BaseScenario
 {
 
 	public:
@@ -29,15 +28,10 @@ class ManualDrivingApp : public BaseApp
 		virtual void finish();
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
 
-		cMessage *readDS;
-		std::string ipAddress; //ip address of DS
-		Veins::TraCIConnection* ds_control;
 
 	public:
-		ManualDrivingApp() {}
+		IntersectionScenario() {}
 
 	protected:
 
@@ -45,4 +39,4 @@ class ManualDrivingApp : public BaseApp
 
 };
 
-#endif /* MANUALDRIVINGAPP_H_ */
+#endif

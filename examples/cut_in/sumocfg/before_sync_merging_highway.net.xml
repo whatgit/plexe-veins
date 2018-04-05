@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on ons 21 mar 2018 17:10:01 by Netedit Version 0.26.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netedit.exeConfiguration.xsd">
+
+    <input>
+        <sumo-net-file value="/home/mayara/src/plexe2.0/plexe-veins/examples/cut_in/merging_highway.net.xml"/>
+    </input>
+
+    <output>
+        <output-file value="/home/mayara/src/plexe2.0/plexe-veins/examples/cut_in/merging_highway.net.xml"/>
+    </output>
+
+    <processing>
+        <no-internal-links value="true"/>
+        <no-turnarounds value="true"/>
+        <offset.disable-normalization value="true"/>
+        <lefthand value="false"/>
+        <junctions.corner-detail value="0"/>
+    </processing>
+
+</configuration>
+-->
+
+<net version="0.25" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="0.00,-44.61,4200.00,0.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
+
+    <edge id="gneE0" from="gneJ0" to="gneJ1" priority="1" length="700.00">
+        <lane id="gneE0_0" index="0" speed="90.11" length="700.00" shape="0.00,-4.95 609.31,-4.95"/>
+        <lane id="gneE0_1" index="1" speed="90.11" length="700.00" shape="0.00,-1.65 609.31,-1.65"/>
+    </edge>
+    <edge id="gneE1" from="gneJ1" to="gneJ3" priority="1" length="200.00">
+        <lane id="gneE1_0" index="0" speed="90.11" length="200.00" shape="611.05,-8.25 898.50,-8.25"/>
+        <lane id="gneE1_1" index="1" speed="90.11" length="200.00" shape="611.05,-4.95 898.50,-4.95"/>
+        <lane id="gneE1_2" index="2" speed="90.11" length="200.00" shape="611.05,-1.65 898.50,-1.65"/>
+    </edge>
+    <edge id="gneE2" from="gneJ3" to="gneJ4" priority="1">
+        <lane id="gneE2_0" index="0" speed="90.11" length="3300.00" shape="901.50,-4.95 4200.00,-4.95"/>
+        <lane id="gneE2_1" index="1" speed="90.11" length="3300.00" shape="901.50,-1.65 4200.00,-1.65"/>
+    </edge>
+    <edge id="gneE3" from="gneJ5" to="gneJ1" priority="1" length="612.22" shape="87.86,-44.61 700.00,0.00">
+        <lane id="gneE3_0" index="0" speed="90.11" length="612.22" shape="87.98,-46.26 607.94,-8.36"/>
+    </edge>
+
+    <junction id="gneJ0" type="unregulated" x="0.00" y="0.00" incLanes="" intLanes="" shape="0.00,-0.05 0.00,-6.55"/>
+    <junction id="gneJ1" type="unregulated" x="700.00" y="0.00" incLanes="gneE3_0 gneE0_0 gneE0_1" intLanes="" shape="611.05,-0.05 611.05,-9.85 608.06,-9.96 607.82,-6.77 609.31,-6.55 609.31,-0.05"/>
+    <junction id="gneJ3" type="priority" x="900.00" y="0.00" incLanes="gneE1_0 gneE1_1 gneE1_2" intLanes="" shape="901.50,-0.05 901.50,-6.55 898.50,-9.85 898.50,-0.05">
+        <request index="0" response="00" foes="00"/>
+        <request index="1" response="00" foes="00"/>
+    </junction>
+    <junction id="gneJ4" type="unregulated" x="4200.00" y="0.00" incLanes="gneE2_0 gneE2_1" intLanes="" shape="4200.00,-6.55 4200.00,-0.05"/>
+    <junction id="gneJ5" type="unregulated" x="87.86" y="-44.61" incLanes="" intLanes="" shape="87.86,-44.66 88.10,-47.85"/>
+
+    <connection from="gneE0" to="gneE1" fromLane="0" toLane="1" dir="s" state="M"/>
+    <connection from="gneE0" to="gneE1" fromLane="1" toLane="2" dir="s" state="M"/>
+    <connection from="gneE1" to="gneE2" fromLane="0" toLane="0" dir="s" state="M"/>
+    <connection from="gneE1" to="gneE2" fromLane="1" toLane="0" dir="s" state="M"/>
+    <connection from="gneE3" to="gneE1" fromLane="0" toLane="0" dir="s" state="M"/>
+
+</net>

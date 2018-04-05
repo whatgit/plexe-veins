@@ -14,35 +14,30 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef MANUALDRIVINGAPP_H_
-#define MANUALDRIVINGAPP_H_
+#ifndef INTERSECTIONPROTOCOL_H_
+#define INTERSECTIONPROTOCOL_H_
 
-#include "veins/modules/application/platooning/apps/BaseApp.h"
-#include <veins/modules/mobility/traci/TraCIBaseTrafficManager.h>
+#include "BaseProtocol.h"
 
-class ManualDrivingApp : public BaseApp
+class IntersectionProtocol : public BaseProtocol
 {
-
-	public:
-
-		virtual void initialize(int stage);
-		virtual void finish();
-
-	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-
-		cMessage *readDS;
-		std::string ipAddress; //ip address of DS
-		Veins::TraCIConnection* ds_control;
-
-	public:
-		ManualDrivingApp() {}
-
 	protected:
 
 		virtual void handleSelfMsg(cMessage *msg);
+		virtual void handleUpperMsg(cMessage *msg); //override the one in BaseProtocol
+		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
+		cMessage *sendIntersecion;
+		void sendIntersectionMessage(int destinationAddress);
+
+	public:
+		IntersectionProtocol(){
+		    sendIntersecion = 0;
+		}
+		virtual ~IntersectionProtocol();
+
+		virtual void initialize(int stage);
+		virtual void finish();
 };
 
-#endif /* MANUALDRIVINGAPP_H_ */
+#endif /* INTERSECTIONPROTOCOL_H_ */

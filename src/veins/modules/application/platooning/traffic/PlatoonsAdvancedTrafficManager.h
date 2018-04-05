@@ -40,6 +40,8 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 			nLanes = 0;
 			nManualCars = 0;
 			laneManualCars = 0;
+			platoon_routeId = 0;
+			manual_routeId = 0;
 		}
 
 	protected:
@@ -75,6 +77,11 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 		int laneManualCars;
 		//sumo vehicle type of platooning cars
 		std::string platooningVType;
+		//the desired route
+		const char *platoon_route, *manual_route;
+		//the route ids
+		int platoon_routeId, manual_routeId;
+
 
 		virtual void scenarioLoaded();
 
