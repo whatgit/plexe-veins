@@ -24,7 +24,6 @@ class IntersectionProtocol : public BaseProtocol
 	protected:
 
 		virtual void handleSelfMsg(cMessage *msg);
-		virtual void handleUpperMsg(cMessage *msg); //override the one in BaseProtocol
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
 		cMessage *sendIntersecion;

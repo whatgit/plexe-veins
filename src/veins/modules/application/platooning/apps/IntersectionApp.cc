@@ -109,6 +109,7 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
     cPacket *enc = unicast->decapsulate();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
+
     //our vehicle's data
     double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
@@ -125,6 +126,7 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
         else {
             //This message is from a car from the other platoon
         }
+
     }
     else if (enc->getKind() == BaseProtocol::INTER_TYPE) {
         Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);

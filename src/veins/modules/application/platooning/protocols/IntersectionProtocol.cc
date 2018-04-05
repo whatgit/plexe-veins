@@ -76,8 +76,6 @@ void IntersectionProtocol::sendIntersectionMessage(int destinatinAddress) {
     Intersection_msg->setSequenceNumber(seq_n++);
     Intersection_msg->setMyPlatoonID(positionHelper->getPlatoonId());
 
-    traciVehicle->getRouteId();
-
     Intersection_msg->setKind(INTER_TYPE);
     Intersection_unicast->encapsulate(Intersection_msg);
     sendDown(Intersection_unicast);  //send up to the application layer
@@ -87,23 +85,6 @@ void IntersectionProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage
 	//nothing to do for static beaconing
 }
 
-void IntersectionProtocol::handleUpperMsg(cMessage *msg) {
-    UnicastMessage *unicast;
-    unicast = dynamic_cast<UnicastMessage *>(msg);
-    assert(unicast);
-
-    if (unicast->getKind() == INTER_TYPE) {  //In case we want to do something before sending down
-        cPacket *enc = unicast->decapsulate();
-        Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);
-        //myMIO_ID = iclcm_pkt->getMIO_ID();
-
-        delete unicast;
-        delete enc;
-    }
-    else {
-        sendDown(msg);
-    }
-}
 
 IntersectionProtocol::~IntersectionProtocol()
 {}
