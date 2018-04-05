@@ -216,7 +216,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	cPacket *enc = unicast->decapsulate();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
-	std::cout << "message type is " << unicast->getKind() << std::endl;
+
 	if (unicast->getKind() == BEACON_TYPE) {
 	    epkt = dynamic_cast<PlatooningBeacon *>(enc);
         if (epkt) {

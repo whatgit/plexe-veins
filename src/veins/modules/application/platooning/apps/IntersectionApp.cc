@@ -109,7 +109,6 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
     cPacket *enc = unicast->decapsulate();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-
     //our vehicle's data
     double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
     traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
@@ -131,7 +130,7 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
     else if (enc->getKind() == BaseProtocol::INTER_TYPE) {
         Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);
         //do stuff here
-        std::cout << "got a message from " << intersect_pkt->getId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
+        std::cout << "got a message from " << intersect_pkt->getVehicleId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
     }
 
     delete enc;
