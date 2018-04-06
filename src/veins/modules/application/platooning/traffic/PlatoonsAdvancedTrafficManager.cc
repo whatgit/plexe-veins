@@ -41,7 +41,7 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		laneManualCars = par("laneManualCars").longValue();
 		//TODO: maybe make them parameters
 		offset_manual = 410.4;
-		offset_platoon = 483.3;
+		offset_platoon = 478.3;
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
