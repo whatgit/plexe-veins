@@ -14,20 +14,19 @@
 	<!--flow id="manual" type="manual_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
 		<route id="manual_route" edges="gneE3 gneE1 gneE2"/>
 	</flow-->
-	<flow id="manual1" type="obstacle_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
+	<!--flow id="manual1" type="obstacle_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
 		<route id="manual_route1" edges="gneE4 gneE2"/>
+	</flow-->
+	<flow id="manual3" type="obstacle_car" begin="0" period="1" departPos="483.3" departLane="0" number="1" departSpeed="3.00">
+		<route id="manual_route2" edges="gneE4 gneE2"/>
 	</flow>
-	<flow id="manual2" type="obstacle_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
-		<route id="manual_route2" edges="gneE7 gneE0"/>
-	</flow>
-	<flow id="manual3" type="obstacle_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
+	<flow id="manual2" type="obstacle_car" begin="0" period="1" departPos="485" departLane="0" number="1" departSpeed="0.00">
 		<route id="manual_route3" edges="gneE9 gneE3"/>
 	</flow>
 
-
 	<!--route id="platooning_route" edges="gneE0 gneE1 gneE2"/-->
 	<!--route id="manual_route" edges="gneE3 gneE1 gneE2"/-->
-
-	<route id="platooning_route" edges="gneE8 gneE1"/>
+	<route id="manual_route" edges="gneE8 gneE1"/> 
+	<route id="platooning_route" edges="gneE7 gneE0"/>
 	
 </routes>

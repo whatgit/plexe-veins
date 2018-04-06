@@ -39,6 +39,9 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		insertManualCarMessage = new cMessage("");
 		nManualCars = par("nManualCars").longValue();
 		laneManualCars = par("laneManualCars").longValue();
+		//TODO: maybe make them parameters
+		offset_manual = 410.4;
+		offset_platoon = 483.3;
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
@@ -88,7 +91,7 @@ void PlatoonsAdvancedTrafficManager::insertPlatoons() {
 	for (int l = 0; l < nLanes; l++)
 		laneOffset[l] = uniform(0, 20);
 
-	double currentPos = totalLength; //totalLength + 4 in case inserting manual car behind the platoon
+	double currentPos = totalLength + offset_platoon; //totalLength + 4 in case inserting manual car behind the platoon
 	int currentCar = 0;
 
     //Go through all the defined routes
@@ -136,7 +139,7 @@ void PlatoonsAdvancedTrafficManager::insertManualCars() {
 
     manual.id = findVehicleTypeIndex("manual_car");
     manual.lane = 0;
-    manual.position = 0;
+    manual.position = offset_manual;
     manual.speed = 0;
     addVehicleToQueue(manual_routeId, manual);
 }

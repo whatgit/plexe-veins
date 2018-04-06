@@ -87,7 +87,9 @@ void IntersectionApp::handleSelfMsg(cMessage *msg) {
         if(intention != 0) {
             //do something with the received intention
             // ADD THE PLATOON HERE
-            //std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
+            std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
+            std::string route_id = traciVehicle->getRouteId();
+            traci->addVehicle("obstacle", "obstacle_car", route_id, simTime(), 10, 0, 0);
         }
 
 
@@ -130,7 +132,7 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
     else if (enc->getKind() == BaseProtocol::INTER_TYPE) {
         Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);
         //do stuff here
-        std::cout << "got a message from " << intersect_pkt->getVehicleId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
+        //std::cout << "got a message from " << intersect_pkt->getVehicleId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
     }
 
     delete enc;

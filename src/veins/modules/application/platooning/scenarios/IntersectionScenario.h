@@ -28,7 +28,7 @@ class IntersectionScenario : public BaseScenario
 		virtual void finish();
 
 	protected:
-
+		cMessage *checkforstop;
 
 	public:
 		IntersectionScenario() {}

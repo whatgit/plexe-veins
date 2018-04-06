@@ -82,6 +82,9 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 		//the route ids
 		int platoon_routeId, manual_routeId;
 
+		double offset_manual;
+		double offset_platoon;
+
 
 		virtual void scenarioLoaded();
 

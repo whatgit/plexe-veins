@@ -27,11 +27,14 @@ void IntersectionScenario::initialize(int stage) {
 		if (positionHelper->getId() < positionHelper->getLanesCount()) {
 			//set base cruising speed
 			traciVehicle->setCruiseControlDesiredSpeed(100/3.6);
+			checkforstop = new cMessage("checkforstop");
+			scheduleAt(simTime() + SimTime(0.01), checkforstop);
 		}
 		else {
 			//let the follower set a higher desired speed to stay connected
 			//to the leader when it is accelerating
 			traciVehicle->setCruiseControlDesiredSpeed((100/3.6) + 5);
+			checkforstop = 0;
 		}
 
 	}
@@ -40,8 +43,23 @@ void IntersectionScenario::initialize(int stage) {
 
 void IntersectionScenario::finish() {
 	BaseScenario::finish();
+	if (checkforstop) {
+	        cancelAndDelete(checkforstop);
+	        checkforstop = 0;
+		}
 }
 
 void IntersectionScenario::handleSelfMsg(cMessage *msg) {
 	BaseScenario::handleSelfMsg(msg);
+	if (msg == checkforstop) {
+		std::cout << "distance to route end is " << traciVehicle->getDistanceToRouteEnd() <<std::endl;
+		//if(traciVehicle->getDistanceToRouteEnd() < 510.00) {
+		    traciVehicle->setActiveController(Plexe::DRIVER);
+		    traciVehicle->stopAt("gneE7", 494, 0, 0.0, 100);
+		//}
+		//else {
+		    scheduleAt(simTime() + SimTime(0.01), checkforstop);
+		//}
+	}
+
 }
