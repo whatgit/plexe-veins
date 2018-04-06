@@ -17,7 +17,7 @@
 	<!--flow id="manual1" type="obstacle_car" begin="0" period="1" departLane="0" number="1" departSpeed="27.77">
 		<route id="manual_route1" edges="gneE4 gneE2"/>
 	</flow-->
-	<flow id="manual3" type="obstacle_car" begin="0" period="1" departPos="483.3" departLane="0" number="1" departSpeed="3.00">
+	<flow id="manual3" type="obstacle_car" begin="0" period="1" departPos="478.3" departLane="0" number="1" departSpeed="3.00">
 		<route id="manual_route2" edges="gneE4 gneE2"/>
 	</flow>
 	<flow id="manual2" type="obstacle_car" begin="0" period="1" departPos="485" departLane="0" number="1" departSpeed="0.00">
