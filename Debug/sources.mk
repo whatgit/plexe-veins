@@ -1,0 +1,95 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+C_UPPER_SRCS := 
+CXX_SRCS := 
+C++_SRCS := 
+OBJ_SRCS := 
+CC_SRCS := 
+ASM_SRCS := 
+CPP_SRCS := 
+C_SRCS := 
+O_SRCS := 
+S_UPPER_SRCS := 
+CC_DEPS := 
+C++_DEPS := 
+EXECUTABLES := 
+C_UPPER_DEPS := 
+CXX_DEPS := 
+OBJS := 
+CPP_DEPS := 
+C_DEPS := 
+
+# Every subdirectory with source files must be described here
+SUBDIRS := \
+subprojects/veins_inet/src/veins_inet \
+src/veins/modules/world/annotations \
+src/veins/modules/phy \
+src/veins/modules/obstacle \
+src/veins/modules/mobility/traci \
+src/veins/modules/mobility \
+src/veins/modules/messages \
+src/veins/modules/mac/ieee80211p \
+src/veins/modules/application/traci \
+src/veins/modules/application/platooning/utilities \
+src/veins/modules/application/platooning/traffic \
+src/veins/modules/application/platooning/scenarios \
+src/veins/modules/application/platooning/protocols \
+src/veins/modules/application/platooning/messages \
+src/veins/modules/application/platooning/apps \
+src/veins/modules/application/platooning \
+src/veins/modules/application/ieee80211p \
+src/veins/modules/analogueModel \
+src/veins/base/utils \
+src/veins/base/phyLayer \
+src/veins/base/modules \
+src/veins/base/messages \
+src/veins/base/connectionManager \
+out/gcc-release/src/veins/modules/world/annotations \
+out/gcc-release/src/veins/modules/phy \
+out/gcc-release/src/veins/modules/obstacle \
+out/gcc-release/src/veins/modules/mobility/traci \
+out/gcc-release/src/veins/modules/mobility \
+out/gcc-release/src/veins/modules/messages \
+out/gcc-release/src/veins/modules/mac/ieee80211p \
+out/gcc-release/src/veins/modules/application/traci \
+out/gcc-release/src/veins/modules/application/platooning/utilities \
+out/gcc-release/src/veins/modules/application/platooning/traffic \
+out/gcc-release/src/veins/modules/application/platooning/scenarios \
+out/gcc-release/src/veins/modules/application/platooning/protocols \
+out/gcc-release/src/veins/modules/application/platooning/messages \
+out/gcc-release/src/veins/modules/application/platooning/apps \
+out/gcc-release/src/veins/modules/application/platooning \
+out/gcc-release/src/veins/modules/application/ieee80211p \
+out/gcc-release/src/veins/modules/analogueModel \
+out/gcc-release/src/veins/base/utils \
+out/gcc-release/src/veins/base/phyLayer \
+out/gcc-release/src/veins/base/modules \
+out/gcc-release/src/veins/base/messages \
+out/gcc-release/src/veins/base/connectionManager \
+out/gcc-relase/src/veins/modules/world/annotations \
+out/gcc-relase/src/veins/modules/phy \
+out/gcc-relase/src/veins/modules/obstacle \
+out/gcc-relase/src/veins/modules/mobility/traci \
+out/gcc-relase/src/veins/modules/mobility \
+out/gcc-relase/src/veins/modules/messages \
+out/gcc-relase/src/veins/modules/mac/ieee80211p \
+out/gcc-relase/src/veins/modules/application/traci \
+out/gcc-relase/src/veins/modules/application/platooning/utilities \
+out/gcc-relase/src/veins/modules/application/platooning/traffic \
+out/gcc-relase/src/veins/modules/application/platooning/scenarios \
+out/gcc-relase/src/veins/modules/application/platooning/protocols \
+out/gcc-relase/src/veins/modules/application/platooning/messages \
+out/gcc-relase/src/veins/modules/application/platooning/apps \
+out/gcc-relase/src/veins/modules/application/platooning \
+out/gcc-relase/src/veins/modules/application/ieee80211p \
+out/gcc-relase/src/veins/modules/analogueModel \
+out/gcc-relase/src/veins/base/utils \
+out/gcc-relase/src/veins/base/phyLayer \
+out/gcc-relase/src/veins/base/modules \
+out/gcc-relase/src/veins/base/messages \
+out/gcc-relase/src/veins/base/connectionManager \
+.metadata/.plugins/org.eclipse.cdt.managedbuilder.core \
+.metadata/.plugins/org.eclipse.cdt.make.core \
+

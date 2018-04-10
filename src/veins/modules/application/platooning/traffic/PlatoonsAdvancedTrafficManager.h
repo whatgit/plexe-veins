@@ -84,6 +84,11 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 
 		double offset_manual;
 		double offset_platoon;
+		double insert_speed_manual;
+
+		bool NGEA2;
+
+		Veins::TraCIConnection* ds_control;
 
 
 		virtual void scenarioLoaded();

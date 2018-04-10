@@ -34,6 +34,7 @@ class IntersectionApp : public BaseApp
 		virtual void handleLowerMsg(cMessage *msg);
 
 		cMessage *readDS;
+		cMessage *initManual;
 		std::string ipAddress; //ip address of DS
 		Veins::TraCIConnection* ds_control;
 

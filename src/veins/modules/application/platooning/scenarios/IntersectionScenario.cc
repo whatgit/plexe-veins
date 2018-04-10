@@ -52,7 +52,7 @@ void IntersectionScenario::finish() {
 void IntersectionScenario::handleSelfMsg(cMessage *msg) {
 	BaseScenario::handleSelfMsg(msg);
 	if (msg == checkforstop) {
-		std::cout << "distance to route end is " << traciVehicle->getDistanceToRouteEnd() <<std::endl;
+		//std::cout << "distance to route end is " << traciVehicle->getDistanceToRouteEnd() <<std::endl;
 		//if(traciVehicle->getDistanceToRouteEnd() < 510.00) {
 		    traciVehicle->setActiveController(Plexe::DRIVER);
 		    traciVehicle->stopAt("gneE7", 494, 0, 0.0, 100);

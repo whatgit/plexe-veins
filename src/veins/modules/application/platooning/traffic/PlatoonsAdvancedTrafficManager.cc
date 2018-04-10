@@ -42,8 +42,10 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		//TODO: maybe make them parameters
 		offset_manual = 410.4;
 		offset_platoon = 478.3;
+		insert_speed_manual = 0;
+		NGEA2 = true;
+		if(NGEA2)   ds_control = Veins::TraCIConnection::connect("194.47.15.48", 8855);
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
-
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}
 
@@ -65,6 +67,39 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
 		insertPlatoons();
 	}
 	if (msg == insertManualCarMessage) {
+	    if (NGEA2) {
+	        uint8_t read_a_byte;
+            double pos;
+            int laneID;
+            int intention;
+            std::string ds_resp;
+
+            ds_control->sendTCPMessage(Veins::makeTraCICommand(0x21, Veins::TraCIBuffer()));
+            ds_resp = ds_control->receiveMessage();
+            Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> pos;
+            buf >> laneID;
+            buf >> intention;
+            offset_manual = 500-pos;
+            ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));
+            ds_resp = ds_control->receiveMessage();
+            buf = Veins::TraCIBuffer(ds_resp);
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> read_a_byte;
+            buf >> pos;
+            buf >> laneID;
+            buf >> intention;
+            insert_speed_manual = pos;
+            ds_control->~TraCIConnection();
+	    }
         insertManualCars();
     }
 
@@ -140,7 +175,7 @@ void PlatoonsAdvancedTrafficManager::insertManualCars() {
     manual.id = findVehicleTypeIndex("manual_car");
     manual.lane = 0;
     manual.position = offset_manual;
-    manual.speed = 0;
+    manual.speed = insert_speed_manual;
     addVehicleToQueue(manual_routeId, manual);
 }
 
