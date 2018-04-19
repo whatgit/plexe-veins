@@ -81,10 +81,13 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
         traciVehicle->setFixedLane(laneID);
-        if(intention != 0) {
+        if(intention >= 0) {
             //do something with the received intention
             // ADD THE PLATOON HERE
             //std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
+        }
+        else {
+            stopSimulation();
         }
 
 
