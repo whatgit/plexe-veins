@@ -477,6 +477,7 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame) {
 	if(usePropagationDelay) {
 		Signal& s = frame->getSignal();
 		simtime_t delay = simTime() - s.getSendingStart();
+		delay = 0.01;
 		s.setPropagationDelay(delay);
 	}
 	assert(frame->getSignal().getReceptionStart() == simTime());

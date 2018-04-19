@@ -38,6 +38,7 @@ void IntersectionApp::initialize(int stage) {
         }
         else {
             readDS = 0;
+            initManual = 0;
 	    }
 
 	    //Register intersection type
@@ -51,6 +52,10 @@ void IntersectionApp::finish() {
         cancelAndDelete(readDS);
         readDS = 0;
 	}
+	if (initManual) {
+        cancelAndDelete(initManual);
+        initManual = 0;
+    }
 }
 
 void IntersectionApp::onData(WaveShortMessage *wsm) {
