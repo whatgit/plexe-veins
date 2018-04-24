@@ -39,17 +39,19 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		insertManualCarMessage = new cMessage("");
 		nManualCars = par("nManualCars").longValue();
 		laneManualCars = par("laneManualCars").longValue();
+		dsTrigger = par("triggeredByDS");
 		//TODO: maybe make them parameters
 		offset_manual = 0;
 		offset_platoon = 0;
 		insert_speed_manual = 0;
-		NGEA2 = true;
+		NGEA2 = false;
 		if(NGEA2) {
 		    ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855);
 		    offset_manual = 410.4;
             offset_platoon = 478.3;
             insert_speed_manual = 0;
 		}
+		if(dsTrigger)   ds_control = Veins::TraCIConnection::connect("192.168.164.101", 8855);
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}
@@ -72,9 +74,10 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
 		insertPlatoons();
 	}
 	if (msg == insertManualCarMessage) {
-	    if (NGEA2) {
+	    if (dsTrigger) {
 	        uint8_t read_a_byte;
             double pos;
+            double speed;
             int laneID;
             int intention;
             std::string ds_resp;
@@ -90,7 +93,7 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
             buf >> pos;
             buf >> laneID;
             buf >> intention;
-            offset_manual = 500-pos;
+            offset_manual = pos;
             ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));
             ds_resp = ds_control->receiveMessage();
             buf = Veins::TraCIBuffer(ds_resp);
@@ -99,10 +102,10 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
             buf >> read_a_byte;
             buf >> read_a_byte;
             buf >> read_a_byte;
-            buf >> pos;
+            buf >> speed;
             buf >> laneID;
             buf >> intention;
-            insert_speed_manual = pos;
+            insert_speed_manual = speed;
             ds_control->~TraCIConnection();
 	    }
         insertManualCars();

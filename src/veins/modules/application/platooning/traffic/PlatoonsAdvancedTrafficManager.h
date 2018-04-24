@@ -88,6 +88,8 @@ class PlatoonsAdvancedTrafficManager : public TraCIBaseTrafficManager
 
 		bool NGEA2;
 
+		bool dsTrigger;
+
 		Veins::TraCIConnection* ds_control;
 
 
