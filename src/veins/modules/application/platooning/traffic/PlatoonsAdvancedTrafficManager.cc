@@ -40,11 +40,16 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		nManualCars = par("nManualCars").longValue();
 		laneManualCars = par("laneManualCars").longValue();
 		//TODO: maybe make them parameters
-		offset_manual = 410.4;
-		offset_platoon = 478.3;
+		offset_manual = 0;
+		offset_platoon = 0;
 		insert_speed_manual = 0;
 		NGEA2 = true;
-		if(NGEA2)   ds_control = Veins::TraCIConnection::connect("194.47.15.48", 8855);
+		if(NGEA2) {
+		    ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855);
+		    offset_manual = 410.4;
+            offset_platoon = 478.3;
+            insert_speed_manual = 0;
+		}
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}

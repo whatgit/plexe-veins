@@ -38,8 +38,8 @@ void IntersectionApp::initialize(int stage) {
         }
         else {
             readDS = 0;
-            initManual = 0;
 	    }
+	    receivedDelay.setName("receivedDelay");
 
 	    //Register intersection type
 	    protocol->registerApplication(BaseProtocol::INTER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
@@ -52,10 +52,6 @@ void IntersectionApp::finish() {
         cancelAndDelete(readDS);
         readDS = 0;
 	}
-	if (initManual) {
-        cancelAndDelete(initManual);
-        initManual = 0;
-    }
 }
 
 void IntersectionApp::onData(WaveShortMessage *wsm) {
@@ -136,6 +132,8 @@ void IntersectionApp::handleLowerMsg(cMessage *msg) {
     }
     else if (enc->getKind() == BaseProtocol::INTER_TYPE) {
         Intersection *intersect_pkt = dynamic_cast<Intersection *>(enc);
+
+        receivedDelay.record(simTime().dbl() - intersect_pkt->getTime());
         //do stuff here
         //std::cout << "got a message from " << intersect_pkt->getVehicleId() << " it is on the route " << intersect_pkt->getCurrentRoad() << " with intention 0 " << intersect_pkt->getIntention() << std::endl;
     }
