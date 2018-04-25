@@ -14,30 +14,22 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef MANUALDRIVINGSCENARIO_H_
-#define MANUALDRIVINGSCENARIO_H_
+package org.car2x.veins.modules.application.platooning.apps;
 
-#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 
-class ManualDrivingScenario : public BaseScenario
+simple CutInApp like BaseApp
 {
+    parameters:
+        int headerLength @unit("bit") = default(0 bit);
+        //duration of simulation
+        double simulationDuration @unit("s");
 
-	public:
-
-		virtual void initialize(int stage);
-		virtual void finish();
-
-	protected:
-		//leader average speed
-		double leaderSpeed;
-
-	public:
-		ManualDrivingScenario() {}
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
-
-};
-
-#endif
+        @display("i=block/app2");
+        @class(CutInApp);
+    gates:
+        input lowerLayerIn;
+        output lowerLayerOut;
+        input lowerControlIn;
+        output lowerControlOut;
+}

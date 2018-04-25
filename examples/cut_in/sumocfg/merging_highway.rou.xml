@@ -7,18 +7,17 @@
 		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="3" ccAccel="5.0"/>
 	</vType>
 
-	<vType id="obstacle_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
-		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="4" ccAccel="5.0"/>
-	</vType>
+	<vType id="vtypehuman" accel="2.5" decel="6.0" sigma="0.5" length="4" minGap="1" maxSpeed="27.77778" color="0,0,1" probability="1"></vType>
 
 	<!--route id="platooning_route" edges="gneE0 gneE1 gneE2"/-->
 	<!--route id="manual_route" edges="gneE3 gneE1 gneE2"/-->
 
 	<route id="platooning_route" edges="gneE0 gneE2 gneE3"/>
-	<!--route id="manual_route" edges="gneE1 gneE2 gneE3"/-->
+	<!--route id="manual" edges="gneE1 gneE2 gneE3"/-->
+	<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
 
-	<flow id="manual" type="manual_car" begin="6" period="1" departLane="0" number="2" departSpeed="27.77">
-		<route id="manual" edges="gneE1 gneE2 gneE3"/>
+	<flow id="manual" type="vtypehuman" begin="2" period="1" departLane="0" number="10" departSpeed="27.77">
+		<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
 	</flow>
 	
 </routes>

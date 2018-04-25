@@ -43,7 +43,7 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		//TODO: maybe make them parameters
 		offset_manual = 0;
 		offset_platoon = 0;
-		insert_speed_manual = 0;
+		insert_speed_manual = 25;
 		NGEA2 = false;
 		if(NGEA2) {
 		    ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855);

@@ -14,12 +14,13 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef MANUALDRIVINGSCENARIO_H_
-#define MANUALDRIVINGSCENARIO_H_
+#ifndef CUTINAPP_H_
+#define CUTINAPP_H_
 
-#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
+#include "veins/modules/application/platooning/apps/BaseApp.h"
+#include <veins/modules/mobility/traci/TraCIBaseTrafficManager.h>
 
-class ManualDrivingScenario : public BaseScenario
+class CutInApp : public BaseApp
 {
 
 	public:
@@ -28,11 +29,11 @@ class ManualDrivingScenario : public BaseScenario
 		virtual void finish();
 
 	protected:
-		//leader average speed
-		double leaderSpeed;
+		virtual void onBeacon(WaveShortMessage* wsm);
+		virtual void onData(WaveShortMessage* wsm);
 
 	public:
-		ManualDrivingScenario() {}
+		CutInApp() {}
 
 	protected:
 
@@ -40,4 +41,4 @@ class ManualDrivingScenario : public BaseScenario
 
 };
 
-#endif
+#endif /* CUTINAPP_H_ */
