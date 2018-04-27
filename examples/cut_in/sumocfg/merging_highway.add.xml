@@ -1,0 +1,4 @@
+ <additional>
+    <edgeData id="measurement1" file="output_edge"/>
+    <laneData id="measurement1" file="output_lane"/>
+ </additional>

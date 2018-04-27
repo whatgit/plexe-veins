@@ -1,0 +1,32 @@
+<routes>
+	<vType id="platoon_vehicle" accel="2.5" decel="5.88" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" >
+		<carFollowing-CC tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" decel="5.88" lanesCount="2" ccAccel="1.5"/>
+	</vType>
+
+	<vType id="manual_car" accel="5.0" decel="5.0" sigma="0.5" length="4" minGap="0" maxSpeed="41" color="1,0,0" probability="1" laneChangeModel="JE2013" >
+		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="3" ccAccel="5.0"/>
+	</vType>
+
+	<vType id="vtypehuman" accel="2.5" decel="6.0" sigma="0.5" length="4" minGap="1" maxSpeed="27.77778" carFollowModel="IDM" color="0,1,1" probability="1" laneChangeModel="JE2013"></vType>
+
+	<!--route id="platooning_route" edges="gneE0 gneE1 gneE2"/-->
+	<!--route id="manual_route" edges="gneE3 gneE1 gneE2"/-->
+
+	<route id="platooning_route" edges="gneE0 gneE2 gneE3"/>
+	<!--route id="manual" edges="gneE1 gneE2 gneE3"/-->
+	<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
+
+	<flow id="manual_main_right" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.5" departSpeed="27.77">
+		<route edges="gneE0 gneE2 gneE3"/>
+	</flow>
+
+	<flow id="manual_main_left" type="vtypehuman" begin="0" number="2000" departLane="1" probability="0.01" departSpeed="27.77">
+		<route edges="gneE0 gneE2 gneE3"/>
+	</flow>
+
+	<flow id="manual_on_ramp" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.3" departSpeed="27.77">
+		<route edges="gneE1 gneE2 gneE3"/>
+	</flow>
+
+	
+</routes>

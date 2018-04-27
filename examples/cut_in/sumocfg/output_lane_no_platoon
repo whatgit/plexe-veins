@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on fre 27 apr 2018 18:50:50 by SUMO gui Version 0.26.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
+
+    <input>
+        <net-file value="the_merging_highway_no_platoon.net.xml"/>
+        <route-files value="merging_highway_no_platoon.rou.xml"/>
+        <additional-files value="merging_highway_no_platoon.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="86400"/>
+        <step-length value="0.01"/>
+    </time>
+
+    <random_number>
+        <seed value="123"/>
+    </random_number>
+
+    <gui_only>
+        <start value="false"/>
+    </gui_only>
+
+</configuration>
