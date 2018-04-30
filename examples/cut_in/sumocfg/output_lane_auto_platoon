@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on mån 30 apr 2018 15:50:25 by SUMO gui Version 0.26.0
+<!-- generated on mån 30 apr 2018 15:54:57 by SUMO gui Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
@@ -18,7 +18,7 @@
     </time>
 
     <traci_server>
-        <remote-port value="56805"/>
+        <remote-port value="49501"/>
     </traci_server>
 
     <random_number>
@@ -30,25 +30,3 @@
     </gui_only>
 
 </configuration>
--->
-
-<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
-    <interval begin="0.00" end="47.60" id="no_platoon_lane">
-        <edge id="gneE0">
-            <lane id="gneE0_0" sampledSeconds="470.07" traveltime="26.64" density="14.11" occupancy="5.64" waitingTime="0.00" speed="26.28" departed="25" arrived="0" entered="0" left="13" laneChangedFrom="0" laneChangedTo="0"/>
-            <lane id="gneE0_1" sampledSeconds="0.00" departed="0" arrived="0" entered="0" left="0" laneChangedFrom="0" laneChangedTo="0"/>
-        </edge>
-        <edge id="gneE1">
-            <lane id="gneE1_0" sampledSeconds="305.36" traveltime="23.85" density="10.48" occupancy="4.19" waitingTime="0.00" speed="25.67" departed="18" arrived="0" entered="0" left="8" laneChangedFrom="0" laneChangedTo="0"/>
-        </edge>
-        <edge id="gneE2">
-            <lane id="gneE2_0" sampledSeconds="2.36" traveltime="8.62" density="0.26" occupancy="0.10" waitingTime="0.00" speed="22.04" departed="0" arrived="0" entered="8" left="0" laneChangedFrom="8" laneChangedTo="0"/>
-            <lane id="gneE2_1" sampledSeconds="146.94" traveltime="9.83" density="16.25" occupancy="6.50" waitingTime="0.11" speed="19.33" departed="0" arrived="0" entered="13" left="13" laneChangedFrom="0" laneChangedTo="8"/>
-            <lane id="gneE2_2" sampledSeconds="0.00" departed="0" arrived="0" entered="0" left="0" laneChangedFrom="0" laneChangedTo="0"/>
-        </edge>
-        <edge id="gneE3">
-            <lane id="gneE3_0" sampledSeconds="114.10" traveltime="138.33" density="0.72" occupancy="0.29" waitingTime="0.00" speed="23.93" departed="0" arrived="0" entered="13" left="0" laneChangedFrom="0" laneChangedTo="1"/>
-            <lane id="gneE3_1" sampledSeconds="0.00" departed="0" arrived="0" entered="0" left="0" laneChangedFrom="0" laneChangedTo="0"/>
-        </edge>
-    </interval>
-</meandata>

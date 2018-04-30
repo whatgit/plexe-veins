@@ -826,7 +826,6 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 		}
 
 		if (mType != "0") {
-		    std::cout << "---------- adding ------- " << mType << std::endl;
 			addModule(objectId, mType, mName, mDisplayString, p, edge, speed, angle, VehicleSignal(signals));
 			MYDEBUG << "Added vehicle #" << objectId << endl;
 		}

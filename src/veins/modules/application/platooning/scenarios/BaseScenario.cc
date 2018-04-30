@@ -89,7 +89,6 @@ void BaseScenario::initialize(int stage) {
 			traciVehicle->setActiveController(controller);
 			traciVehicle->setACCHeadwayTime(accHeadway);
 			traciVehicle->setCACCConstantSpacing(caccSpacing);
-			std::cout << "Spacing is " << caccSpacing << std::endl;
 		}
 		//set the current lane
 		traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
