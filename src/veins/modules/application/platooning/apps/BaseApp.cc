@@ -84,7 +84,7 @@ void BaseApp::finish() {
 		if (traciVehicle->isCrashed()) {
 			crashHappened = true;
 			logVehicleData(true);
-			endSimulation();
+			//endSimulation();
 		}
 	}
 }
