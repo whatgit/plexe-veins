@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on mån 30 apr 2018 15:50:25 by SUMO gui Version 0.26.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
+
+    <input>
+        <net-file value="./sumocfg/the_merging_highway_auto_platoon.net.xml"/>
+        <route-files value="./sumocfg/merging_highway_auto_platoon.rou.xml"/>
+        <additional-files value="./sumocfg/merging_highway_auto_platoon.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="86400"/>
+        <step-length value="0.01"/>
+    </time>
+
+    <traci_server>
+        <remote-port value="56805"/>
+    </traci_server>
+
+    <random_number>
+        <seed value="0"/>
+    </random_number>
+
+    <gui_only>
+        <start value="false"/>
+    </gui_only>
+
+</configuration>
+-->
+
+<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
+    <interval begin="0.00" end="47.60" id="no_platoon_edge">
+        <edge id="gneE0" sampledSeconds="470.07" traveltime="26.64" density="14.11" occupancy="2.82" waitingTime="0.00" speed="26.28" departed="25" arrived="0" entered="0" left="13" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="gneE1" sampledSeconds="305.36" traveltime="23.85" density="10.48" occupancy="4.19" waitingTime="0.00" speed="25.67" departed="18" arrived="0" entered="0" left="8" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="gneE2" sampledSeconds="149.29" traveltime="9.81" density="16.51" occupancy="2.20" waitingTime="0.11" speed="19.38" departed="0" arrived="0" entered="21" left="13" laneChangedFrom="8" laneChangedTo="8"/>
+        <edge id="gneE3" sampledSeconds="114.10" traveltime="138.33" density="0.72" occupancy="0.14" waitingTime="0.00" speed="23.93" departed="0" arrived="0" entered="13" left="0" laneChangedFrom="0" laneChangedTo="1"/>
+    </interval>
+</meandata>

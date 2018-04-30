@@ -16,13 +16,13 @@
 	<!--route id="manual" edges="gneE1 gneE2 gneE3"/-->
 	<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
 
-	<flow id="manual_main_right" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.5" departSpeed="27.77">
+	<!--flow id="manual_main_right" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.5" departSpeed="27.77">
 		<route edges="gneE0 gneE2 gneE3"/>
-	</flow>
+	</flow-->
 
-	<flow id="manual_main_left" type="vtypehuman" begin="0" number="2000" departLane="1" probability="0.01" departSpeed="27.77">
+	<!--flow id="manual_main_left" type="vtypehuman" begin="0" number="2000" departLane="1" probability="0.01" departSpeed="27.77">
 		<route edges="gneE0 gneE2 gneE3"/>
-	</flow>
+	</flow-->
 
 	<flow id="manual_on_ramp" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.3" departSpeed="27.77">
 		<route edges="gneE1 gneE2 gneE3"/>

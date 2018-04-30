@@ -72,6 +72,7 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
 
 	if (msg == insertPlatoonMessage) {
 		insertPlatoons();
+		scheduleAt(simTime() + SimTime(10), insertPlatoonMessage);
 	}
 	if (msg == insertManualCarMessage) {
 	    if (dsTrigger) {
