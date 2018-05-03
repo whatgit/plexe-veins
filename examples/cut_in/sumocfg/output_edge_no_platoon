@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on lör 28 apr 2018 17:26:33 by SUMO gui Version 0.26.0
+<!-- generated on Thu May  3 09:50:33 2018 by SUMO Version 0.29.0
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="the_merging_highway_no_platoon.net.xml"/>
@@ -17,22 +17,8 @@
         <step-length value="0.01"/>
     </time>
 
-    <random_number>
-        <seed value="3"/>
-    </random_number>
-
     <gui_only>
         <start value="false"/>
     </gui_only>
 
 </configuration>
--->
-
-<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
-    <interval begin="0.00" end="86400.00" id="no_platoon_edge">
-        <edge id="gneE0" sampledSeconds="606335.48" traveltime="68.48" density="10.03" occupancy="2.01" waitingTime="43.72" speed="10.22" departed="8855" arrived="0" entered="0" left="8855" laneChangedFrom="3771" laneChangedTo="3771"/>
-        <edge id="gneE1" sampledSeconds="821750.79" traveltime="102.74" density="15.54" occupancy="6.21" waitingTime="0.00" speed="5.96" departed="8000" arrived="0" entered="0" left="8000" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="gneE2" sampledSeconds="629889.28" traveltime="36.60" density="38.37" occupancy="5.12" waitingTime="1477.47" speed="5.19" departed="0" arrived="0" entered="16855" left="16855" laneChangedFrom="8695" laneChangedTo="8695"/>
-        <edge id="gneE3" sampledSeconds="2178065.63" traveltime="129.22" density="7.62" occupancy="1.52" waitingTime="0.47" speed="25.62" departed="0" arrived="16855" entered="16855" left="0" laneChangedFrom="989" laneChangedTo="989"/>
-    </interval>
-</meandata>

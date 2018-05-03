@@ -584,6 +584,7 @@ void TraCIScenarioManager::processSimSubscription(std::string objectId, TraCIBuf
 			}
 
 			if ((count > 0) && (count >= activeVehicleCount) && autoShutdown) autoShutdownTriggered = true;
+			//if ((count > 0) && (count >= activeVehicleCount) && autoShutdown) autoShutdownTriggered = false;
 			activeVehicleCount -= count;
 			drivingVehicleCount -= count;
 
