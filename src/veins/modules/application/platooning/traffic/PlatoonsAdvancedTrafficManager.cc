@@ -44,8 +44,8 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		offset_manual = 0;
 		offset_platoon = 0;
 		insert_speed_manual = 0;
-		NGEA2 = false;
-		if(dsTrigger)   ds_control = Veins::TraCIConnection::connect("192.168.164.101", 8855);
+		NGEA2 = true;
+		if(dsTrigger)   ds_control = Veins::TraCIConnection::connect("192.168.164.10", 8855);
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}
