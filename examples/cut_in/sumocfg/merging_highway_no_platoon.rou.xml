@@ -3,7 +3,7 @@
 	<!--vType id="vtypehuman" accel="2.5" decel="6.0" sigma="0.0" tau="1.5" length="4" minGap="0" maxSpeed="33.33" carFollowModel="Krauss" color="0,1,1" probability="1" laneChangeModel="LC2013" lcCooperative="1.0" lcSpeedGainRight="10.0"  lcStrategic="10.0" lcLookaheadLeft="10.0" lcSpeedGain="15.0" speedFactor="1" speedDev="0.1">
 	</vType-->
 
-	<vType id="vtypehuman" accel="2.5" decel="6.0" sigma="0.0" tau="1.5" length="4" minGap="0" maxSpeed="33.33" carFollowModel="Krauss" color="0,1,1" probability="1" laneChangeModel="LC2013" lcCooperative="1.0" lcSpeedGainRight="10.0"  lcStrategic="10.0" lcLookaheadLeft="10.0" lcSpeedGain="15.0" speedFactor="1" speedDev="0.1">
+	<vType id="vtypehuman" accel="2.5" decel="6.0" sigma="0.0" tau="1.5" length="4" minGap="0" maxSpeed="33.33" carFollowModel="Krauss" color="0,1,1" probability="1" laneChangeModel="LC2013" lcCooperative="1.0" lcSpeedGainRight="10.0"  lcStrategic="10.0" lcLookaheadLeft="10.0" lcSpeedGain="15.0" emergencyDecel="8.0" speedFactor="1" speedDev="0.1">
 	</vType>
 
 	<flow id="manual_main_right" type="vtypehuman" begin="0" number="8000" departLane="0" probability="0.5" departSpeed="27.77">

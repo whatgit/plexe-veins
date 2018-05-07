@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May  3 09:50:33 2018 by SUMO Version 0.29.0
+<!-- generated on Thu May  3 13:10:13 2018 by PLEXE SUMO Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -22,3 +22,25 @@
     </gui_only>
 
 </configuration>
+-->
+
+<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
+    <interval begin="0.00" end="86400.00" id="no_platoon_lane">
+        <edge id="gneE0">
+            <lane id="gneE0_0" sampledSeconds="187545.30" traveltime="23.45" density="3.10" occupancy="1.24" waitingTime="0.00" speed="29.86" departed="8000" arrived="0" entered="0" left="7999" laneChangedFrom="1" laneChangedTo="0"/>
+            <lane id="gneE0_1" sampledSeconds="18203.55" traveltime="21.19" density="0.30" occupancy="0.12" waitingTime="0.00" speed="33.03" departed="859" arrived="0" entered="0" left="860" laneChangedFrom="0" laneChangedTo="1"/>
+        </edge>
+        <edge id="gneE1">
+            <lane id="gneE1_0" sampledSeconds="93730.69" traveltime="18.75" density="1.77" occupancy="0.71" waitingTime="0.00" speed="32.65" departed="5000" arrived="0" entered="0" left="5000" laneChangedFrom="0" laneChangedTo="0"/>
+        </edge>
+        <edge id="gneE2">
+            <lane id="gneE2_0" sampledSeconds="582.85" traveltime="6.09" density="0.04" occupancy="0.01" waitingTime="0.00" speed="31.18" departed="0" arrived="0" entered="5000" left="0" laneChangedFrom="5000" laneChangedTo="0"/>
+            <lane id="gneE2_1" sampledSeconds="75512.26" traveltime="6.45" density="4.60" occupancy="1.84" waitingTime="0.00" speed="29.44" departed="0" arrived="0" entered="7999" left="11422" laneChangedFrom="1577" laneChangedTo="5000"/>
+            <lane id="gneE2_2" sampledSeconds="13171.97" traveltime="5.83" density="0.80" occupancy="0.32" waitingTime="0.00" speed="32.57" departed="0" arrived="0" entered="860" left="2437" laneChangedFrom="0" laneChangedTo="1577"/>
+        </edge>
+        <edge id="gneE3">
+            <lane id="gneE3_0" sampledSeconds="1095692.07" traveltime="100.82" density="3.83" occupancy="1.53" waitingTime="0.00" speed="32.83" departed="0" arrived="9517" entered="11425" left="0" laneChangedFrom="1807" laneChangedTo="0"/>
+            <lane id="gneE3_1" sampledSeconds="297463.03" traveltime="99.48" density="1.04" occupancy="0.42" waitingTime="0.00" speed="33.27" departed="0" arrived="4239" entered="2434" left="2" laneChangedFrom="0" laneChangedTo="1807"/>
+        </edge>
+    </interval>
+</meandata>

@@ -81,12 +81,12 @@ void BaseApp::finish() {
 		recordData = 0;
 	}
 	if (!crashHappened && !simulationCompleted) {
-		if (traciVehicle->isCrashed()) {
+		/*if (traciVehicle->isCrashed()) {
 			crashHappened = true;
 			logVehicleData(true);
 			//std::cout << "CRASHED !!! " << std::endl;
 			//endSimulation();
-		}
+		}*/
 	}
 }
 

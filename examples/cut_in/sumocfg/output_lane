@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Wed May  2 13:02:08 2018 by PLEXE SUMO Version 0.29.0
+<!-- generated on Thu May  3 11:34:02 2018 by PLEXE SUMO Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -18,7 +18,7 @@
     </time>
 
     <traci_server>
-        <remote-port value="55279"/>
+        <remote-port value="43635"/>
     </traci_server>
 
     <random_number>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May  3 09:50:33 2018 by SUMO Version 0.29.0
+<!-- generated on Thu May  3 13:10:13 2018 by PLEXE SUMO Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
@@ -22,3 +22,13 @@
     </gui_only>
 
 </configuration>
+-->
+
+<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
+    <interval begin="0.00" end="86400.00" id="no_platoon_edge">
+        <edge id="gneE0" sampledSeconds="205748.86" traveltime="23.23" density="3.40" occupancy="0.68" waitingTime="0.00" speed="30.14" departed="8859" arrived="0" entered="0" left="8859" laneChangedFrom="1" laneChangedTo="1"/>
+        <edge id="gneE1" sampledSeconds="93730.69" traveltime="18.75" density="1.77" occupancy="0.71" waitingTime="0.00" speed="32.65" departed="5000" arrived="0" entered="0" left="5000" laneChangedFrom="0" laneChangedTo="0"/>
+        <edge id="gneE2" sampledSeconds="89267.08" traveltime="6.35" density="5.44" occupancy="0.73" waitingTime="0.00" speed="29.91" departed="0" arrived="0" entered="13859" left="13859" laneChangedFrom="6577" laneChangedTo="6577"/>
+        <edge id="gneE3" sampledSeconds="1393155.10" traveltime="100.53" density="4.87" occupancy="0.97" waitingTime="0.00" speed="32.92" departed="0" arrived="13756" entered="13859" left="2" laneChangedFrom="1807" laneChangedTo="1807"/>
+    </interval>
+</meandata>
