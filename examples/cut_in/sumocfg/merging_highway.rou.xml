@@ -16,8 +16,8 @@
 	<!--route id="manual" edges="gneE1 gneE2 gneE3"/-->
 	<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
 
-	<flow id="manual" type="vtypehuman" begin="2" period="1" departLane="0" number="10" departSpeed="27.77">
+	<!--flow id="manual" type="vtypehuman" begin="2" period="1" departLane="0" number="10" departSpeed="27.77">
 		<route id="manual_route" edges="gneE1 gneE2 gneE3"/>
-	</flow>
+	</flow-->
 	
 </routes>

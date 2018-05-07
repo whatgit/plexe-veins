@@ -42,9 +42,9 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		dsTrigger = par("triggeredByDS");
 		//TODO: maybe make them parameters
 		offset_manual = 0;
-		offset_platoon = 0;
+		offset_platoon = 100;
 		insert_speed_manual = 25;
-		NGEA2 = true;
+		NGEA2 = false;
 		if(NGEA2) {
 		    //ds_control = Veins::TraCIConnection::connect("192.168.164.10", 8855);
 		    offset_manual = 410.4;
@@ -72,7 +72,7 @@ void PlatoonsAdvancedTrafficManager::handleSelfMsg(cMessage *msg) {
 
 	if (msg == insertPlatoonMessage) {
 		insertPlatoons();
-		scheduleAt(simTime() + SimTime(10), insertPlatoonMessage);
+		//scheduleAt(simTime() + SimTime(10), insertPlatoonMessage);
 	}
 	if (msg == insertManualCarMessage) {
 	    if (dsTrigger) {
