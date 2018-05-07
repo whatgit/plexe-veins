@@ -84,7 +84,8 @@ void BaseApp::finish() {
 		if (traciVehicle->isCrashed()) {
 			crashHappened = true;
 			logVehicleData(true);
-			endSimulation();
+			//std::cout << "CRASHED !!! " << std::endl;
+			//endSimulation();
 		}
 	}
 }
@@ -169,7 +170,7 @@ void BaseApp::sendUnicast(cPacket *msg, int destination) {
 void BaseApp::handleSelfMsg(cMessage *msg) {
 	if (msg == recordData) {
 		//check for simulation end. let the first vehicle check
-		if (myId == 0 && simTime() > simulationDuration)
+		if (simTime() > simulationDuration)
 			stopSimulation();
 		//log mobility data
 		logVehicleData();

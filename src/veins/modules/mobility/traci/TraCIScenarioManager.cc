@@ -584,6 +584,7 @@ void TraCIScenarioManager::processSimSubscription(std::string objectId, TraCIBuf
 			}
 
 			if ((count > 0) && (count >= activeVehicleCount) && autoShutdown) autoShutdownTriggered = true;
+			//if ((count > 0) && (count >= activeVehicleCount) && autoShutdown) autoShutdownTriggered = false;
 			activeVehicleCount -= count;
 			drivingVehicleCount -= count;
 
@@ -826,7 +827,6 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 		}
 
 		if (mType != "0") {
-		    std::cout << "---------- adding ------- " << mType << std::endl;
 			addModule(objectId, mType, mName, mDisplayString, p, edge, speed, angle, VehicleSignal(signals));
 			MYDEBUG << "Added vehicle #" << objectId << endl;
 		}

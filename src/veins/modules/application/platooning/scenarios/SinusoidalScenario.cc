@@ -38,10 +38,10 @@ void SinusoidalScenario::initialize(int stage) {
 			changeSpeed = new cMessage("changeSpeed");
 			if (simTime() > startOscillating) {
 				startOscillating = simTime();
-				scheduleAt(simTime(), changeSpeed);
+				//scheduleAt(simTime(), changeSpeed);
 			}
 			else {
-				scheduleAt(startOscillating, changeSpeed);
+				//scheduleAt(startOscillating, changeSpeed);
 			}
 			//set base cruising speed
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
@@ -57,8 +57,13 @@ void SinusoidalScenario::initialize(int stage) {
 }
 
 void SinusoidalScenario::finish() {
-	cancelAndDelete(changeSpeed);
-	changeSpeed = 0;
+    if(changeSpeed) {
+        if (changeSpeed->isScheduled()) {
+            cancelEvent(changeSpeed);
+        }
+        delete changeSpeed;
+        changeSpeed = 0;
+    }
 	BaseScenario::finish();
 }
 

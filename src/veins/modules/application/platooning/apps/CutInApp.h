@@ -14,13 +14,13 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef INTERSECTIONAPP_H_
-#define INTERSECTIONAPP_H_
+#ifndef CUTINAPP_H_
+#define CUTINAPP_H_
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 #include <veins/modules/mobility/traci/TraCIBaseTrafficManager.h>
 
-class IntersectionApp : public BaseApp
+class CutInApp : public BaseApp
 {
 
 	public:
@@ -31,15 +31,9 @@ class IntersectionApp : public BaseApp
 	protected:
 		virtual void onBeacon(WaveShortMessage* wsm);
 		virtual void onData(WaveShortMessage* wsm);
-		virtual void handleLowerMsg(cMessage *msg);
-
-		cMessage *readDS;
-		std::string ipAddress; //ip address of DS
-		Veins::TraCIConnection* ds_control;
-		cOutVector receivedDelay;
 
 	public:
-		IntersectionApp() {}
+		CutInApp() {}
 
 	protected:
 
@@ -47,4 +41,4 @@ class IntersectionApp : public BaseApp
 
 };
 
-#endif /* INTERSECTIONAPP_H_ */
+#endif /* CUTINAPP_H_ */

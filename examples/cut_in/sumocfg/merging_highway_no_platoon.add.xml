@@ -1,0 +1,4 @@
+ <additional>
+    <edgeData id="no_platoon_edge" file="output_edge_no_platoon"/>
+    <laneData id="no_platoon_lane" file="output_lane_no_platoon"/>
+ </additional>

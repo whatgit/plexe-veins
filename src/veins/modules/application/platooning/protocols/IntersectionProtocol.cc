@@ -72,6 +72,7 @@ void IntersectionProtocol::sendIntersectionMessage(int destinatinAddress) {
     Intersection_msg->setSUMOpositionY(sumoPosY);
     //i generated the message, i send it
     Intersection_msg->setRelayerId(myId);
+    Intersection_msg->setTime(simTime().dbl());
     Intersection_msg->setByteLength(packetSize);
     Intersection_msg->setSequenceNumber(seq_n++);
     Intersection_msg->setMyPlatoonID(positionHelper->getPlatoonId());

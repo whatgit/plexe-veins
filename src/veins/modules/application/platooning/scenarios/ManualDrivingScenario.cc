@@ -24,14 +24,16 @@ void ManualDrivingScenario::initialize(int stage) {
 
 	if (stage == 1) {
 
+	    leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
+
 		if (positionHelper->getId() < positionHelper->getLanesCount()) {
 			//set base cruising speed
-			traciVehicle->setCruiseControlDesiredSpeed(100/3.6);
+			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
 		}
 		else {
 			//let the follower set a higher desired speed to stay connected
 			//to the leader when it is accelerating
-			traciVehicle->setCruiseControlDesiredSpeed((100/3.6) + 5);
+			traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed) + 5);
 		}
 
 	}

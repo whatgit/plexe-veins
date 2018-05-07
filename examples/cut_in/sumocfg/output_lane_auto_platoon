@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on tis  1 maj 2018 18:04:30 by SUMO gui Version 0.29.0
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
+
+    <input>
+        <net-file value="./sumocfg/the_merging_highway_auto_platoon.net.xml"/>
+        <route-files value="./sumocfg/merging_highway_auto_platoon.rou.xml"/>
+        <additional-files value="./sumocfg/merging_highway_auto_platoon.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="8640"/>
+        <step-length value="0.01"/>
+    </time>
+
+    <traci_server>
+        <remote-port value="49954"/>
+    </traci_server>
+
+    <random_number>
+        <seed value="0"/>
+    </random_number>
+
+    <gui_only>
+        <start value="false"/>
+    </gui_only>
+
+</configuration>
+-->
+
+<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
+    <interval begin="0.00" end="56.01" id="no_platoon_lane">
+        <edge id="gneE0">
+            <lane id="gneE0_0" sampledSeconds="548.99" traveltime="25.14" overlapTraveltime="25.30" density="14.00" occupancy="5.60" waitingTime="0.00" speed="27.82" departed="30" arrived="0" entered="0" left="19" laneChangedFrom="0" laneChangedTo="0"/>
+            <lane id="gneE0_1" sampledSeconds="0.00" departed="0" arrived="0" entered="0" left="0" laneChangedFrom="0" laneChangedTo="0"/>
+        </edge>
+        <edge id="gneE1">
+            <lane id="gneE1_0" sampledSeconds="206.44" traveltime="18.75" overlapTraveltime="18.88" density="6.02" occupancy="2.41" waitingTime="0.00" speed="32.63" departed="14" arrived="0" entered="0" left="9" laneChangedFrom="0" laneChangedTo="0"/>
+        </edge>
+        <edge id="gneE2">
+            <lane id="gneE2_0" sampledSeconds="77.75" traveltime="17.25" overlapTraveltime="17.61" density="7.31" occupancy="2.92" waitingTime="2.82" speed="11.01" departed="0" arrived="0" entered="9" left="0" laneChangedFrom="7" laneChangedTo="0"/>
+            <lane id="gneE2_1" sampledSeconds="147.07" traveltime="7.90" overlapTraveltime="8.09" density="13.82" occupancy="5.53" waitingTime="0.00" speed="23.99" departed="0" arrived="0" entered="19" left="18" laneChangedFrom="4" laneChangedTo="7"/>
+            <lane id="gneE2_2" sampledSeconds="13.62" traveltime="7.38" overlapTraveltime="7.70" density="1.28" occupancy="0.51" waitingTime="0.00" speed="25.18" departed="0" arrived="0" entered="0" left="4" laneChangedFrom="0" laneChangedTo="4"/>
+        </edge>
+        <edge id="gneE3">
+            <lane id="gneE3_0" sampledSeconds="254.10" traveltime="127.20" overlapTraveltime="127.35" density="1.37" occupancy="0.55" waitingTime="0.00" speed="26.02" departed="0" arrived="0" entered="18" left="0" laneChangedFrom="0" laneChangedTo="0"/>
+            <lane id="gneE3_1" sampledSeconds="8.25" traveltime="103.92" overlapTraveltime="104.04" density="0.04" occupancy="0.02" waitingTime="0.00" speed="31.85" departed="0" arrived="0" entered="3" left="0" laneChangedFrom="0" laneChangedTo="0"/>
+        </edge>
+    </interval>
+</meandata>
