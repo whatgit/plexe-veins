@@ -45,5 +45,6 @@ simple PlatoonsAdvancedTrafficManager like TraCIBaseTrafficManager {
         string platoonRoute = default("platoon_route");
         string manualRoute = default("manual_route");
         bool triggeredByDS = default(false);
+        double offsetPlatoon @unit("m") = default(0m);
         @class(PlatoonsAdvancedTrafficManager);
 }

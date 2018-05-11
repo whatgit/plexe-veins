@@ -40,9 +40,9 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
 		nManualCars = par("nManualCars").longValue();
 		laneManualCars = par("laneManualCars").longValue();
 		dsTrigger = par("triggeredByDS");
+		offset_platoon = par("offsetPlatoon").doubleValue();
 		//TODO: maybe make them parameters
 		offset_manual = 0;
-		offset_platoon = 100;
 		insert_speed_manual = 25;
 		NGEA2 = false;
 		if(NGEA2) {
@@ -51,7 +51,7 @@ void PlatoonsAdvancedTrafficManager::initialize(int stage) {
             offset_platoon = 478.3;
             insert_speed_manual = 0;
 		}
-		if(dsTrigger)   ds_control = Veins::TraCIConnection::connect("192.168.164.10", 8855);
+		if(dsTrigger)   ds_control = Veins::TraCIConnection::connect("194.47.15.19", 8855);
 		scheduleAt(platoonInsertTime, insertPlatoonMessage);
 		if (nManualCars)    scheduleAt(platoonInsertTime, insertManualCarMessage);
 	}

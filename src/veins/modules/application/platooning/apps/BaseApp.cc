@@ -80,14 +80,14 @@ void BaseApp::finish() {
 		delete recordData;
 		recordData = 0;
 	}
-	if (!crashHappened && !simulationCompleted) {
-		/*if (traciVehicle->isCrashed()) {
+	/*if (!crashHappened && !simulationCompleted) {
+		if (traciVehicle->isCrashed()) {
 			crashHappened = true;
 			logVehicleData(true);
 			//std::cout << "CRASHED !!! " << std::endl;
 			//endSimulation();
-		}*/
-	}
+		}
+	}*/
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {

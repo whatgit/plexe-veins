@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on mån  7 maj 2018 16:28:45 by SUMO gui Version 0.26.0
->>>>>>> 748c3aea67a4298193c84671cb5e45bc6491796c
+<!-- generated on Thu May 10 18:32:26 2018 by PLEXE SUMO Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumo-gui.exeConfiguration.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="./sumocfg/the_merging_highway.net.xml"/>
@@ -19,7 +18,7 @@
     </time>
 
     <traci_server>
-        <remote-port value="50947"/>
+        <remote-port value="51379"/>
     </traci_server>
 
     <random_number>
@@ -27,17 +26,7 @@
     </random_number>
 
     <gui_only>
-        <start value="false"/>
+        <start value="true"/>
     </gui_only>
 
 </configuration>
--->
-
-<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
-    <interval begin="0.00" end="56.07" id="measurement1">
-        <edge id="gneE0" sampledSeconds="79.13" traveltime="21.00" density="2.02" occupancy="0.40" waitingTime="0.00" speed="33.33" departed="5" arrived="0" entered="0" left="5" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="gneE1" sampledSeconds="14.89" traveltime="21.39" density="0.43" occupancy="0.17" waitingTime="0.00" speed="28.62" departed="1" arrived="0" entered="0" left="1" laneChangedFrom="0" laneChangedTo="0"/>
-        <edge id="gneE2" sampledSeconds="34.78" traveltime="5.68" density="3.26" occupancy="0.44" waitingTime="0.00" speed="33.46" departed="0" arrived="0" entered="6" left="6" laneChangedFrom="1" laneChangedTo="1"/>
-        <edge id="gneE3" sampledSeconds="170.43" traveltime="102.15" density="0.92" occupancy="0.18" waitingTime="1.40" speed="32.40" departed="0" arrived="0" entered="6" left="4" laneChangedFrom="6" laneChangedTo="6"/>
-    </interval>
-</meandata>
