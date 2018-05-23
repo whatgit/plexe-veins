@@ -87,7 +87,7 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
             //std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;
         }
         else {
-            stopSimulation();
+            //stopSimulation();
         }
 
 
