@@ -17,7 +17,7 @@ def packData(data,data_type="i"):
   
   return DATA
 
-def sendData(DATA,UDP_IP="127.0.0.1",UDP_PORT=25565):
+def sendData(DATA,UDP_IP="192.168.65.82",UDP_PORT=44445):
   sock = socket.socket(socket.AF_INET, # Internet
                       socket.SOCK_DGRAM) # UDP
   sock.sendto(DATA, (UDP_IP, UDP_PORT))
