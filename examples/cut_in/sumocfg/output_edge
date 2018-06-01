@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on Thu May 24 16:43:42 2018 by PLEXE SUMO Version 0.26.0
+<!-- generated on Fri Jun  1 16:15:00 2018 by PLEXE SUMO Version 0.26.0
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="./sumocfg/the_merging_highway.net.xml"/>
+        <net-file value="./sumocfg/the_merging_highway_fixed.net.xml"/>
         <route-files value="./sumocfg/merging_highway.rou.xml"/>
         <additional-files value="./sumocfg/merging_highway.add.xml"/>
     </input>
@@ -18,7 +18,7 @@
     </time>
 
     <traci_server>
-        <remote-port value="42317"/>
+        <remote-port value="60887"/>
     </traci_server>
 
     <random_number>
