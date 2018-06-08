@@ -972,4 +972,17 @@ std::string TraCICommandInterface::Vehicle::getVType() {
 	return traci->genericGetString(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
 }
 
+void TraCICommandInterface::Vehicle::moveTo(std::string laneID, double position) {
+    uint8_t variableId = VAR_MOVE_TO;
+    uint8_t variableType = TYPE_COMPOUND;
+    int32_t count = 2;
+    uint8_t laneIdT = TYPE_STRING;
+    std::string laneId_val = laneID;
+    uint8_t positionT = TYPE_DOUBLE;
+    double position_val = position;
+
+    //traci->connection.query(0x5c, Veins::TraCIBuffer() << "platoon_vehicle.0" << TYPE_COMPOUND << int(2) << TYPE_STRING << "gneE1_0" << TYPE_DOUBLE << MysumoPosX+500);
+    TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << variableType << count << laneIdT << laneId_val << positionT << position_val);
+}
+
 }

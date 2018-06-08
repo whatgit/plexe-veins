@@ -11,6 +11,7 @@
 		<carFollowing-CC tauEngine="0" omegaN="0.2" xi="1" c1="0.5" decel="9" lanesCount="1" ccAccel="5.0"/>
 	</vType>
 	
-	<route id="platoon_route" edges="e1"/>
+	<route id="platoon_route" edges="gneE1"/>
+	<route id="manual_route" edges="gneE0"/>
 	<!--<flow id="platoon" route="platoon_route" type="vtypeauto" begin="0" period="1" departLane="0" number="8" departSpeed="27.77"/>-->
 </routes>

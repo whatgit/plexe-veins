@@ -201,6 +201,8 @@ class TraCICommandInterface
 				 */
 				std::string getVType();
 
+				void moveTo(std::string laneID, double position);
+
 			protected:
 				TraCICommandInterface* traci;
 				TraCIConnection* connection;
