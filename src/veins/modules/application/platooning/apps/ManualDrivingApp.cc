@@ -78,10 +78,32 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         buf >> laneID;
         buf >> intention;
 
+        //speed = 10;
+
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
         traciVehicle->setFixedLane(laneID);
         if(intention >= 0) {
+            if(intention == 0){
+                traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(20);
+                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(20);
+                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(20);
+            }
+            else if(intention == 1){
+                traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(15);
+                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(15);
+                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(15);
+            }
+            else if(intention == 2){
+                traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(30);
+                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(30);
+                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(30);
+            }
+            else if(intention == 3){
+                traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(45);
+                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(45);
+                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(45);
+            }
             //do something with the received intention
             // ADD THE PLATOON HERE
             //std::cout << "should be adding the platoon here !!!!!!!!!!!!!!!!!!!!!!!!!!! " << std::endl;

@@ -52,23 +52,24 @@ void OvertakingScenario::handleSelfMsg(cMessage *msg) {
     double diff_ego_platoon, diff_platoon_ego;
 
     if (msg == checkDistanceToManual) {
-        std::cout << "checking distance to manual car" << std::endl;
+        std::string route_id = traciVehicle->getRouteId();
+        //std::cout << "checking distance to manual car" << std::endl;
         traci->vehicle("manual_car.0").getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
         traciVehicle->getVehicleData(Myspeed, Myacceleration, MycontrollerAcceleration, MysumoPosX, MysumoPosY, MysumoTime);
-        std::cout << "I am at " <<  MysumoPosX << std::endl;
-        std::cout << "Manual car is at " << sumoPosX << std::endl;
-        std::cout << "Diff = " << MysumoPosX - sumoPosX << std::endl;
-        std::cout << "------------------***********-------------" << std::endl;
+        //std::cout << "I am at " <<  MysumoPosX << std::endl;
+        //std::cout << "Manual car is at " << sumoPosX << std::endl;
+        //std::cout << "Diff = " << MysumoPosX - sumoPosX << std::endl;
+        //std::cout << "------------------***********-------------" << std::endl;
         //scheduleAt(simTime() + SimTime(0.01), checkDistanceToManual);
     }
     if (msg == moveNeighbors) {
 
         traci->vehicle("platoon_vehicle.0").getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
         traciVehicle->getVehicleData(Myspeed, Myacceleration, MycontrollerAcceleration, MysumoPosX, MysumoPosY, MysumoTime);
-        std::cout << "My pos is " << MysumoPosX;
-        std::cout << "Vehicle 0 pos is " << sumoPosX;
-        std::cout << "Diff = " << MysumoPosX - sumoPosX << std::endl;
-        std::cout << "------------------***********-------------" << std::endl;
+        //std::cout << "My pos is " << MysumoPosX;
+        //std::cout << "Vehicle 0 pos is " << sumoPosX;
+        //std::cout << "Diff = " << MysumoPosX - sumoPosX << std::endl;
+        //std::cout << "------------------***********-------------" << std::endl;
         diff_ego_platoon = MysumoPosX - sumoPosX;
 
         if(diff_ego_platoon > 200) {
@@ -83,6 +84,7 @@ void OvertakingScenario::handleSelfMsg(cMessage *msg) {
         traci->vehicle("platoon_vehicle.0").moveTo("gneE1_0", 10000 - MysumoPosX - 500);
         traci->vehicle("platoon_vehicle.1").moveTo("gneE1_0", 10000 - MysumoPosX - 520);
         traci->vehicle("platoon_vehicle.2").moveTo("gneE1_0", 10000 - MysumoPosX - 540);
+        traci->addVehicle("obstacle", "obstacle_car", "manual_route", simTime(), 30+10, 10, 0);
 
         scheduleAt(simTime() + SimTime(0.01), moveNeighbors);
     }

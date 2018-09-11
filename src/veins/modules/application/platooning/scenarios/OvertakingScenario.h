@@ -32,6 +32,7 @@ class OvertakingScenario : public BaseScenario
         cMessage *moveNeighbors;
         cMessage *startScenario;
 
+
     public:
         OvertakingScenario() {}
 
