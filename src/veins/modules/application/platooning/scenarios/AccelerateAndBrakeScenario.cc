@@ -44,9 +44,11 @@ void AccelerateAndBrakeScenario::initialize(int stage) {
 		startBrakingMsg = new cMessage("startBrakingMsg");
 
 		//enable ACC
-		traciVehicle->setActiveController(Plexe::ACC);
+		//traciVehicle->setActiveController(Plexe::ACC);
+		traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
+
 		//let the vehicle start from standstill
-		traciVehicle->setFixedAcceleration(1, -8);
+		//traciVehicle->setFixedAcceleration(1, -8);
 
 		//schedule messages
 		scheduleAt(startAccelerating, startAccelerationMsg);
