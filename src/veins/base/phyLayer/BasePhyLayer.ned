@@ -11,6 +11,7 @@ simple BasePhyLayer like IWirelessPhy
         int headerLength = default(0) @unit(bit); //defines the length of the phy header (/preamble)
         
         bool usePropagationDelay;		//Should transmission delay be simulated?
+        double propagationDelay = default(0);	//How much is the added delay?
         double thermalNoise @unit(dBm);	//the strength of the thermal noise [dBm]
         bool useThermalNoise;			//should thermal noise be considered?
 

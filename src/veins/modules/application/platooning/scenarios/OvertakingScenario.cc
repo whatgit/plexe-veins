@@ -72,19 +72,19 @@ void OvertakingScenario::handleSelfMsg(cMessage *msg) {
         //std::cout << "------------------***********-------------" << std::endl;
         diff_ego_platoon = MysumoPosX - sumoPosX;
 
-        if(diff_ego_platoon > 200) {
+        if(diff_ego_platoon > 40) {
             //traci->connection.query(0x5c, Veins::TraCIBuffer() << "platoon_vehicle.0" << TYPE_COMPOUND << int(2) << TYPE_STRING << "gneE1_0" << TYPE_DOUBLE << MysumoPosX+500);
-            traci->vehicle("platoon_vehicle.0").moveTo("gneE1_0", 10000 - MysumoPosX - 500);
-            traci->vehicle("platoon_vehicle.1").moveTo("gneE1_0", 10000 - MysumoPosX - 520);
-            traci->vehicle("platoon_vehicle.2").moveTo("gneE1_0", 10000 - MysumoPosX - 540);
+            traci->vehicle("platoon_vehicle.0").moveTo("gneE1_0", 10000 - MysumoPosX - 250);
+            //traci->vehicle("platoon_vehicle.1").moveTo("gneE1_0", 10000 - MysumoPosX - 370);
+            //traci->vehicle("platoon_vehicle.2").moveTo("gneE1_0", 10000 - MysumoPosX - 390);
         }
         scheduleAt(simTime() + SimTime(0.01), moveNeighbors);
     }
     if (msg == startScenario) {
-        traci->vehicle("platoon_vehicle.0").moveTo("gneE1_0", 10000 - MysumoPosX - 500);
-        traci->vehicle("platoon_vehicle.1").moveTo("gneE1_0", 10000 - MysumoPosX - 520);
-        traci->vehicle("platoon_vehicle.2").moveTo("gneE1_0", 10000 - MysumoPosX - 540);
-        traci->addVehicle("obstacle", "obstacle_car", "manual_route", simTime(), 30+10, 10, 0);
+        traci->vehicle("platoon_vehicle.0").moveTo("gneE1_0", 10000 - MysumoPosX - 700);
+        //traci->vehicle("platoon_vehicle.1").moveTo("gneE1_0", 10000 - MysumoPosX - 720);
+        //traci->vehicle("platoon_vehicle.2").moveTo("gneE1_0", 10000 - MysumoPosX - 740);
+        //traci->addVehicle("obstacle", "obstacle_car", "manual_route", simTime(), 30+10, 10, 0);
 
         scheduleAt(simTime() + SimTime(0.01), moveNeighbors);
     }

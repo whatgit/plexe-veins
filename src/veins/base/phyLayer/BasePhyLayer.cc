@@ -108,6 +108,9 @@ void BasePhyLayer::initialize(int stage) {
 		//initialise timer messages
 		radioSwitchingOverTimer = new cMessage("radio switching over", RADIO_SWITCHING_OVER);
 		txOverTimer = new cMessage("transmission over", TX_OVER);
+		//changeDelay = new cMessage("changeDelay");
+		amount_delay = par("propagationDelay").doubleValue();
+		//scheduleAt(simTime() + SimTime(25), changeDelay);
 
 	}
 }
@@ -477,7 +480,7 @@ void BasePhyLayer::handleAirFrameStartReceive(AirFrame* frame) {
 	if(usePropagationDelay) {
 		Signal& s = frame->getSignal();
 		simtime_t delay = simTime() - s.getSendingStart();
-		//delay = 0.1;
+		delay = delay + amount_delay;
 		s.setPropagationDelay(delay);
 	}
 	assert(frame->getSignal().getReceptionStart() == simTime());

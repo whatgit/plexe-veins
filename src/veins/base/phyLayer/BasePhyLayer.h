@@ -429,6 +429,9 @@ protected:
 	 */
 	virtual bool isKnownProtocolId(int id) { return id == myProtocolId(); }
 
+	cMessage *changeDelay;
+	double amount_delay;
+
 public:
 	BasePhyLayer();
 

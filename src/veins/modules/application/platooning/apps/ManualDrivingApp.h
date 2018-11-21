@@ -36,6 +36,14 @@ class ManualDrivingApp : public BaseApp
 		std::string ipAddress; //ip address of DS
 		Veins::TraCIConnection* ds_control;
 
+		//NGEA2 demo stuff
+		int distance_to_preceding;
+		double time_gap;
+		cOutVector receivedDelay;
+		virtual void handleLowerMsg(cMessage *msg);
+		std::queue<double> fake_delay_speed_queue;
+		int max_delay_step, delay_counter;
+
 	public:
 		ManualDrivingApp() {}
 

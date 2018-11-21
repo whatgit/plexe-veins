@@ -35,10 +35,15 @@ void ManualDrivingApp::initialize(int stage) {
             readDS = new cMessage("readDS");
             scheduleAt(simTime() + SimTime(0.01), readDS);
             std::cout << "found a manual car" << std::endl;
+            time_gap = -1.00;
         }
         else {
             readDS = 0;
 	    }
+	    receivedDelay.setName("receivedDelay");
+	    max_delay_step= 0;
+	    delay_counter = 0;
+	    distance_to_preceding = -1.0;
 	}
 }
 
@@ -66,7 +71,8 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
         traciVehicle->getRadarMeasurements(radar_distance, rel_speed);
 
         //send command to request control values from ds (basically speed and laneID of ego vehicle)
-        ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));
+        //ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer()));  //original
+        ds_control->sendTCPMessage(Veins::makeTraCICommand(0x40, Veins::TraCIBuffer() << time_gap));
         ds_resp = ds_control->receiveMessage();
         Veins::TraCIBuffer buf = Veins::TraCIBuffer(ds_resp);
         buf >> read_a_byte;
@@ -82,27 +88,68 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 
         //Control the vehicle with received speed
         traciVehicle->setSpeed(speed);
-        traciVehicle->setFixedLane(laneID);
+        //For NGEA2 lane ID is always 0 and we use received lane ID as distance instead
+        //std::cout << "receiving the distance of " << laneID << std::endl;
+        distance_to_preceding = laneID;
+        traciVehicle->setFixedLane(0);
         if(intention >= 0) {
             if(intention == 0){
                 traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(20);
-                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(20);
-                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(20);
+                //traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(20);
+                //traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(20);
+
+                if(max_delay_step == 0) {
+
+                }
+                else {
+                    while(fake_delay_speed_queue.size() != 0) fake_delay_speed_queue.pop();
+                    max_delay_step= 0;
+                    delay_counter = 0;
+                }
+
             }
             else if(intention == 1){
                 traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(15);
-                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(15);
-                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(15);
+                //traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(15);
+                //traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(15);
+
+                if(max_delay_step == 3) {
+
+                }
+                else {
+                    while(fake_delay_speed_queue.size() != 0) fake_delay_speed_queue.pop();
+                    max_delay_step = 3;
+                    delay_counter = 0;
+                }
+
             }
             else if(intention == 2){
                 traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(30);
-                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(30);
-                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(30);
+                //traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(30);
+                //traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(30);
+
+                if(max_delay_step == 5) {
+
+                }
+                else {
+                    while(fake_delay_speed_queue.size() != 0) fake_delay_speed_queue.pop();
+                    max_delay_step = 5;
+                    delay_counter = 0;
+                }
             }
             else if(intention == 3){
                 traci->vehicle("platoon_vehicle.0").setCACCConstantSpacing(45);
-                traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(45);
-                traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(45);
+                //traci->vehicle("platoon_vehicle.1").setCACCConstantSpacing(45);
+                //traci->vehicle("platoon_vehicle.2").setCACCConstantSpacing(45);
+
+                if(max_delay_step == 7) {
+
+                }
+                else {
+                    while(fake_delay_speed_queue.size() != 0) fake_delay_speed_queue.pop();
+                    max_delay_step = 7;
+                    delay_counter = 0;
+                }
             }
             //do something with the received intention
             // ADD THE PLATOON HERE
@@ -121,4 +168,60 @@ void ManualDrivingApp::handleSelfMsg(cMessage *msg) {
 }
 
 void ManualDrivingApp::onBeacon(WaveShortMessage* wsm) {
+}
+
+void ManualDrivingApp::handleLowerMsg(cMessage *msg) {
+
+    UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
+    ASSERT2(unicast, "received a frame not of type UnicastMessage");
+
+    cPacket *enc = unicast->decapsulate();
+    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+
+    //our vehicle's data
+    double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime, distance, relSpeed;
+
+    //received data
+    double receivedPosX;
+    traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+    traciVehicle->getRadarMeasurements(distance, relSpeed);
+    if (enc->getKind() == BaseProtocol::BEACON_TYPE) {  //Similar to BaseApp
+        PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
+        ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
+        //receivedDelay.record(simTime().dbl() - epkt->getTime());
+        if((epkt->getVehicleId() == 0)){
+            //std::cout << "getting packets from vehicle that is at : " << epkt->getPositionX() << '\n';
+            fake_delay_speed_queue.push(epkt->getPositionX());
+            if(delay_counter < max_delay_step){
+                delay_counter = delay_counter + 1;
+            }
+            else{
+                receivedPosX = fake_delay_speed_queue.front();
+                std::cout << "before popping size: " << fake_delay_speed_queue.size() << '\n';
+
+                if((distance_to_preceding <= 100) && (receivedPosX > sumoPosX) && (distance_to_preceding > 0)) {
+                    std::cout << "there is some time gap" << '\n';
+                    time_gap = (receivedPosX - (sumoPosX + distance_to_preceding))/speed;
+                }
+                else{
+                    std::cout << "just sending -1" << '\n';
+                    time_gap = -1.0;
+                }
+                std::cout << "clearing the queue" << '\n';
+                while(fake_delay_speed_queue.size() != 0) fake_delay_speed_queue.pop();
+                delay_counter = 0;
+            }
+
+        }
+        else{
+
+        }
+        //std::cout << "received a message from vehicle id: " << epkt->getVehicleId() << ", at the position: " <<  epkt->getPositionX() << std::endl;
+        //
+        //Loggin below does not work with the fake delay for some reason
+        //receivedDelay.record(simTime().dbl() - epkt->getTime());
+    }
+
+    delete enc;
+    delete unicast;
 }
