@@ -40,19 +40,30 @@ void AccelerateAndBrakeScenario::initialize(int stage) {
 		startBraking = SimTime(par("startBraking").doubleValue());
 
 		//messages to schedule actions
-		startAccelerationMsg = new cMessage("startAccelerationMsg");
-		startBrakingMsg = new cMessage("startBrakingMsg");
 
-		//enable ACC
-		//traciVehicle->setActiveController(Plexe::ACC);
-		traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
 
-		//let the vehicle start from standstill
-		//traciVehicle->setFixedAcceleration(1, -8);
+		if (positionHelper->getId() < positionHelper->getLanesCount()) {
+		    startAccelerationMsg = new cMessage("startAccelerationMsg");
+            startBrakingMsg = new cMessage("startBrakingMsg");
+		    //for the leader
+		    //enable ACC
+            //traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
 
-		//schedule messages
-		scheduleAt(startAccelerating, startAccelerationMsg);
-		scheduleAt(startBraking, startBrakingMsg);
+            //let the vehicle start from standstill
+            //traciVehicle->setFixedAcceleration(1, -8);
+
+            //schedule messages
+            //scheduleAt(startAccelerating, startAccelerationMsg);
+            scheduleAt(startBraking, startBrakingMsg);
+		}
+		else {
+		    //for the follower
+		    startAccelerationMsg = 0;
+            startBrakingMsg = 0;
+            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed+10);
+		}
+
 
 	}
 

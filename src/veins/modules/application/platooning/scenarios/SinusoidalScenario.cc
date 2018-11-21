@@ -41,7 +41,7 @@ void SinusoidalScenario::initialize(int stage) {
 				//scheduleAt(simTime(), changeSpeed);
 			}
 			else {
-				//scheduleAt(startOscillating, changeSpeed);
+				scheduleAt(startOscillating, changeSpeed);
 			}
 			//set base cruising speed
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);

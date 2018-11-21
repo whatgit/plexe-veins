@@ -24,6 +24,9 @@
 #include "veins/modules/application/platooning/messages/PlatooningBeacon_m.h"
 #include "veins/modules/application/platooning/messages/ICLCM_m.h"
 #include "veins/modules/application/platooning/messages/Intersection_m.h"
+#include "veins/modules/application/platooning/messages/eBrakeAck_m.h"
+#include "veins/modules/application/platooning/messages/eBrakeDirectly_m.h"
+#include "veins/modules/application/platooning/messages/eBrakeRequest_m.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
@@ -176,6 +179,9 @@ class BaseProtocol : public BaseApplLayer {
 		static const int iCLCM_TYPE = 20000;
 		static const int STOM_TYPE = 30000;
 		static const int INTER_TYPE = 4000;
+		static const int EBREQ_TYPE = 5001;
+		static const int EBACK_TYPE = 5002;
+		static const int EBDIR_TYPE = 5003;
 
 		BaseProtocol() {
 			sendBeacon = 0;
